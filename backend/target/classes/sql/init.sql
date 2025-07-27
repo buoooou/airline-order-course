@@ -16,7 +16,7 @@ USE `airline_order_db`;
 DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `app_users`;
 
-CREATE TABLE `app_users_zdq` (
+CREATE TABLE `app_users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
@@ -26,30 +26,18 @@ CREATE TABLE `app_users_zdq` (
 
 -- 步骤 3: 创建 orders 表
 -- 用于存储订单信息，对应 Order.java 实体
-CREATE TABLE `orders_zdq` (
+CREATE TABLE `orders` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `order_number` VARCHAR(255) NOT NULL,
   `status` ENUM('PENDING_PAYMENT', 'PAID', 'TICKETING_IN_PROGRESS', 'TICKETING_FAILED', 'TICKETED', 'CANCELLED') NOT NULL,
   `amount` DECIMAL(19, 2) NOT NULL,
   `creation_date` DATETIME(6) NOT NULL,
   `user_id` BIGINT NOT NULL,
-  `flight_id` BIGINT NOT NULL,
-  `seat_number` Varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_orders_zdq_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users_zdq` (`id`)
+  CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `flight_info_zdq` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `flight_number` VARCHAR(20),
-  `departure_airport_code` VARCHAR(10),
-  `departure_airport_name` VARCHAR(100),
-  `arrival_airport_code` VARCHAR(10),
-  `arrival_airport_name` VARCHAR(100),
-  `departure_time` DATETIME,
-  `arrival_time` DATETIME,
-  `flight_duration` INT
-);
+
 -- 步骤 4: 插入测试数据
 
 -- 插入用户 (密码原文均为 'password')
