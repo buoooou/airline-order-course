@@ -183,10 +183,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("endTime") LocalDateTime endTime);
     
     /**
-     * 查找最近的订单
-     * @param limit 限制数量
-     * @return 订单列表
+     * 查找最近的订单（分页）
+     * @param pageable 分页参数
+     * @return 订单分页结果
      */
-    @Query(value = "SELECT * FROM orders_zdq ORDER BY creation_date DESC LIMIT ?1", nativeQuery = true)
-    List<Order> findRecentOrders(@Param("limit") int limit);
+    @Query("SELECT o FROM Order o ORDER BY o.creationDate DESC")
+    Page<Order> findRecentOrders(Pageable pageable);
 }

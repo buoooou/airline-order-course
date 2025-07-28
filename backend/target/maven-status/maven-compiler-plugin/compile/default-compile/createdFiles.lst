@@ -15,3 +15,4 @@ com\airline\order\controller\OrderController.class
 com\airline\order\entity\Order$OrderStatus.class
 com\airline\order\repository\FlightInfoRepository.class
 com\airline\order\repository\UserRepository.class
+com\airline\order\service\UserService$UserStatistics.class
