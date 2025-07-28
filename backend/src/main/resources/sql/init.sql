@@ -8,8 +8,8 @@
 -- =================================================================
 
 -- 步骤 1: 创建数据库并切换
-CREATE DATABASE IF NOT EXISTS `airline_order_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `airline_order_db`;
+--CREATE DATABASE IF NOT EXISTS `airline_order_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+--USE `airline_order_db`;
 
 -- 步骤 2: 创建 app_users 表
 -- 用于存储用户信息，对应 User.java 实体
