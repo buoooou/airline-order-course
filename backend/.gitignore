@@ -1,0 +1,80 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Java
+*.class
+*.log
+*.ctxt
+.mtj.tmp/
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# Spring Boot
+*.pid
+application-local.properties
+application-dev.properties
+application-prod.properties
+!application.properties
+!application-test.properties
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Security
+*.key
+*.pem
+*.p12
+*.jks
+
+# Test
+test-results/
+coverage/
+.coverage
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# Scripts (可选的，如果你不想提交测试脚本)
+# test-*.sh
+# compile-test.sh
+# check-db-users.sh 

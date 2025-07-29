@@ -1,8 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.postion.airlineorderbackend.service.impl.UserServiceImplTest
--------------------------------------------------------------------------------
-Tests run: 15, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.112 s <<< FAILURE! - in com.postion.airlineorderbackend.service.impl.UserServiceImplTest
-testUserPasswordSecurity  Time elapsed: 0.002 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: expected: <false> but was: <true>
-	at com.postion.airlineorderbackend.service.impl.UserServiceImplTest.testUserPasswordSecurity(UserServiceImplTest.java:301)
-
