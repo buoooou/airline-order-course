@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class AirlineOrderBackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AirlineOrderBackendApplication.class, args);
+		SpringApplication.run(AirlineOrderBackendApplication.class, args);
     }
 
 }
