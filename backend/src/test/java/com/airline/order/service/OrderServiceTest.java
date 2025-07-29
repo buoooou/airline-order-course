@@ -348,8 +348,7 @@ class OrderServiceTest {
 
     @Test
     void testConvertToDTO() {
-        // 使用反射或者创建一个public方法来测试convertToDTO
-        // 这里我们通过其他方法间接测试
+        // 使用反射测试convertToDTO        
         when(orderRepository.findByOrderNumber("ORD001")).thenReturn(Optional.of(testOrder));
 
         OrderDTO result = orderService.getOrderByNumber("ORD001");
