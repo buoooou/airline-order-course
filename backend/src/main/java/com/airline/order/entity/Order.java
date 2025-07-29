@@ -1,5 +1,6 @@
 package com.airline.order.entity;
 
+import com.airline.order.enums.OrderStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,16 +39,6 @@ public class Order {
     
     @Column(name = "seat_number", nullable = false)
     private String seatNumber;
-    
-    // 订单状态枚举
-    public enum OrderStatus {
-        PENDING_PAYMENT,      // 待支付
-        PAID,                 // 已支付
-        TICKETING_IN_PROGRESS,// 出票中
-        TICKETING_FAILED,     // 出票失败
-        TICKETED,             // 已出票
-        CANCELLED             // 已取消
-    }
     
     // 构造函数
     public Order() {

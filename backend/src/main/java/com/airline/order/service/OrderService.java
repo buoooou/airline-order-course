@@ -4,7 +4,7 @@ import com.airline.order.dto.CreateOrderRequest;
 import com.airline.order.dto.OrderDTO;
 import com.airline.order.entity.FlightInfo;
 import com.airline.order.entity.Order;
-import com.airline.order.entity.Order.OrderStatus;
+import com.airline.order.enums.OrderStatus;
 import com.airline.order.entity.User;
 import com.airline.order.repository.FlightInfoRepository;
 import com.airline.order.repository.OrderRepository;
@@ -357,7 +357,7 @@ public class OrderService {
      */
     public boolean isSeatAvailable(Long flightId, String seatNumber) {
         Optional<Order> existingOrder = orderRepository.findByFlightIdAndSeatNumber(flightId, seatNumber);
-        return existingOrder.isEmpty();
+        return !existingOrder.isPresent();
     }
     
     /**

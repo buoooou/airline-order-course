@@ -11,8 +11,8 @@ com\airline\order\service\UserService.class
 com\airline\order\entity\FlightInfo.class
 com\airline\order\dto\UserRegistrationRequest.class
 com\airline\order\entity\Order.class
+com\airline\order\enums\OrderStatus.class
 com\airline\order\controller\OrderController.class
-com\airline\order\entity\Order$OrderStatus.class
 com\airline\order\repository\FlightInfoRepository.class
 com\airline\order\repository\UserRepository.class
 com\airline\order\service\UserService$UserStatistics.class

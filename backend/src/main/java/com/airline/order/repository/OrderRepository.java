@@ -1,7 +1,7 @@
 package com.airline.order.repository;
 
 import com.airline.order.entity.Order;
-import com.airline.order.entity.Order.OrderStatus;
+import com.airline.order.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

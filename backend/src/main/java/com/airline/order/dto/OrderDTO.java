@@ -1,6 +1,6 @@
 package com.airline.order.dto;
 
-import com.airline.order.entity.Order.OrderStatus;
+import com.airline.order.enums.OrderStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

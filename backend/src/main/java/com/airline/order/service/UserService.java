@@ -59,20 +59,21 @@ public class UserService {
     public UserDTO loginUser(String username, String password) {
         // 查找用户
         Optional<User> userOptional = userRepository.findByUsername(username);
-        
-        if (userOptional.isEmpty()) {
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            // 验证密码
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                throw new RuntimeException("密码错误");
+            }
+
+            // 转换为DTO
+            return convertToDTO(user);
+        } else {
             throw new RuntimeException("用户不存在");
         }
-        
-        User user = userOptional.get();
-        
-        // 验证密码
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("密码错误");
-        }
-        
-        // 转换为DTO
-        return convertToDTO(user);
+
     }
     
     /**
@@ -83,12 +84,12 @@ public class UserService {
      */
     public UserDTO getUserById(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
-        
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("用户不存在");
+
+        if (userOptional.isPresent()) {
+            return convertToDTO(userOptional.get());
         }
-        
-        return convertToDTO(userOptional.get());
+        throw new RuntimeException("用户不存在");
+
     }
     
     /**
@@ -129,12 +130,12 @@ public class UserService {
      */
     public UserDTO getUserByRoleAndUsername(String role, String username) {
         Optional<User> userOptional = userRepository.findByRoleAndUsername(role, username);
-        
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("用户不存在");
+
+        if (userOptional.isPresent()) {
+            return convertToDTO(userOptional.get());
         }
-        
-        return convertToDTO(userOptional.get());
+        throw new RuntimeException("用户不存在");
+
     }
     
     /**
@@ -172,12 +173,12 @@ public class UserService {
      */
     public UserDTO getUserByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
-        
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("用户不存在");
+
+        if (userOptional.isPresent()) {
+            return convertToDTO(userOptional.get());
         }
-        
-        return convertToDTO(userOptional.get());
+        throw new RuntimeException("用户不存在");
+
     }
     
     /**
@@ -189,16 +190,17 @@ public class UserService {
      */
     public UserDTO updateUserRole(Long userId, String newRole) {
         Optional<User> userOptional = userRepository.findById(userId);
-        
-        if (userOptional.isEmpty()) {
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setRole(newRole);
+            User savedUser = userRepository.save(user);
+
+            return convertToDTO(savedUser);
+        } else {
             throw new RuntimeException("用户不存在");
         }
-        
-        User user = userOptional.get();
-        user.setRole(newRole);
-        User savedUser = userRepository.save(user);
-        
-        return convertToDTO(savedUser);
+
     }
     
     /**
@@ -211,23 +213,24 @@ public class UserService {
      */
     public UserDTO updateUserPassword(Long userId, String oldPassword, String newPassword) {
         Optional<User> userOptional = userRepository.findById(userId);
-        
-        if (userOptional.isEmpty()) {
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            // 验证旧密码
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+                throw new RuntimeException("旧密码错误");
+            }
+
+            // 更新密码
+            user.setPassword(passwordEncoder.encode(newPassword));
+            User savedUser = userRepository.save(user);
+
+            return convertToDTO(savedUser);
+        } else {
             throw new RuntimeException("用户不存在");
         }
-        
-        User user = userOptional.get();
-        
-        // 验证旧密码
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new RuntimeException("旧密码错误");
-        }
-        
-        // 更新密码
-        user.setPassword(passwordEncoder.encode(newPassword));
-        User savedUser = userRepository.save(user);
-        
-        return convertToDTO(savedUser);
+
     }
     
     /**
