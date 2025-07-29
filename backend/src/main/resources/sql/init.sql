@@ -15,7 +15,7 @@ USE `airline_order_db`;
 -- 用于存储用户信息，对应 User.java 实体
 DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `app_users`;
-DROP TABLE IF EXISTS `flights`;
+DROP TABLE IF EXISTS `flight_info`;
 
 CREATE TABLE `app_users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -26,7 +26,7 @@ CREATE TABLE `app_users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 创建 航班信息表 Flights 表
-CREATE TABLE `flights` (
+CREATE TABLE `flight_info` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `departure_city` VARCHAR(250) NOT NULL,
   `arrival_city` VARCHAR(250) NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `orders` (
   `flight_id` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`),
-  CONSTRAINT `fk_orders_flight_id` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`id`)
+  CONSTRAINT `fk_orders_flight_id` FOREIGN KEY (`flight_id`) REFERENCES `flight_info` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -59,7 +59,7 @@ INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
 (1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
 (2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
 
-INSERT INTO `flights` (`id`, `departure_city`, `arrival_city`, `departure_time`, `arrival_time`) VALUES
+INSERT INTO `flight_info` (`id`, `departure_city`, `arrival_city`, `departure_time`, `arrival_time`) VALUES
 (1, '北京', '上海', NOW() - INTERVAL 2 HOUR, NOW() - INTERVAL 10 MINUTE),
 (2, '上海', '北京', NOW() - INTERVAL 3 HOUR, NOW() - INTERVAL 1 HOUR);
 
@@ -90,5 +90,5 @@ INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user
 -- 打印成功信息
 SELECT '数据库和测试数据初始化成功！' AS '状态';
 SELECT COUNT(*) AS '用户总数' FROM `app_users`;
-SELECT COUNT(*) AS '航班总数' FROM `flights`;
+SELECT COUNT(*) AS '航班总数' FROM `flight_info`;
 SELECT status, COUNT(*) AS '订单数量' FROM `orders` GROUP BY status;

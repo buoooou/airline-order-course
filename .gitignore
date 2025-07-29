@@ -6,4 +6,6 @@
 */target/
 */.DS_Store
 .DS_Store*
-*/logs/*
+*/logs
+logs
+*.tar.gz
