@@ -1,1 +1,5 @@
 /.idea/
+/.vscode/
+/backend/target/
+.env
+.DS_STORE
