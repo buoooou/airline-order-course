@@ -1,0 +1,67 @@
+package com.postion.airlineorderbackend.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.postion.airlineorderbackend.dto.OrderDto;
+import com.postion.airlineorderbackend.dto.request.TestT2RequestDto;
+import com.postion.airlineorderbackend.dto.response.CommonResponseDto;
+import com.postion.airlineorderbackend.service.OrderService;
+import com.postion.airlineorderbackend.service.UserService;
+
+@RestController
+@RequestMapping("/api/test")
+public class TestController {
+
+  @Autowired
+  OrderService orderService;
+
+  @Autowired
+  UserService userService;
+
+  /**
+   * Test controller method for /api/test/t1
+   * 
+   * @return All orders
+   */
+  @PostMapping("/t1")
+  public List<OrderDto> getAllOrders() {
+    List<OrderDto> results = orderService.getAllOrders();
+    return results;
+  }
+
+  /**
+   * Test controller method for /api/test/t2
+   * 
+   * @param requestDto Request data, sample: { "userid": 1 }
+   * @return All orders of the user
+   */
+  @PostMapping("/t2")
+  public ResponseEntity<CommonResponseDto<List<OrderDto>>> getOrdersForUser(@RequestBody TestT2RequestDto requestDto) {
+    CommonResponseDto<List<OrderDto>> res = new CommonResponseDto<List<OrderDto>>();
+    Long userid = requestDto.getUserid();
+    if (userid == null) {
+      res.setSuccess(false);
+      res.setMessage("Can not get user id.");
+      return res.ok();
+    }
+
+    List<OrderDto> result = orderService.getAllOrdersByUserId(userid);
+    if (result == null) {
+      res.setSuccess(false);
+      res.setMessage("Query failed.");
+      return res.ok();
+    }
+
+    res.setMessage(result.size() + " order(s) found.");
+    res.setData(result);
+    return res.ok();
+  }
+
+}
