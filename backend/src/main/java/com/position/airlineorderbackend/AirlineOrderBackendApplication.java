@@ -1,4 +1,4 @@
-package com.postion.airlineorderbackend;
+package com.position.airlineorderbackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
