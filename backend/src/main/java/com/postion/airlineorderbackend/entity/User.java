@@ -1,5 +1,6 @@
 package com.postion.airlineorderbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class User {
     private UserRole role;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Order> orders;
     
     public enum UserRole {

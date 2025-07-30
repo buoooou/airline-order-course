@@ -1,5 +1,6 @@
 package com.postion.airlineorderbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -32,8 +33,24 @@ public class Order {
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
     
+    @Column(name = "flight_number")
+    private String flightNumber;
+
+    @Column(name = "departure_city")
+    private String departureCity;
+
+    @Column(name = "arrival_city")
+    private String arrivalCity;
+
+    @Column(name = "departure_time")
+    private LocalDateTime departureTime;
+
+    @Column(name = "arrival_time")
+    private LocalDateTime arrivalTime;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonManagedReference
     private User user;
     
     public enum OrderStatus {

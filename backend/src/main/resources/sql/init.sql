@@ -33,6 +33,11 @@ CREATE TABLE `orders` (
   `amount` DECIMAL(19, 2) NOT NULL,
   `creation_date` DATETIME(6) NOT NULL,
   `user_id` BIGINT NOT NULL,
+  `flight_number` VARCHAR(50),
+  `departure_city` VARCHAR(50),
+  `arrival_city` VARCHAR(50),
+  `departure_time` DATETIME,
+  `arrival_time` DATETIME,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -47,27 +52,21 @@ INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
 (2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
 
 -- 插入覆盖所有场景的订单数据
-INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
+INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`, `flight_number`, `departure_city`, `arrival_city`, `departure_time`, `arrival_time`) VALUES
 -- 订单 1 (admin): 已支付 -> 用于测试异步出票
-('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, 1),
-
+('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, 1, 'CA123', '北京', '上海', NOW() + INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY + INTERVAL 2 HOUR),
 -- 订单 2 (admin): 已出票 (最终成功状态)
-('TIC-2B3C4D5E', 'TICKETED', 3400.00, NOW() - INTERVAL 5 DAY, 1),
-
+('TIC-2B3C4D5E', 'TICKETED', 3400.00, NOW() - INTERVAL 5 DAY, 1, 'MU456', '广州', '深圳', NOW() + INTERVAL 2 DAY, NOW() + INTERVAL 2 DAY + INTERVAL 2 HOUR),
 -- 订单 3 (admin): 出票失败 -> 用于测试“重试出票”
-('TIC-3C4D5E6F', 'TICKETING_FAILED', 980.50, NOW() - INTERVAL 2 HOUR, 1),
-
+('TIC-3C4D5E6F', 'TICKETING_FAILED', 980.50, NOW() - INTERVAL 2 HOUR, 1, 'ZH789', '成都', '重庆', NOW() + INTERVAL 3 DAY, NOW() + INTERVAL 3 DAY + INTERVAL 2 HOUR),
 -- 订单 4 (admin): 支付超时 -> 用于测试定时任务自动取消 (30分钟前创建)
-('PEN-4D5E6F7G', 'PENDING_PAYMENT', 550.00, NOW() - INTERVAL 30 MINUTE, 1),
-
+('PEN-4D5E6F7G', 'PENDING_PAYMENT', 550.00, NOW() - INTERVAL 30 MINUTE, 1, 'HU321', '杭州', '南京', NOW() + INTERVAL 4 DAY, NOW() + INTERVAL 4 DAY + INTERVAL 2 HOUR),
 -- 订单 5 (user): 待支付 (正常) -> 用于测试“立即支付” (5分钟前创建)
-('PEN-5E6F7G8H', 'PENDING_PAYMENT', 888.00, NOW() - INTERVAL 5 MINUTE, 2),
-
+('PEN-5E6F7G8H', 'PENDING_PAYMENT', 888.00, NOW() - INTERVAL 5 MINUTE, 2, 'CZ654', '西安', '郑州', NOW() + INTERVAL 5 DAY, NOW() + INTERVAL 5 DAY + INTERVAL 2 HOUR),
 -- 订单 6 (user): 已取消 (最终失败状态)
-('CAN-6F7G8H9I', 'CANCELLED', 1100.20, NOW() - INTERVAL 2 DAY, 2),
-
+('CAN-6F7G8H9I', 'CANCELLED', 1100.20, NOW() - INTERVAL 2 DAY, 2, 'SC987', '青岛', '济南', NOW() + INTERVAL 6 DAY, NOW() + INTERVAL 6 DAY + INTERVAL 2 HOUR),
 -- 订单 7 (user): 出票中 -> 模拟中间状态，测试UI展示
-('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, 2);
+('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, 2, 'FM159', '厦门', '福州', NOW() + INTERVAL 7 DAY, NOW() + INTERVAL 7 DAY + INTERVAL 2 HOUR);
 
 
 -- 打印成功信息

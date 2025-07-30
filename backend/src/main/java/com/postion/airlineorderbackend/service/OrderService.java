@@ -13,9 +13,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class OrderService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     @Autowired
     private OrderRepository orderRepository;
@@ -33,6 +37,11 @@ public class OrderService {
         order.setAmount(request.getAmount());
         order.setCreationDate(LocalDateTime.now());
         order.setUser(user);
+        order.setFlightNumber(request.getFlightNumber());
+        order.setDepartureCity(request.getDepartureCity());
+        order.setArrivalCity(request.getArrivalCity());
+        order.setDepartureTime(request.getDepartureTime());
+        order.setArrivalTime(request.getArrivalTime());
 
         return orderRepository.save(order);
     }
@@ -60,15 +69,21 @@ public class OrderService {
     public Order payOrder(Long orderId, String username) {
         Order order = getOrderById(orderId, username);
         
+        logger.info("[payOrder] 订单ID: {}, 当前状态: {}", orderId, order.getStatus());
+        
         if (order.getStatus() != Order.OrderStatus.PENDING_PAYMENT) {
-            throw new RuntimeException("Order cannot be paid in current status");
+            logger.error("[payOrder] 订单状态错误: 期望 PENDING_PAYMENT, 实际 {}", order.getStatus());
+            throw new RuntimeException("Order cannot be paid in current status: " + order.getStatus());
         }
         
+        logger.info("[payOrder] 开始状态转换: PENDING_PAYMENT -> PAID");
         order.transitionTo(Order.OrderStatus.PAID);
         order = orderRepository.save(order);
+        logger.info("[payOrder] 状态转换完成，订单ID: {}, 新状态: {}", orderId, order.getStatus());
         
-        // 异步处理出票
-        processTicketing(order.getId());
+        // 暂时禁用异步出票处理，避免状态冲突
+        // logger.info("[payOrder] 启动异步出票处理，订单ID: {}", orderId);
+        // processTicketing(order.getId());
         
         return order;
     }
@@ -103,22 +118,32 @@ public class OrderService {
     @Async
     public void processTicketing(Long orderId) {
         try {
+            logger.info("[processTicketing] 开始处理出票，订单ID: {}", orderId);
+            
             // 模拟出票处理时间
             Thread.sleep(5000);
             
             Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
             
+            logger.info("[processTicketing] 订单ID: {}, 当前状态: {}", orderId, order.getStatus());
+            
             // 模拟出票成功率90%
             if (Math.random() < 0.9) {
+                logger.info("[processTicketing] 出票成功，订单ID: {}, 状态转换: {} -> TICKETED", orderId, order.getStatus());
                 order.transitionTo(Order.OrderStatus.TICKETED);
             } else {
+                logger.info("[processTicketing] 出票失败，订单ID: {}, 状态转换: {} -> TICKETING_FAILED", orderId, order.getStatus());
                 order.transitionTo(Order.OrderStatus.TICKETING_FAILED);
             }
             
             orderRepository.save(order);
+            logger.info("[processTicketing] 出票处理完成，订单ID: {}, 最终状态: {}", orderId, order.getStatus());
         } catch (InterruptedException e) {
+            logger.error("[processTicketing] 出票处理被中断，订单ID: {}", orderId);
             Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            logger.error("[processTicketing] 出票处理异常，订单ID: {}, 错误: {}", orderId, e.getMessage());
         }
     }
 
