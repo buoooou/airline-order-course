@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <!-- 从 Spring 环境读取属性 -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="airline-order"/>
+    <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="./logs"/>
+    <springProperty scope="context" name="LOG_LEVEL" source="logging.level.root" defaultValue="INFO"/>
+
+    <!-- 日志格式定义 -->
+    <property name="CONSOLE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n"/>
+    <property name="FILE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 滚动文件输出 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize> <!-- 单个文件最大 -->
+            <maxHistory>30</maxHistory>      <!-- 保留30天日志 -->
+            <totalSizeCap>5GB</totalSizeCap> <!-- 日志总大小上限 -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 异步文件输出（提升性能） -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold> <!-- 不丢弃日志 -->
+        <queueSize>1024</queueSize>                 <!-- 队列容量 -->
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <!-- 多环境配置 -->
+    <springProfile name="dev | test">
+        <root level="${LOG_LEVEL}">
+            <appender-ref ref="CONSOLE"/> <!-- 开发环境输出到控制台 -->
+        </root>
+    </springProfile>
+    <springProfile name="prod">
+        <root level="${LOG_LEVEL}">
+            <appender-ref ref="ASYNC_FILE"/> <!-- 生产环境仅输出到文件 -->
+        </root>
+        <!-- 关闭 Hibernate 日志 -->
+        <logger name="org.hibernate.SQL" level="OFF"/>
+    </springProfile>
+
+    <!-- 第三方库日志降噪 -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+</configuration>
