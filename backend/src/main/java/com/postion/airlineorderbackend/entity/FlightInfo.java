@@ -6,7 +6,7 @@ import javax.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "flight-info")
+@Table(name = "flight_info")
 @Data
 public class FlightInfo {
     @Id
