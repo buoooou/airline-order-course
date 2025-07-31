@@ -1,1 +1,12 @@
 /.idea/
+
+### VS Code ###
+.vscode/
+
+*/target/
+*/.DS_Store
+.DS_Store*
+*/logs
+logs
+*.tar.gz
+.trae
