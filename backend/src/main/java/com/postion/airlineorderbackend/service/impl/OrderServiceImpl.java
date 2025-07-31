@@ -1,6 +1,7 @@
 package com.postion.airlineorderbackend.service.impl;
 
 import com.postion.airlineorderbackend.dto.OrderDto;
+import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.repo.OrderRepository;
 import com.postion.airlineorderbackend.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +13,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class OrderServiceImpl implements OrderService {
-
     private final OrderRepository orderRepository;
 
     @Override
@@ -26,8 +26,35 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto getOrderById(Long id) {
-        return orderRepository.findById(id)
-                .map(OrderDto::fromEntity)
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
+        return OrderDto.fromEntity(order);
+    }
+
+    @Override
+    public void payOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
+
+        if (order.getStatus() != Order.OrderStatus.PENDING_PAYMENT) {
+            throw new IllegalArgumentException("订单状态不允许支付");
+        }
+
+        order.setStatus(Order.OrderStatus.PAID);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void cancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
+
+        if (order.getStatus() == Order.OrderStatus.TICKETED ||
+                order.getStatus() == Order.OrderStatus.CANCELLED) {
+            throw new IllegalArgumentException("订单状态不允许取消");
+        }
+
+        order.setStatus(Order.OrderStatus.CANCELLED);
+        orderRepository.save(order);
     }
 }
