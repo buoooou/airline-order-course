@@ -1,9 +1,8 @@
 package com.postion.airlineorderbackend.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Service;
 
+import com.postion.airlineorderbackend.dto.OrderResponseDTO;
 import com.postion.airlineorderbackend.entity.Flight;
 import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.entity.OrderStatus;
@@ -17,55 +16,54 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final OrderRepository orderRepo;
-    private final UserRepository userRepo;
-    private final FlightRepository flightRepo;
 
-    public Order createOrder(String email, Long flightId) {
-        User user = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-        Flight flight = flightRepo.findById(flightId).orElseThrow(() -> new RuntimeException("Flight not found"));
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final FlightRepository flightRepository;
+    private final IOrderStateService orderStateService; // 注入状态机
 
-        return orderRepo.save(Order.builder()
+    // 获取订单并返回 DTO
+    public OrderResponseDTO getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        return convertToDTO(order);
+    }
+
+    // 创建新订单
+    public OrderResponseDTO createOrder(String userEmail, Long flightId) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Flight flight = flightRepository.findById(flightId)
+                .orElseThrow(() -> new RuntimeException("Flight not found"));
+
+        Order order = Order.builder()
                 .user(user)
                 .flight(flight)
                 .status(OrderStatus.PENDING_PAYMENT)
-                .createdAt(LocalDateTime.now())
-                .build());
+                .build();
+
+        return convertToDTO(orderRepository.save(order));
     }
 
-    public Order updateStatus(Long orderId, OrderStatus newStatus) {
-        Order order = orderRepo.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
-        if (!isValidTransition(order.getStatus(), newStatus)) {
-            throw new IllegalStateException("非法状态流转");
-        }
-        order.setStatus(newStatus);
-        return orderRepo.save(order);
+    // 更新订单状态（通过状态机校验）
+    public OrderResponseDTO updateOrderStatus(Long orderId, OrderStatus nextStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
 
+        OrderStatus updatedStatus = orderStateService.updateStatus(order.getStatus(), nextStatus);
+        order.setStatus(updatedStatus);
+
+        return convertToDTO(orderRepository.save(order));
     }
 
-    public boolean isValidTransition(OrderStatus current, OrderStatus next) {
-        switch (current) {
-            case PENDING_PAYMENT:
-                return next == OrderStatus.PAID || next == OrderStatus.CANCELLED;
-            case PAID:
-                return next == OrderStatus.TICKETING_IN_PROGRESS || next == OrderStatus.CANCELLED;
-            case TICKETING_IN_PROGRESS:
-                return next == OrderStatus.TICKETED || next == OrderStatus.TICKETING_FAILED || next == OrderStatus.CANCELLED;
-            case TICKETING_FAILED:
-                return next == OrderStatus.TICKETING_IN_PROGRESS || next == OrderStatus.CANCELLED;
-            case TICKETED:
-                return next == OrderStatus.CANCELLED;
-            case CANCELLED:
-                return false; // 已取消不能再变更
-            default:
-                return false;
-        }
-    }
-
-    public OrderStatus updateStatus(OrderStatus current, OrderStatus next) {
-        if (!isValidTransition(current, next)) {
-            throw new IllegalStateException("Invalid state transition: " + current + " -> " + next);
-        }
-        return next;
+    private OrderResponseDTO convertToDTO(Order order) {
+        OrderResponseDTO dto = new OrderResponseDTO();
+        dto.setOrderId(order.getId());
+        dto.setFlightNumber(order.getFlight().getFlightNumber());
+        dto.setStatus(order.getStatus());
+        dto.setUserEmail(order.getUser().getEmail());
+        return dto;
     }
 }
