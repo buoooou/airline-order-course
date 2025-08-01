@@ -2,8 +2,8 @@
 --  Docker MySQL 初始化脚本
 --  功能:
 --  1. 创建 airline_order_db 数据库
---  2. 创建 app_users_yb 表 (用户信息)
---  3. 创建 orders_yb 表 (订单信息)
+--  2. 创建 app_users 表 (用户信息)
+--  3. 创建 orders 表 (订单信息)
 --  4. 插入测试用户和覆盖所有状态的测试订单
 -- =================================================================
 
@@ -11,12 +11,12 @@
 CREATE DATABASE IF NOT EXISTS `airline_order_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `airline_order_db`;
 
--- 步骤 2: 创建 app_users_yb 表
+-- 步骤 2: 创建 app_users 表
 -- 用于存储用户信息，对应 User.java 实体
-DROP TABLE IF EXISTS `orders_yb`;
-DROP TABLE IF EXISTS `app_users_yb`;
+DROP TABLE IF EXISTS `orders`;
+DROP TABLE IF EXISTS `app_users`;
 
-CREATE TABLE `app_users_yb` (
+CREATE TABLE `app_users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
@@ -24,9 +24,9 @@ CREATE TABLE `app_users_yb` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 步骤 3: 创建 orders_yb 表
+-- 步骤 3: 创建 orders 表
 -- 用于存储订单信息，对应 Order.java 实体
-CREATE TABLE `orders_yb` (
+CREATE TABLE `orders` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `order_number` VARCHAR(255) NOT NULL,
   `status` ENUM('PENDING_PAYMENT', 'PAID', 'TICKETING_IN_PROGRESS', 'TICKETING_FAILED', 'TICKETED', 'CANCELLED') NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `orders_yb` (
   `creation_date` DATETIME(6) NOT NULL,
   `user_id` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_orders_yb_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users_yb` (`id`)
+  CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
@@ -42,12 +42,12 @@ CREATE TABLE `orders_yb` (
 
 -- 插入用户 (密码原文均为 'password')
 -- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
-INSERT INTO `app_users_yb` (`id`, `username`, `password`, `role`) VALUES
+INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
 (1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
 (2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
 
 -- 插入覆盖所有场景的订单数据
-INSERT INTO `orders_yb` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
+INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
 -- 订单 1 (admin): 已支付 -> 用于测试异步出票
 ('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, 1),
 
@@ -72,5 +72,5 @@ INSERT INTO `orders_yb` (`order_number`, `status`, `amount`, `creation_date`, `u
 
 -- 打印成功信息
 SELECT '数据库和测试数据初始化成功！' AS '状态';
-SELECT COUNT(*) AS '用户总数' FROM `app_users_yb`;
-SELECT status, COUNT(*) AS '订单数量' FROM `orders_yb` GROUP BY status;
+SELECT COUNT(*) AS '用户总数' FROM `app_users`;
+SELECT status, COUNT(*) AS '订单数量' FROM `orders` GROUP BY status;
