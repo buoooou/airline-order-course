@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.postion.airlineorderbackend.statemachine.OrderStateMachine;
+import com.postion.airlineorderbackend.statemachine.OrderStatus;
 import com.postion.airlineorderbackend.model.FlightInfo;
 import com.postion.airlineorderbackend.model.Order;
 import com.postion.airlineorderbackend.repository.OrderRepository;
@@ -40,9 +40,17 @@ public class OrderService {
     }
 
     public Order updateOrder(Order order) {
-        Order existingOrder = orderRepository.findById(order.getId()).orElseThrow(() -> new RuntimeException("Order not found"));
-        OrderStateMachine.validateTransition(existingOrder.getStatus(), order.getStatus());
         return orderRepository.save(order);
+    }
+
+    public Order updateStatus(Long orderId, OrderStatus newStatus) {
+        Order existingOrder = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        OrderStatus currentStatus = OrderStatus.valueOf(existingOrder.getStatus());
+        if (!currentStatus.canTransitionTo(newStatus)) {
+            throw new IllegalStateException("Invalid status transition from " + currentStatus + " to " + newStatus);
+        }
+        existingOrder.setStatus(newStatus.name());
+        return orderRepository.save(existingOrder);
     }
 
 }

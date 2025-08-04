@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.postion.airlineorderbackend.model.Order;
 import com.postion.airlineorderbackend.service.OrderService;
+import com.postion.airlineorderbackend.statemachine.OrderStatus;
 
 import java.util.Optional;
 
@@ -38,5 +39,10 @@ public class OrderController {
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) {
         order.setId(id);
         return ResponseEntity.ok(orderService.updateOrder(order));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Order> updateStatus(@PathVariable Long id, @RequestBody OrderStatus newStatus) {
+        return ResponseEntity.ok(orderService.updateStatus(id, newStatus));
     }
 }
