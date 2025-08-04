@@ -27,7 +27,8 @@
         <url/>
     </scm>
     <properties>
-        <java.version>1.8</java.version>
+        <!-- <java.version>1.8</java.version> -->
+        <java.version>17</java.version>
         <lombok.version>1.18.30</lombok.version>
     </properties>
     <dependencies>
@@ -90,6 +91,11 @@
             <version>${lombok.version}</version> <!-- 使用一个被广泛验证的稳定版本 -->
             <scope>provided</scope> <!-- 关键：Lombok只在编译期需要，运行时不需要，provided是最佳scope -->
         </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -118,6 +124,11 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version> <!-- 版本要与上面依赖中指定的版本一致 -->
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.5.Final</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
