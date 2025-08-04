@@ -1,5 +1,6 @@
 package com.airline.order.controller;
 
+import com.airline.order.dto.ApiResponse;
 import com.airline.order.dto.CreateOrderRequest;
 import com.airline.order.dto.OrderDTO;
 import com.airline.order.service.OrderService;
@@ -29,26 +30,15 @@ public class OrderController {
      * @return 创建结果
      */
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody CreateOrderRequest request) {
-        Map<String, Object> response = new HashMap<>();
-        
+    public ResponseEntity<ApiResponse<OrderDTO>> createOrder(@RequestBody CreateOrderRequest request) {
         try {
             OrderDTO orderDTO = orderService.createOrder(request);
-            
-            response.put("success", true);
-            response.put("message", "订单创建成功");
-            response.put("order", orderDTO);
-            
-            return ResponseEntity.ok(response);
-            
+            return ResponseEntity.ok(ApiResponse.success("订单创建成功", orderDTO));
         } catch (RuntimeException e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "创建订单失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("创建订单失败: " + e.getMessage()));
         }
     }
     
@@ -61,30 +51,27 @@ public class OrderController {
      * @return 订单列表
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getOrders(
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getOrders(
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
-        Map<String, Object> response = new HashMap<>();
-        
         try {
             Page<OrderDTO> orderPage = orderService.getOrders(userId, status, page, size);
             
-            response.put("success", true);
-            response.put("orders", orderPage.getContent());
-            response.put("totalElements", orderPage.getTotalElements());
-            response.put("totalPages", orderPage.getTotalPages());
-            response.put("currentPage", page);
-            response.put("pageSize", size);
+            Map<String, Object> pageData = new HashMap<>();
+            pageData.put("orders", orderPage.getContent());
+            pageData.put("totalElements", orderPage.getTotalElements());
+            pageData.put("totalPages", orderPage.getTotalPages());
+            pageData.put("currentPage", page);
+            pageData.put("pageSize", size);
             
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(ApiResponse.success(pageData));
             
         } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "查询订单失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("查询订单失败: " + e.getMessage()));
         }
     }
     
@@ -94,25 +81,16 @@ public class OrderController {
      * @return 订单详情
      */
     @GetMapping("/{orderId}")
-    public ResponseEntity<Map<String, Object>> getOrderById(@PathVariable Long orderId) {
-        Map<String, Object> response = new HashMap<>();
-        
+    public ResponseEntity<ApiResponse<OrderDTO>> getOrderById(@PathVariable Long orderId) {
         try {
             OrderDTO orderDTO = orderService.getOrderById(orderId);
-            
-            response.put("success", true);
-            response.put("order", orderDTO);
-            
-            return ResponseEntity.ok(response);
-            
+            return ResponseEntity.ok(ApiResponse.success(orderDTO));
         } catch (RuntimeException e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "获取订单详情失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("获取订单详情失败: " + e.getMessage()));
         }
     }
     
@@ -122,26 +100,15 @@ public class OrderController {
      * @return 取消结果
      */
     @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<Map<String, Object>> cancelOrder(@PathVariable Long orderId) {
-        Map<String, Object> response = new HashMap<>();
-        
+    public ResponseEntity<ApiResponse<OrderDTO>> cancelOrder(@PathVariable Long orderId) {
         try {
             OrderDTO orderDTO = orderService.cancelOrder(orderId);
-            
-            response.put("success", true);
-            response.put("message", "订单已取消");
-            response.put("order", orderDTO);
-            
-            return ResponseEntity.ok(response);
-            
+            return ResponseEntity.ok(ApiResponse.success("订单已取消", orderDTO));
         } catch (RuntimeException e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "取消订单失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("取消订单失败: " + e.getMessage()));
         }
     }
     
@@ -152,30 +119,19 @@ public class OrderController {
      * @return 修改结果
      */
     @PutMapping("/{orderId}/status")
-    public ResponseEntity<Map<String, Object>> updateOrderStatus(
+    public ResponseEntity<ApiResponse<OrderDTO>> updateOrderStatus(
             @PathVariable Long orderId,
             @RequestBody Map<String, String> statusRequest) {
-        
-        Map<String, Object> response = new HashMap<>();
         
         try {
             String newStatusStr = statusRequest.get("status");
             OrderDTO orderDTO = orderService.updateOrderStatus(orderId, newStatusStr);
-            
-            response.put("success", true);
-            response.put("message", "订单状态已更新");
-            response.put("order", orderDTO);
-            
-            return ResponseEntity.ok(response);
-            
+            return ResponseEntity.ok(ApiResponse.success("订单状态已更新", orderDTO));
         } catch (RuntimeException e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "更新订单状态失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("更新订单状态失败: " + e.getMessage()));
         }
     }
     
@@ -185,25 +141,16 @@ public class OrderController {
      * @return 订单信息
      */
     @GetMapping("/by-number/{orderNumber}")
-    public ResponseEntity<Map<String, Object>> getOrderByNumber(@PathVariable String orderNumber) {
-        Map<String, Object> response = new HashMap<>();
-        
+    public ResponseEntity<ApiResponse<OrderDTO>> getOrderByNumber(@PathVariable String orderNumber) {
         try {
             OrderDTO orderDTO = orderService.getOrderByNumber(orderNumber);
-            
-            response.put("success", true);
-            response.put("order", orderDTO);
-            
-            return ResponseEntity.ok(response);
-            
+            return ResponseEntity.ok(ApiResponse.success(orderDTO));
         } catch (RuntimeException e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "查询订单失败: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("查询订单失败: " + e.getMessage()));
         }
     }
     
