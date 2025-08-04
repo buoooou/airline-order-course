@@ -2,6 +2,7 @@ package com.postion.airlineorderbackend.service.impl;
 
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.entity.Order;
+import com.postion.airlineorderbackend.mapper.OrderMapper;
 import com.postion.airlineorderbackend.repo.OrderRepository;
 import com.postion.airlineorderbackend.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +17,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
     @Override
     public List<OrderDto> getAllOrders() {
         return orderRepository.findAll().stream()
-                .map(OrderDto::fromEntity)
+                .map(orderMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -28,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto getOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
-        return OrderDto.fromEntity(order);
+        return orderMapper.toDto(order);
     }
 
     @Override

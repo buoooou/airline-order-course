@@ -16,15 +16,4 @@ public class OrderDto {
     private Long userId;
     private Long flightId;
 
-    public static OrderDto fromEntity(Order order) {
-        OrderDto dto = new OrderDto();
-        dto.setId(order.getId());
-        dto.setOrderNumber(order.getOrderNumber());
-        dto.setStatus(order.getStatus());
-        dto.setAmount(order.getAmount());
-        dto.setCreationDate(order.getCreationDate());
-        dto.setUserId(order.getUserId());
-        dto.setFlightId(order.getFlightId());
-        return dto;
-    }
 }
