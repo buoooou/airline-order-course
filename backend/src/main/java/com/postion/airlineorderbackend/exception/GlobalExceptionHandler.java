@@ -120,6 +120,20 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理用户名未找到异常
+     * 
+     * @param e       用户名未找到异常
+     * @param request HTTP请求
+     * @return 错误响应
+     */
+    @ExceptionHandler(org.springframework.security.core.userdetails.UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleUsernameNotFoundException(
+            org.springframework.security.core.userdetails.UsernameNotFoundException e, HttpServletRequest request) {
+        log.error("用户名未找到异常 - 路径: {}", request.getRequestURI(), e);
+        return errorResponseEntity("用户名或密码错误", HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
      * 处理所有未捕获的异常
      * 
      * @param e       异常
