@@ -1,1 +1,27 @@
+# Java specific ignores
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.log
+
+# Build directories
+target/
+build/
+out/
+bin/
+
+# IDE specific
 /.idea/
+/.settings/
+/.project
+/.classpath
+
+# System files
+.DS_Store
+*.swp
+*.swo
+
+# IDE
+.vscode/

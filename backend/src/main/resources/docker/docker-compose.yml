@@ -3,23 +3,23 @@ version: '3.8'
 
 # 定义服务 (即我们的容器)
 services:
-  # 1. 数据库服务 (MySQL)
+  # 1. 数据库服务 (PostgreSQL)
   db:
-    image: mysql:8.0
-    container_name: airline-mysql-db
+    image: postgres:17
+    container_name: airline-postgres-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: airlineTest1234  # !!! 请务必修改为一个安全的密码 !!!
-      MYSQL_DATABASE: airline_order_db         # 自动创建名为 airline_order_db 的数据库
+      POSTGRES_PASSWORD: airlineTest1234  # !!! 请务必修改为一个安全的密码 !!!
+      POSTGRES_DB: airline_order_db         # 自动创建名为 airline_order_db 的数据库
     ports:
-      - "3306:3306"  # 将主机的3306端口映射到容器的3306, 用于远程连接
+      - "5432:5432"  # 将主机的5432端口映射到容器的5432, 用于远程连接
     volumes:
-      - mysql-data:/var/lib/mysql  # 将数据持久化到名为 mysql-data 的数据卷中
+      - postgres-data:/var/lib/postgresql/data  # 将数据持久化到名为 postgres-data 的数据卷中
     networks:
       - airline-network
 # 定义数据卷
 volumes:
-  mysql-data: {} # Docker会为我们管理这个数据卷
+  postgres-data: {} # Docker会为我们管理这个数据卷
 
 # 定义网络
 networks:

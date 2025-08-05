@@ -1,0 +1,9 @@
+package com.postion.airlineorderbackend.repo;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.postion.airlineorderbackend.model.User;
+
+public interface UserRepository extends JpaRepository<User, Long>{
+    User findByUsername(String username);
+}
