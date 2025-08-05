@@ -65,6 +65,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // 禁用 CSRF（Cross-Site Request Forgery，跨站请求伪造）防护机制
+                .formLogin(form -> form.disable()) // 禁用表单登录
+                .httpBasic(basic -> basic.disable()) // 禁用 HTTP Basic
                 .authorizeHttpRequests(requests -> requests
                         // 允许认证相关接口无需认证即可访问
                         .antMatchers("/api/auth/**").permitAll()
