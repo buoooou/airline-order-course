@@ -1,5 +1,6 @@
 package com.postion.airlineorderbackend.dto;
 
+import com.postion.airlineorderbackend.common.Constants;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -51,7 +52,7 @@ public class ApiResponse<T> {
      *          ApiResponse<User> response = ApiResponse.success(user);
      */
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>("SUCCESS", "success", data);
+        return new ApiResponse<>("SUCCESS", Constants.HttpStatusMessage.SUCCESS, data);
     }
 
     /**

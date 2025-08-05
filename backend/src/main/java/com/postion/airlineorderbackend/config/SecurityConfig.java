@@ -1,5 +1,6 @@
 package com.postion.airlineorderbackend.config;
 
+import com.postion.airlineorderbackend.common.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,9 +70,9 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable()) // 禁用 HTTP Basic
                 .authorizeHttpRequests(requests -> requests
                         // 允许认证相关接口无需认证即可访问
-                        .antMatchers("/api/auth/**").permitAll()
+                        .antMatchers(Constants.ApiPath.AUTH_PREFIX + "/**").permitAll()
                         // 允许Swagger相关接口无需认证即可访问
-                        .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .antMatchers(Constants.ApiPath.SWAGGER_UI, Constants.ApiPath.SWAGGER_API_DOCS).permitAll()
                         // 其他所有请求都需要认证
                         .anyRequest().authenticated())
                 // 配置无状态会话（不创建HTTP会话）

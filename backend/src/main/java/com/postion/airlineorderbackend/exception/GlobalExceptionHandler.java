@@ -1,6 +1,7 @@
 package com.postion.airlineorderbackend.exception;
 
 import com.postion.airlineorderbackend.dto.ApiResponse;
+import com.postion.airlineorderbackend.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +72,7 @@ public class GlobalExceptionHandler {
         });
         
         // 将错误信息Map转换为字符串消息
-        StringBuilder errorMessage = new StringBuilder("参数校验失败: ");
+        StringBuilder errorMessage = new StringBuilder(Constants.ErrorMessage.VALIDATION_FAILED + ": ");
         errors.forEach((field, message) -> {
             errorMessage.append("[").append(field).append(": ").append(message).append("] ");
         });
@@ -90,7 +91,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleNoHandlerFoundException(NoHandlerFoundException e,
             HttpServletRequest request) {
         log.error("404异常 - 路径: {}", request.getRequestURI(), e);
-        return errorResponseEntity("请求的资源不存在", HttpStatus.NOT_FOUND);
+        return errorResponseEntity(Constants.HttpStatusMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -116,7 +117,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleNullPointerException(NullPointerException e,
             HttpServletRequest request) {
         log.error("空指针异常 - 路径: {}", request.getRequestURI(), e);
-        return errorResponseEntity("服务器内部错误", HttpStatus.INTERNAL_SERVER_ERROR);
+        return errorResponseEntity(Constants.HttpStatusMessage.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**

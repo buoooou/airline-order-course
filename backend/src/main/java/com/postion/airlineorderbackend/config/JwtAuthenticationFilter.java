@@ -1,5 +1,6 @@
 package com.postion.airlineorderbackend.config;
 
+import com.postion.airlineorderbackend.common.Constants;
 import com.postion.airlineorderbackend.service.impl.UserDetailsServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -67,14 +68,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        final String requestTokenHeader = request.getHeader("Authorization");
+        final String requestTokenHeader = request.getHeader(Constants.Auth.AUTHORIZATION_HEADER);
 
         String username = null;
         String jwtToken = null;
 
         // 从Authorization头中提取JWT令牌
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
+        if (requestTokenHeader != null && requestTokenHeader.startsWith(Constants.Auth.TOKEN_PREFIX)) {
+            jwtToken = requestTokenHeader.substring(Constants.Auth.TOKEN_PREFIX.length());
             try {
                 // 从令牌中提取用户名
                 username = jwtUtil.getUsernameFromToken(jwtToken);

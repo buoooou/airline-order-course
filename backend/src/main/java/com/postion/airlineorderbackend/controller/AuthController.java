@@ -7,6 +7,7 @@ import com.postion.airlineorderbackend.dto.LoginRequest;
 import com.postion.airlineorderbackend.dto.RegisterRequest;
 import com.postion.airlineorderbackend.entity.AppUser;
 import com.postion.airlineorderbackend.repo.AppUserRepository;
+import com.postion.airlineorderbackend.common.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(Constants.ApiPath.AUTH_PREFIX)
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -42,20 +43,19 @@ public class AuthController {
                             loginRequest.password()));
         } catch (BadCredentialsException e) {
             return ResponseEntity.badRequest()
-                    .body(new ApiResponse<>("ERROR", "Invalid username or password", null));
+                    .body(ApiResponse.error(Constants.ErrorMessage.INVALID_CREDENTIALS));
         }
         return ResponseEntity
-                .ok(new ApiResponse<>("SUCCESS", "Login successful", createAuthResponse(loginRequest.username())));
+                .ok(ApiResponse.success(Constants.SuccessMessage.LOGIN_SUCCESS,
+                        createAuthResponse(loginRequest.username())));
     }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest registerRequest) {
         String username = registerRequest.username();
         if (appUserRepository.findByUsername(username).isPresent()) {
-            // throw new UsernameNotFoundException("User not found with username: " +
-            // username);
             return ResponseEntity.badRequest()
-                    .body(new ApiResponse<>("ERROR", "Username already exists", null));
+                    .body(ApiResponse.error(Constants.ErrorMessage.USERNAME_EXISTS));
         }
 
         AppUser user = new AppUser();
@@ -65,7 +65,7 @@ public class AuthController {
 
         AppUser savedUser = appUserRepository.save(user);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "User registered successfully",
+        return ResponseEntity.ok(ApiResponse.success(Constants.SuccessMessage.REGISTER_SUCCESS,
                 createAuthResponse(savedUser.getUsername())));
     }
 
@@ -73,6 +73,6 @@ public class AuthController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         final String jwt = jwtUtil.generateToken(userDetails);
 
-        return new AuthResponse(jwt, "Bearer", username);
+        return new AuthResponse(jwt, Constants.Auth.TOKEN_PREFIX.trim(), username);
     }
 }
