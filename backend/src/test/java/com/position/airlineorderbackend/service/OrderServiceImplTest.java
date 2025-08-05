@@ -24,6 +24,7 @@ import com.position.airlineorderbackend.dto.OrderDto;
 import com.position.airlineorderbackend.model.Order;
 import com.position.airlineorderbackend.model.OrderStatus;
 import com.position.airlineorderbackend.repo.OrderRepository;
+import com.position.airlineorderbackend.service.impl.OrderServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -176,7 +177,7 @@ class OrderServiceImplTest {
     void shouldRetryPayment_WhenOrderExists() {
         // arrange
         Long orderId = 1L;
-        Order mockOrder = createMockOrder(orderId, OrderStatus.TICKETING_IN_FAILED);
+        Order mockOrder = createMockOrder(orderId, OrderStatus.TICKETING_FAILED);
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
         when(orderRepository.save(any(Order.class))).thenReturn(mockOrder);
 
@@ -193,7 +194,7 @@ class OrderServiceImplTest {
     void shouldRetryTicketing_WhenOrderExists() {
         // arrange
         Long orderId = 1L;
-        Order mockOrder = createMockOrder(orderId, OrderStatus.TICKETING_IN_FAILED);
+        Order mockOrder = createMockOrder(orderId, OrderStatus.TICKETING_FAILED);
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
         when(orderRepository.save(any(Order.class))).thenReturn(mockOrder);
 

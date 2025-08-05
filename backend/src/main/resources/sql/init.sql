@@ -3,8 +3,9 @@
 --  功能:
 --  1. 创建 airline_order_db 数据库
 --  2. 创建 app_users 表 (用户信息)
---  3. 创建 orders 表 (订单信息)
---  4. 插入测试用户和覆盖所有状态的测试订单
+--  3. 创建 flight_info 表 (航班信息)
+--  4. 创建 orders 表 (订单信息)
+--  5. 插入测试用户和覆盖所有状态的测试订单
 -- =================================================================
 
 -- 步骤 1: 创建数据库并切换
@@ -14,7 +15,9 @@ USE `airline_order_db`;
 -- 步骤 2: 创建 app_users 表
 -- 用于存储用户信息，对应 User.java 实体
 DROP TABLE IF EXISTS `orders`;
+DROP TABLE IF EXISTS `flight_info`;
 DROP TABLE IF EXISTS `app_users`;
+DROP TABLE IF EXISTS `shedlock`;
 
 CREATE TABLE `app_users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -24,7 +27,18 @@ CREATE TABLE `app_users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 步骤 3: 创建 orders 表
+-- 步骤 3: 创建 flight_info 表
+-- 用于存储航班信息，对应 FlightInfo.java 实体
+CREATE TABLE `flight_info` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `flight_number` VARCHAR(50) NOT NULL,
+  `departure` VARCHAR(100) NOT NULL,
+  `destination` VARCHAR(100) NOT NULL,
+  `departure_time` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 步骤 4: 创建 orders 表
 -- 用于存储订单信息，对应 Order.java 实体
 CREATE TABLE `orders` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -33,12 +47,24 @@ CREATE TABLE `orders` (
   `amount` DECIMAL(19, 2) NOT NULL,
   `creation_date` DATETIME(6) NOT NULL,
   `user_id` BIGINT NOT NULL,
+  `flight_info_id` BIGINT,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`)
+  CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`),
+  CONSTRAINT `fk_orders_flight_info_id` FOREIGN KEY (`flight_info_id`) REFERENCES `flight_info` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 步骤 5: 创建 shedlock 表
+-- 用于ShedLock分布式锁管理
+CREATE TABLE `shedlock` (
+  `name` VARCHAR(64) NOT NULL,
+  `lock_until` TIMESTAMP(3) NOT NULL,
+  `locked_at` TIMESTAMP(3) NOT NULL,
+  `locked_by` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
--- 步骤 4: 插入测试数据
+-- 步骤 6: 插入测试数据
 
 -- 插入用户 (密码原文均为 'password')
 -- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
@@ -46,28 +72,34 @@ INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
 (1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
 (2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
 
+-- 插入航班信息
+INSERT INTO `flight_info` (`id`, `flight_number`, `departure`, `destination`, `departure_time`) VALUES
+(1, 'CA1234', '北京', '上海', '2024-01-15 10:30:00'),
+(2, 'MU5678', '上海', '广州', '2024-01-16 14:20:00'),
+(3, 'CZ9012', '广州', '深圳', '2024-01-17 09:15:00');
+
 -- 插入覆盖所有场景的订单数据
-INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
+INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`, `flight_info_id`) VALUES
 -- 订单 1 (admin): 已支付 -> 用于测试异步出票
-('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, 1),
+('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, 1, 1),
 
 -- 订单 2 (admin): 已出票 (最终成功状态)
-('TIC-2B3C4D5E', 'TICKETED', 3400.00, NOW() - INTERVAL 5 DAY, 1),
+('TIC-2B3C4D5E', 'TICKETED', 3400.00, NOW() - INTERVAL 5 DAY, 1, 2),
 
--- 订单 3 (admin): 出票失败 -> 用于测试“重试出票”
-('TIC-3C4D5E6F', 'TICKETING_FAILED', 980.50, NOW() - INTERVAL 2 HOUR, 1),
+-- 订单 3 (admin): 出票失败 -> 用于测试"重试出票"
+('TIC-3C4D5E6F', 'TICKETING_FAILED', 980.50, NOW() - INTERVAL 2 HOUR, 1, 3),
 
 -- 订单 4 (admin): 支付超时 -> 用于测试定时任务自动取消 (30分钟前创建)
-('PEN-4D5E6F7G', 'PENDING_PAYMENT', 550.00, NOW() - INTERVAL 30 MINUTE, 1),
+('PEN-4D5E6F7G', 'PENDING_PAYMENT', 550.00, NOW() - INTERVAL 30 MINUTE, 1, 1),
 
--- 订单 5 (user): 待支付 (正常) -> 用于测试“立即支付” (5分钟前创建)
-('PEN-5E6F7G8H', 'PENDING_PAYMENT', 888.00, NOW() - INTERVAL 5 MINUTE, 2),
+-- 订单 5 (user): 待支付 (正常) -> 用于测试"立即支付" (5分钟前创建)
+('PEN-5E6F7G8H', 'PENDING_PAYMENT', 888.00, NOW() - INTERVAL 5 MINUTE, 2, 2),
 
 -- 订单 6 (user): 已取消 (最终失败状态)
-('CAN-6F7G8H9I', 'CANCELLED', 1100.20, NOW() - INTERVAL 2 DAY, 2),
+('CAN-6F7G8H9I', 'CANCELLED', 1100.20, NOW() - INTERVAL 2 DAY, 2, 3),
 
 -- 订单 7 (user): 出票中 -> 模拟中间状态，测试UI展示
-('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, 2);
+('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, 2, 1);
 
 
 -- 打印成功信息

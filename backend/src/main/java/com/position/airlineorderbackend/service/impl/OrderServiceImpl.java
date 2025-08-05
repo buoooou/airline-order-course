@@ -1,65 +1,90 @@
-package com.position.airlineorderbackend.service;
+package com.position.airlineorderbackend.service.impl;
 
 import com.position.airlineorderbackend.model.Order;
 import com.position.airlineorderbackend.model.OrderStatus;
 import com.position.airlineorderbackend.dto.OrderDto;
 import com.position.airlineorderbackend.repo.OrderRepository;
+import com.position.airlineorderbackend.service.OrderService;
+import com.position.airlineorderbackend.service.OrderStateLockService;
+import com.position.airlineorderbackend.exception.OrderException;
+import com.position.airlineorderbackend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+    
     @Autowired
     private OrderRepository orderRepository;
+    
+    @Autowired
+    private OrderStateLockService lockService;
 
     @Override
     public String payOrder(Long id) {
-        return updateStatus(id, OrderStatus.PAID, "订单支付成功");
+        return lockService.executeWithLock(id, () -> 
+            updateStatus(id, OrderStatus.PAID, "订单支付成功")
+        );
     }
 
     @Override
     public String startTicketing(Long id) {
-        return updateStatus(id, OrderStatus.TICKETING_IN_PROGRESS, "开始出票处理");
+        return lockService.executeWithLock(id, () -> 
+            updateStatus(id, OrderStatus.TICKETING_IN_PROGRESS, "开始出票处理")
+        );
     }
 
     @Override
     public String completeTicketing(Long id) {
-        return updateStatus(id, OrderStatus.TICKETED, "出票完成");
+        return lockService.executeWithLock(id, () -> 
+            updateStatus(id, OrderStatus.TICKETED, "出票完成")
+        );
     }
 
     @Override
     public String failTicketing(Long id) {
-        return updateStatus(id, OrderStatus.TICKETING_FAILED, "出票失败状态已更新");
+        return lockService.executeWithLock(id, () -> 
+            updateStatus(id, OrderStatus.TICKETING_FAILED, "出票失败状态已更新")
+        );
     }
 
     @Override
     public String cancelOrder(Long id) {
-        return updateStatus(id, OrderStatus.CANCELLED, "订单已取消");
+        return lockService.executeWithLock(id, () -> 
+            updateStatus(id, OrderStatus.CANCELLED, "订单已取消")
+        );
     }
 
     @Override
     public String retryPayment(Long id) {
-        return updateStatus(id, OrderStatus.PAID, "重新支付成功，可重新出票");
+        return lockService.executeWithLock(id, () -> 
+            updateStatus(id, OrderStatus.PAID, "重新支付成功，可重新出票")
+        );
     }
 
     @Override
     public String retryTicketing(Long id) {
-        return updateStatus(id, OrderStatus.TICKETING_IN_PROGRESS, "重新出票处理中");
+        return lockService.executeWithLock(id, () -> 
+            updateStatus(id, OrderStatus.TICKETING_IN_PROGRESS, "重新出票处理中")
+        );
     }
 
     @Override
     public List<OrderDto> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
-        return orders.stream().map(this::toDto).filter(dto -> dto != null).collect(Collectors.toList());
+        return orders.stream()
+            .map(this::toDto)
+            .filter(dto -> dto != null)
+            .collect(Collectors.toList());
     }
 
     @Override
     public OrderDto getOrderById(Long id) {
-        return orderRepository.findByIdWithUserAndFlightInfo(id)
+        return orderRepository.findById(id)
                 .map(this::toDto)
                 .orElse(null);
     }
@@ -67,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     private String updateStatus(Long orderId, OrderStatus newStatus, String successMessage) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("订单不存在: " + orderId));
+                .orElseThrow(() -> new ResourceNotFoundException("订单", "ID", orderId));
         
         OrderStatus currentStatus = order.getStatus();
         
@@ -77,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.save(order);
             return successMessage;
         } else {
-            throw new IllegalStateException(
+            throw new OrderException(
                 String.format("非法状态转换: %s -> %s", currentStatus, newStatus)
             );
         }
@@ -128,9 +153,13 @@ public class OrderServiceImpl implements OrderService {
         dto.setAmount(order.getAmount());
         dto.setCreatedDate(order.getCreatedDate());
         
-        // 暂时设置为null，避免关联对象问题
-        dto.setUserId(null);
-        dto.setFlightInfoId(null);
+        // 设置用户ID和航班信息ID
+        if (order.getUser() != null) {
+            dto.setUserId(order.getUser().getId());
+        }
+        if (order.getFlightInfo() != null) {
+            dto.setFlightInfoId(order.getFlightInfo().getId());
+        }
         
         return dto;
     }

@@ -25,6 +25,13 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user")
-    private List<Order> orders;
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String role = "USER"; // 默认角色
+
+    // 移除了关联关系，因为Order现在使用userId字段
+    // @OneToMany(mappedBy = "user")
+    // private List<Order> orders;
 }

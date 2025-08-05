@@ -13,6 +13,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+        # 禁用外键约束
+        globally_quoted_identifiers: true
+        # 禁用外键约束生成
+        hbm2ddl:
+          auto: update
 
 server:
   port: 8080
@@ -21,4 +26,27 @@ logging:
   level:
     com.position.airlineorderbackend: DEBUG
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE 
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# JWT配置
+jwt:
+  secret: your-secret-key-here-make-it-long-and-secure-in-production
+  expiration: 86400000  # 24小时，单位：毫秒
+
+# Swagger配置
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  packages-to-scan: com.position.airlineorderbackend.controller
+
+# 定时任务配置
+order:
+  timeout:
+    minutes: 30  # 订单超时时间（分钟）
+ticketing:
+  retry:
+    max-attempts: 3  # 出票重试最大次数 
