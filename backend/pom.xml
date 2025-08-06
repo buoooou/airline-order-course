@@ -90,6 +90,24 @@
             <version>${lombok.version}</version> <!-- 使用一个被广泛验证的稳定版本 -->
             <scope>provided</scope> <!-- 关键：Lombok只在编译期需要，运行时不需要，provided是最佳scope -->
         </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>1.5.5.Final</version> <!-- 使用最新版本 -->
+        </dependency>
+        <!-- ShedLock 核心 -->
+		<dependency>
+		    <groupId>net.javacrumbs.shedlock</groupId>
+		    <artifactId>shedlock-spring</artifactId>
+		    <version>4.43.0</version>
+		</dependency>
+		
+		<!-- 锁存储介质（选择一种，这里以 jdbc 为例） -->
+		<dependency>
+		    <groupId>net.javacrumbs.shedlock</groupId>
+		    <artifactId>shedlock-provider-jdbc-template</artifactId>
+		    <version>4.43.0</version>
+		</dependency>
     </dependencies>
 
     <build>
@@ -146,6 +164,28 @@
                     </execution>
                 </executions>
             </plugin>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-compiler-plugin</artifactId>
+	            <version>3.8.1</version>
+	            <configuration>
+	                <source>17</source> <!-- or your Java version -->
+	                <target>17</target>
+	                <annotationProcessorPaths>
+	                    <path>
+	                        <groupId>org.mapstruct</groupId>
+	                        <artifactId>mapstruct-processor</artifactId>
+	                        <version>1.5.5.Final</version>
+	                    </path>
+	                    <!-- 如果使用 Lombok, 必须也在这里配置 -->
+	                    <path>
+	                        <groupId>org.projectlombok</groupId>
+	                        <artifactId>lombok</artifactId>
+	                        <version>1.18.30</version>
+	                    </path>
+	                </annotationProcessorPaths>
+	            </configuration>
+	        </plugin>
         </plugins>
     </build>
 

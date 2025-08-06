@@ -37,6 +37,13 @@ CREATE TABLE `orders_ycr` (
   CONSTRAINT `fk_orders_user_id_ycr` FOREIGN KEY (`user_id`) REFERENCES `app_users_ycr` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `shedlock` (
+  `name` varchar(64) NOT NULL,
+  `lock_until` timestamp(3) NOT NULL,
+  `locked_at` timestamp(3) NOT NULL,
+  `locked_by` varchar(255) NOT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 步骤 4: 插入测试数据
 

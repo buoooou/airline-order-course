@@ -7,3 +7,4 @@ target/
 /backend/.classpath
 /backend/.project
 /backend/.factorypath
+/backend/logs/

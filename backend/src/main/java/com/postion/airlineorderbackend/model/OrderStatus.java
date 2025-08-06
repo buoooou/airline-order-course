@@ -1,10 +1,10 @@
 package com.postion.airlineorderbackend.model;
 
 public enum OrderStatus {
-    PENDING_PAYMENT,        //???
-    PAID,                   //???
-    TICKETING_IN_PROGRESS,  //???
-    TICKETING_FAILED,       //????
-    TICKETED,               //???
-    CANCELLED               //???
+    PENDING_PAYMENT,        //待支付
+    PAID,                   //已支付
+    TICKETING_IN_PROGRESS,  //出票中
+    TICKETING_FAILED,       //出票失败
+    TICKETED,               //已出票
+    CANCELLED               //取消
 }

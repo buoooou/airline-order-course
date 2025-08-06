@@ -4,9 +4,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.postion.airlineorderbackend.dto.ApiResponse;
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.service.OrderService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -19,24 +21,29 @@ public class OrderActionController {
     private final OrderService orderService;
 
     @PostMapping("/pay")
-    public ResponseEntity<OrderDto> pay(@PathVariable Long id) {
+    @Operation(summary = "订单支付", description = "订单支付")
+    public ResponseEntity<ApiResponse<?>> pay(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(orderService.payOrder(id));
+        	OrderDto order = orderService.payOrder(id);
+            return ResponseEntity.ok(ApiResponse.success("订单支付成功", order));
         } catch (Exception e) {    
-            return ResponseEntity.badRequest().body(null);     
+            throw e;   
         }
     }
     
     @PostMapping("/cancel")
-    public ResponseEntity<OrderDto> cancel(@PathVariable Long id) {
+    @Operation(summary = "订单取消", description = "订单取消")
+    public ResponseEntity<ApiResponse<?>> cancel(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(orderService.cancelOrder(id));
+        	OrderDto order = orderService.cancelOrder(id);
+            return ResponseEntity.ok(ApiResponse.success("订单取消成功", order));
         } catch (Exception e) {    
-            return ResponseEntity.badRequest().body(null);     
+            throw e;
         }
     }
     
     @PostMapping("/retry-ticketing")
+    @Operation(summary = "重新出票", description = "重新出票")
     public ResponseEntity<OrderDto> retryTicketing(@PathVariable Long id) {
         orderService.retryTicketingIssuance(id);
         return ResponseEntity.accepted().build();

@@ -23,5 +23,9 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "flight_id", insertable = false, updatable = false)
+//    private FlightInfo flightInfo;
 
 }

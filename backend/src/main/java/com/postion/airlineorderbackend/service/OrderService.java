@@ -11,5 +11,6 @@ public interface  OrderService {
     OrderDto payOrder(Long id);
     void retryTicketingIssuance(Long id);
     OrderDto cancelOrder(Long id);
+	void requestTicketIssuance(Long id, Order saveOrder);
 
 }
