@@ -5,20 +5,15 @@ import com.postion.airlineorderbackend.dto.AsyncHttpResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +24,9 @@ import static org.mockito.Mockito.*;
 /**
  * AsyncHttpService测试类
  * 
- * <p>测试异步HTTP请求服务的各种场景</p>
+ * <p>
+ * 测试异步HTTP请求服务的各种场景
+ * </p>
  * 
  * @author 朱志群
  * @version 1.0
@@ -54,7 +51,9 @@ class AsyncHttpServiceTest {
     /**
      * 测试场景1：请求超时
      * 
-     * <p>模拟第三方API响应超时的情况</p>
+     * <p>
+     * 模拟第三方API响应超时的情况
+     * </p>
      */
     @Test
     void testRequestTimeout() {
@@ -72,10 +71,10 @@ class AsyncHttpServiceTest {
 
         // 提交请求并等待结果
         String requestId = asyncHttpService.submitRequest(request);
-        
+
         // 使用较短的超时时间测试超时情况
         AsyncHttpResponse response = asyncHttpService.waitForResult(requestId, 1);
-        
+
         // 验证结果
         assertNotNull(response);
         assertEquals(408, response.getStatusCode());
@@ -86,7 +85,9 @@ class AsyncHttpServiceTest {
     /**
      * 测试场景2：网络连接失败
      * 
-     * <p>模拟网络连接不可达的情况</p>
+     * <p>
+     * 模拟网络连接不可达的情况
+     * </p>
      */
     @Test
     void testNetworkConnectionFailure() {
@@ -113,7 +114,9 @@ class AsyncHttpServiceTest {
     /**
      * 测试场景3：资源不存在（404错误）
      * 
-     * <p>模拟第三方API返回404资源不存在的情况</p>
+     * <p>
+     * 模拟第三方API返回404资源不存在的情况
+     * </p>
      */
     @Test
     void testResourceNotFound() {
@@ -139,7 +142,9 @@ class AsyncHttpServiceTest {
     /**
      * 测试异步执行是否正常
      * 
-     * <p>验证请求是否在异步线程中执行</p>
+     * <p>
+     * 验证请求是否在异步线程中执行
+     * </p>
      */
     @Test
     void testAsyncExecution() throws Exception {
@@ -158,7 +163,7 @@ class AsyncHttpServiceTest {
 
         // 等待结果
         AsyncHttpResponse response = asyncHttpService.waitForResult(requestId, 3);
-        
+
         // 验证结果
         assertNotNull(response);
         assertEquals(200, response.getStatusCode());
@@ -175,7 +180,7 @@ class AsyncHttpServiceTest {
         var status = asyncHttpService.getQueueStatus();
         assertEquals(0, status.get("activeRequests"));
         assertEquals(0, status.get("cachedResponses"));
-        
+
         // 验证状态查询功能正常
         assertNotNull(status);
         assertTrue(status.containsKey("activeRequests"));
@@ -202,7 +207,7 @@ class AsyncHttpServiceTest {
 
         // 清理缓存
         asyncHttpService.cleanup();
-        
+
         // 验证缓存已清空
         var status = asyncHttpService.getQueueStatus();
         assertEquals(0, status.get("cachedResponses"));
