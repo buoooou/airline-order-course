@@ -3,7 +3,7 @@ package com.postion.airlineorderbackend.service.impl;
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.mapper.OrderMapper;
-import com.postion.airlineorderbackend.repo.OrderRepository;
+import com.postion.airlineorderbackend.repository.OrderRepository;
 import com.postion.airlineorderbackend.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

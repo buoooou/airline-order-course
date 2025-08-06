@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import com.postion.airlineorderbackend.entity.FlightInfo;
 import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.entity.Order.OrderStatus;
+import com.postion.airlineorderbackend.repository.FlightInfoRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

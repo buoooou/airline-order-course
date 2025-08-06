@@ -2,13 +2,16 @@ package com.postion.airlineorderbackend.service.impl;
 
 import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.entity.Order.OrderStatus;
-import com.postion.airlineorderbackend.repo.OrderRepository;
 import com.postion.airlineorderbackend.dto.OrderDto;
+import com.postion.airlineorderbackend.mapper.OrderMapper;
+import com.postion.airlineorderbackend.repository.OrderRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,17 +20,21 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private OrderMapper orderMapper;
 
     @InjectMocks
     private OrderServiceImpl orderService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        // No need for MockitoAnnotations.openMocks with MockitoExtension
     }
 
     @Test
@@ -43,7 +50,17 @@ class OrderServiceImplTest {
         mockOrder.setUserId(1L);
         mockOrder.setFlightId(1L);
 
+        OrderDto expectedDto = new OrderDto();
+        expectedDto.setId(orderId);
+        expectedDto.setOrderNumber("ORD-123");
+        expectedDto.setStatus(OrderStatus.PENDING_PAYMENT);
+        expectedDto.setAmount(new BigDecimal("100.00"));
+        expectedDto.setCreationDate(LocalDateTime.now());
+        expectedDto.setUserId(1L);
+        expectedDto.setFlightId(1L);
+
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
+        when(orderMapper.toDto(mockOrder)).thenReturn(expectedDto);
 
         // Act
         OrderDto result = orderService.getOrderById(orderId);
@@ -52,6 +69,7 @@ class OrderServiceImplTest {
         assertNotNull(result);
         assertEquals(orderId, result.getId());
         verify(orderRepository, times(1)).findById(orderId);
+        verify(orderMapper, times(1)).toDto(mockOrder);
     }
 
     @Test

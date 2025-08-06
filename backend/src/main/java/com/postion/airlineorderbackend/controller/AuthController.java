@@ -6,7 +6,7 @@ import com.postion.airlineorderbackend.dto.AuthResponse;
 import com.postion.airlineorderbackend.dto.LoginRequest;
 import com.postion.airlineorderbackend.dto.RegisterRequest;
 import com.postion.airlineorderbackend.entity.AppUser;
-import com.postion.airlineorderbackend.repo.AppUserRepository;
+import com.postion.airlineorderbackend.repository.AppUserRepository;
 import com.postion.airlineorderbackend.common.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.postion.airlineorderbackend.repo;
+package com.postion.airlineorderbackend.repository;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

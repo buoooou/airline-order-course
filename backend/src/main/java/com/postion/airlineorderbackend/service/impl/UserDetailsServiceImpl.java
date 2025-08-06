@@ -1,7 +1,8 @@
 package com.postion.airlineorderbackend.service.impl;
 
 import com.postion.airlineorderbackend.entity.AppUser;
-import com.postion.airlineorderbackend.repo.AppUserRepository;
+import com.postion.airlineorderbackend.repository.AppUserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser user = appUserRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-        
+
         return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
     }
 }

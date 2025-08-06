@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.postion.airlineorderbackend.entity.AppUser;
+import com.postion.airlineorderbackend.repository.AppUserRepository;
 
 @DataJpaTest // 自动配置JPA测试环境
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // 禁用嵌入式数据库替换

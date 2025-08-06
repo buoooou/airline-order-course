@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import com.postion.airlineorderbackend.entity.FlightInfo;
 import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.entity.Order.OrderStatus;
+import com.postion.airlineorderbackend.repository.OrderRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -70,13 +71,13 @@ public class OrderRepositoryTest {
 
         // 验证结果
         assertThat(found)
-            .as("查询结果不应为 null")
-            .isNotNull();
+                .as("查询结果不应为 null")
+                .isNotNull();
         assertThat(found.getOrderNumber())
-            .as("订单号应匹配")
-            .isEqualTo("ORD456");
+                .as("订单号应匹配")
+                .isEqualTo("ORD456");
         assertThat(found.getFlightInfo())
-            .as("关联的 FlightInfo 不应为 null")
-            .isNotNull();
+                .as("关联的 FlightInfo 不应为 null")
+                .isNotNull();
     }
 }
