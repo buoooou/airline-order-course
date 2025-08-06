@@ -20,7 +20,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<User> findByIdAndPassword(Long id, String password);
 
-  List<User> findByUsername(String username);
+  Optional<User> findByUsername(String username);
+
+  Optional<User> findByUsernameAndPassword(String username, String password);
 
   @Query("select o from Order o inner join o.user u where u.id=:userId")
   List<Order> findOrdersByUserId(@Param("userId") Long userId);

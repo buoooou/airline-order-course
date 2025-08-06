@@ -3,26 +3,30 @@ package com.postion.airlineorderbackend.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.factory.Mappers;
+
 import com.postion.airlineorderbackend.dto.UserDto;
 import com.postion.airlineorderbackend.model.User;
 
-public class UserMapper {
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-  public static UserDto user2dto(User user) {
-    UserDto dto = new UserDto();
-    dto.setId(user.getId());
-    dto.setUsername(user.getUsername());
-    return dto;
-  }
+  @Mappings({
+      @Mapping(source = "id", target = "userid"),
+      @Mapping(source = "username", target = "username"),
+      @Mapping(source = "role", target = "role")
+  })
+  public UserDto user2dto(User user);
 
-  public static List<UserDto> list2dto(List<User> users) {
+  default public List<UserDto> list2dto(List<User> users) {
     if (users == null) {
       return null;
     }
     List<UserDto> dtos = new ArrayList<UserDto>();
-    for (User user : users) {
-      dtos.add(user2dto(user));
-    }
+    users.forEach(user -> dtos.add(user2dto(user)));
     return dtos;
   }
 

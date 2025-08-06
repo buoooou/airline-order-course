@@ -3,36 +3,55 @@ package com.postion.airlineorderbackend.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.postion.airlineorderbackend.dto.UserDto;
+import com.postion.airlineorderbackend.exception.DataNotFoundException;
 import com.postion.airlineorderbackend.mapper.UserMapper;
 import com.postion.airlineorderbackend.model.User;
 import com.postion.airlineorderbackend.repo.UserRepository;
 import com.postion.airlineorderbackend.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  @Autowired
-  UserRepository userRepository;
+  private final UserRepository userRepository;
+
+  private final UserMapper userMapper;
 
   @Override
   public List<UserDto> getAllUsers() {
     List<User> result = userRepository.findAll();
-    return UserMapper.list2dto(result);
+    return userMapper.list2dto(result);
   }
 
   @Override
-  public UserDto findByUserId(Long id) {
+  public UserDto findByUserId(Long id) throws DataNotFoundException {
     Optional<User> result = userRepository.findById(id);
-    return result.isPresent() ? UserMapper.user2dto(result.get()) : null;
+    if (!result.isPresent()) {
+      throw new DataNotFoundException();
+    }
+    return userMapper.user2dto(result.get());
   };
 
   @Override
-  public List<UserDto> findByUsername(String username) {
-    List<User> result = userRepository.findByUsername(username);
-    return UserMapper.list2dto(result);
+  public UserDto findByUsername(String username) throws DataNotFoundException {
+    Optional<User> result = userRepository.findByUsername(username);
+    if (!result.isPresent()) {
+      throw new DataNotFoundException();
+    }
+    return userMapper.user2dto(result.get());
+  }
+
+  @Override
+  public UserDto findByUsernameAndPassword(String username, String password) throws DataNotFoundException {
+    Optional<User> result = userRepository.findByUsernameAndPassword(username, password);
+    if (!result.isPresent()) {
+      throw new DataNotFoundException();
+    }
+    return userMapper.user2dto(result.get());
   }
 }

@@ -2,5 +2,7 @@
 /.vscode/
 /backend/target/
 /backend/env.sh
+/frontend/.env
+/frontend/node_modules/
 .env
 .DS_STORE

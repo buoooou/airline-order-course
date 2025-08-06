@@ -7,17 +7,18 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.service.impl.OrderServiceImpl;
 
+import lombok.RequiredArgsConstructor;
+
 @SpringBootTest
+@RequiredArgsConstructor
 public class OrderServiceTest {
 
-  @Autowired
-  private OrderServiceImpl orderService;
+  private final OrderServiceImpl orderService;
 
   @Test
   @DisplayName("test orderService.getAllOrders(), should get all orders")

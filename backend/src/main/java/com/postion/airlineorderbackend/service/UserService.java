@@ -3,6 +3,7 @@ package com.postion.airlineorderbackend.service;
 import java.util.List;
 
 import com.postion.airlineorderbackend.dto.UserDto;
+import com.postion.airlineorderbackend.exception.DataNotFoundException;
 
 public interface UserService {
 
@@ -17,16 +18,28 @@ public interface UserService {
    * Find user by user id.
    * 
    * @param id The user id.
-   * @return The user. Return null if not found.
+   * @return Found user.
+   * @throws DataNotFoundException
    */
-  UserDto findByUserId(Long id);
+  UserDto findByUserId(Long id) throws DataNotFoundException;
 
   /**
    * Find users with specified user name.
    * 
    * @param username The user name.
-   * @return List of the users.
+   * @return Found user.
+   * @throws DataNotFoundException
    */
-  List<UserDto> findByUsername(String username);
+  UserDto findByUsername(String username) throws DataNotFoundException;
+
+  /**
+   * Find users with specified user name and password.
+   * 
+   * @param username The user name.
+   * @param password The password.
+   * @return Found user.
+   * @throws DataNotFoundException
+   */
+  UserDto findByUsernameAndPassword(String username, String password) throws DataNotFoundException;
 
 }

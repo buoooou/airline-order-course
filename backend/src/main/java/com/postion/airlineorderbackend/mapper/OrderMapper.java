@@ -3,24 +3,37 @@ package com.postion.airlineorderbackend.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.model.Order;
 
-public class OrderMapper {
+@Mapper(componentModel = "spring")
+public interface OrderMapper {
 
-  public static OrderDto order2dto(Order order) {
-    OrderDto dto = new OrderDto();
-    dto.setAmount(order.getAmount());
-    dto.setCreationDate(order.getCreationDate());
-    dto.setFlightInfo(null);
-    dto.setId(order.getId());
-    dto.setOrderNumber(order.getOrderNumber());
-    dto.setStatus(order.getStatus());
-    dto.setUser(UserMapper.user2dto(order.getUser()));
-    return dto;
-  }
+  /**
+   * Maps Order to OrderDto.
+   * 
+   * @param order Order
+   * @return OrderDto
+   */
+  @Mappings({
+      @Mapping(source = "id", target = "id"), @Mapping(source = "orderNumber", target = "orderNumber"),
+      @Mapping(source = "status", target = "status"), @Mapping(source = "amount", target = "amount"),
+      @Mapping(source = "creationDate", target = "creationDate"), @Mapping(source = "user", target = "user"),
+      @Mapping(target = "flightInfo", expression = "java(null)")
+  })
+  public OrderDto order2dto(Order order);
 
-  public static List<OrderDto> list2dto(List<Order> orders) {
+  /**
+   * Maps Order list to OrderDto list.
+   * 
+   * @param orders Order List
+   * @return OrderDto List
+   */
+  default public List<OrderDto> list2dto(List<Order> orders) {
     if (orders == null) {
       return null;
     }
