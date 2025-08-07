@@ -5,16 +5,21 @@ import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.mapper.OrderMapper;
 import com.postion.airlineorderbackend.repository.OrderRepository;
 import com.postion.airlineorderbackend.service.OrderService;
+import com.postion.airlineorderbackend.statemachine.OrderState;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
@@ -27,6 +32,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderDto> getOrdersByUserId(Long userId) {
+        return orderRepository.findByUserId(userId).stream()
+                .map(orderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public OrderDto getOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
@@ -34,29 +46,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void payOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
+    public OrderDto createOrder(Long userId, Long flightId, BigDecimal amount) {
+        Order order = new Order();
+        order.setOrderNumber(generateOrderNumber());
+        order.setUserId(userId);
+        order.setFlightId(flightId);
+        order.setAmount(amount);
+        order.setStatus(OrderState.PENDING_PAYMENT.name());
+        order.setCreationDate(LocalDateTime.now());
 
-        if (order.getStatus() != Order.OrderStatus.PENDING_PAYMENT) {
-            throw new IllegalArgumentException("订单状态不允许支付");
-        }
+        Order savedOrder = orderRepository.save(order);
+        log.info("创建订单成功: 订单号={}, 用户ID={}, 航班ID={}", savedOrder.getOrderNumber(), userId, flightId);
 
-        order.setStatus(Order.OrderStatus.PAID);
-        orderRepository.save(order);
+        return orderMapper.toDto(savedOrder);
+    }
+
+    private String generateOrderNumber() {
+        return "ORD-" + System.currentTimeMillis() + "-" + (int) (Math.random() * 1000);
     }
 
     @Override
-    public void cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+    public Order findOrderById(Long id) {
+        return orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("订单不存在"));
-
-        if (order.getStatus() == Order.OrderStatus.TICKETED ||
-                order.getStatus() == Order.OrderStatus.CANCELLED) {
-            throw new IllegalArgumentException("订单状态不允许取消");
-        }
-
-        order.setStatus(Order.OrderStatus.CANCELLED);
-        orderRepository.save(order);
     }
+
 }

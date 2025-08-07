@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import com.postion.airlineorderbackend.entity.FlightInfo;
 import com.postion.airlineorderbackend.entity.Order;
-import com.postion.airlineorderbackend.entity.Order.OrderStatus;
+import com.postion.airlineorderbackend.statemachine.OrderState;
 import com.postion.airlineorderbackend.repository.FlightInfoRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +47,7 @@ public class FlightInfoRepositoryTest {
 
         testOrder = new Order();
         testOrder.setOrderNumber("ORD456");
-        testOrder.setStatus(OrderStatus.PAID);
+        testOrder.setStatus(OrderState.PAID.name());
         testOrder.setAmount(new BigDecimal("99.99"));
         testOrder.setCreationDate(LocalDateTime.now());
         testOrder.setUserId(1L);

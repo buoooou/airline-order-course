@@ -19,8 +19,7 @@ public class Order {
     private String orderNumber;
 
     @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING) // 存储枚举的字符串值，与数据库ENUM类型对应
-    private OrderStatus status;
+    private String status; // 改为String类型以兼容状态机
 
     @Column(name = "amount", precision = 19, scale = 2, nullable = false)
     private BigDecimal amount;
@@ -44,14 +43,6 @@ public class Order {
     @JoinColumn(name = "flight_id", insertable = false, updatable = false)
     private FlightInfo flightInfo;
 
-    // 订单状态枚举，与数据库ENUM类型对应
-    public enum OrderStatus {
-        PENDING_PAYMENT,
-        PAID,
-        TICKETING_IN_PROGRESS,
-        TICKETING_FAILED,
-        TICKETED,
-        CANCELLED
-    }
+
 
 }

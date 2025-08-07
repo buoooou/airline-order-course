@@ -5,13 +5,15 @@ import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/admin/orders")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class OrderController {
 
     private final OrderService orderService;

@@ -1,7 +1,7 @@
 package com.postion.airlineorderbackend.service.impl;
 
 import com.postion.airlineorderbackend.entity.Order;
-import com.postion.airlineorderbackend.entity.Order.OrderStatus;
+import com.postion.airlineorderbackend.statemachine.OrderState;
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.mapper.OrderMapper;
 import com.postion.airlineorderbackend.repository.OrderRepository;
@@ -44,7 +44,7 @@ class OrderServiceImplTest {
         Order mockOrder = new Order();
         mockOrder.setId(orderId);
         mockOrder.setOrderNumber("ORD-123");
-        mockOrder.setStatus(OrderStatus.PENDING_PAYMENT);
+        mockOrder.setStatus(OrderState.PENDING_PAYMENT.name());
         mockOrder.setAmount(new BigDecimal("100.00"));
         mockOrder.setCreationDate(LocalDateTime.now());
         mockOrder.setUserId(1L);
@@ -53,7 +53,7 @@ class OrderServiceImplTest {
         OrderDto expectedDto = new OrderDto();
         expectedDto.setId(orderId);
         expectedDto.setOrderNumber("ORD-123");
-        expectedDto.setStatus(OrderStatus.PENDING_PAYMENT);
+        expectedDto.setStatus(OrderState.PENDING_PAYMENT.name());
         expectedDto.setAmount(new BigDecimal("100.00"));
         expectedDto.setCreationDate(LocalDateTime.now());
         expectedDto.setUserId(1L);
@@ -72,43 +72,7 @@ class OrderServiceImplTest {
         verify(orderMapper, times(1)).toDto(mockOrder);
     }
 
-    @Test
-    void payOrder_ShouldUpdateStatus_WhenPendingPayment() {
-        // Arrange
-        Long orderId = 1L;
-        Order mockOrder = new Order();
-        mockOrder.setId(orderId);
-        mockOrder.setStatus(OrderStatus.PENDING_PAYMENT);
 
-        when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
-        when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
-        orderService.payOrder(orderId);
 
-        // Assert
-        verify(orderRepository, times(1)).findById(orderId);
-        verify(orderRepository, times(1)).save(mockOrder);
-        assertEquals(OrderStatus.PAID, mockOrder.getStatus());
-    }
-
-    @Test
-    void cancelOrder_ShouldUpdateStatus_WhenNotCompletedOrCancelled() {
-        // Arrange
-        Long orderId = 1L;
-        Order mockOrder = new Order();
-        mockOrder.setId(orderId);
-        mockOrder.setStatus(OrderStatus.PENDING_PAYMENT);
-
-        when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
-        when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Act
-        orderService.cancelOrder(orderId);
-
-        // Assert
-        verify(orderRepository, times(1)).findById(orderId);
-        verify(orderRepository, times(1)).save(mockOrder);
-        assertEquals(OrderStatus.CANCELLED, mockOrder.getStatus());
-    }
 }
