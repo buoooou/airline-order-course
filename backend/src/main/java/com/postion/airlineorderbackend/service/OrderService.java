@@ -12,4 +12,5 @@ public interface OrderService {
     OrderDto payOrder(Long id);
     void requestTicketIssuance(Long id); // 请求出票
     OrderDto cancelOrder(Long id);
+    String queryTicketStatus(Long id); // 查询票务状态
 }
