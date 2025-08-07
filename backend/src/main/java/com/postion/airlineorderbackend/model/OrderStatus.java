@@ -14,7 +14,11 @@ public enum OrderStatus {
     		case PENDING_PAYMENT:
     			return nextStatus == PAID || nextStatus == CANCELLED;
     		case PAID:
-    			return nextStatus == TICKETED || nextStatus == CANCELLED;
+    			return nextStatus == TICKETING_IN_PROGRESS || nextStatus == CANCELLED;
+    		case TICKETING_IN_PROGRESS:
+    			return nextStatus == TICKETED || nextStatus == TICKETING_FAILED;
+    		case TICKETING_FAILED:
+    			return nextStatus == CANCELLED;
     		default:
     			return false; // 默认不允许转换
     	}

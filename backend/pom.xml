@@ -30,6 +30,7 @@
     <properties>
         <java.version>1.8</java.version>
         <lombok.version>1.18.30</lombok.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
     </properties>
     <dependencies>
         <dependency>
@@ -47,10 +48,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-<!--    <dependency>
+    	<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -91,6 +92,21 @@
             <version>${lombok.version}</version> <!-- 使用一个被广泛验证的稳定版本 -->
             <scope>provided</scope> <!-- 关键：Lombok只在编译期需要，运行时不需要，provided是最佳scope -->
         </dependency>
+        <dependency>
+    		<groupId>org.mapstruct</groupId>
+    		<artifactId>mapstruct</artifactId>
+    		<version>${org.mapstruct.version}</version>
+		</dependency>
+		<dependency>
+    		<groupId>net.javacrumbs.shedlock</groupId>
+    		<artifactId>shedlock-spring</artifactId>
+    		<version>4.43.0</version> <!-- Check for the latest version -->
+		</dependency>
+		<dependency>  
+ 			<groupId>net.javacrumbs.shedlock</groupId>  
+  			<artifactId>shedlock-provider-jdbc-template</artifactId>  
+  			<version>4.43.0</version>  
+		</dependency>  
     </dependencies>
 
     <build>
@@ -112,15 +128,25 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version> <!-- 这是一个稳定版本，可以保持不变 -->
                 <configuration>
-                    <source>${java.version}</source> <!-- 再次确认源文件版本 -->
-                    <target>${java.version}</target> <!-- 再次确认目标字节码版本 -->
+                    <source>1.8</source> <!-- 再次确认源文件版本 -->
+                    <target>1.8</target> <!-- 再次确认目标字节码版本 -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version> <!-- 版本要与上面依赖中指定的版本一致 -->
+                            <version>1.18.30</version> <!-- 版本要与上面依赖中指定的版本一致 -->
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.5.Final</version>
                         </path>
                     </annotationProcessorPaths>
+                    <compilerArgs>
+                        <compilerArg>
+                               -Amapstruct.defaultComponentModel=spring
+                        </compilerArg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
