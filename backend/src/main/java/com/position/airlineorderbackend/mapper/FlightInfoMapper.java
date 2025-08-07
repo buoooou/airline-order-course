@@ -5,6 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import com.position.airlineorderbackend.config.MapStructConfig;
+import lombok.Data;
 
 import java.util.List;
 
@@ -41,27 +42,12 @@ public interface FlightInfoMapper {
     /**
      * FlightInfo DTO类
      */
+    @Data
     class FlightInfoDto {
         private Long id;
         private String flightNumber;
         private String departure;
         private String destination;
         private String departureTime;
-
-        // Getters and Setters
-        public Long getId() { return id; }
-        public void setId(Long id) { this.id = id; }
-        
-        public String getFlightNumber() { return flightNumber; }
-        public void setFlightNumber(String flightNumber) { this.flightNumber = flightNumber; }
-        
-        public String getDeparture() { return departure; }
-        public void setDeparture(String departure) { this.departure = departure; }
-        
-        public String getDestination() { return destination; }
-        public void setDestination(String destination) { this.destination = destination; }
-        
-        public String getDepartureTime() { return departureTime; }
-        public void setDepartureTime(String departureTime) { this.departureTime = departureTime; }
     }
 } 

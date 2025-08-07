@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .requestMatchers("/mapstruct-test/**").permitAll()
                 .requestMatchers("/shedlock-test/**").permitAll()
                 .requestMatchers("/ticketing-test/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/v3/api-docs/**", "/webjars/**").permitAll()
                 .requestMatchers("/orders/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/jwt-test/authenticated").authenticated()
                 .requestMatchers("/jwt-test/admin-only").hasRole("ADMIN")

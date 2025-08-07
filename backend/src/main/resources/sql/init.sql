@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS `shedlock`;
 CREATE TABLE `app_users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL UNIQUE,
+  `email` VARCHAR(255) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
   `role` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`id`)
@@ -48,9 +49,7 @@ CREATE TABLE `orders` (
   `creation_date` DATETIME(6) NOT NULL,
   `user_id` BIGINT NOT NULL,
   `flight_info_id` BIGINT,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`),
-  CONSTRAINT `fk_orders_flight_info_id` FOREIGN KEY (`flight_info_id`) REFERENCES `flight_info` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 步骤 5: 创建 shedlock 表
@@ -68,9 +67,9 @@ CREATE TABLE `shedlock` (
 
 -- 插入用户 (密码原文均为 'password')
 -- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
-INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
-(1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
-(2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
+INSERT INTO `app_users` (`id`, `username`, `email`, `password`, `role`) VALUES
+(1, 'admin', 'admin@example.com', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
+(2, 'user', 'user@example.com', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
 
 -- 插入航班信息
 INSERT INTO `flight_info` (`id`, `flight_number`, `departure`, `destination`, `departure_time`) VALUES
