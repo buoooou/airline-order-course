@@ -50,6 +50,19 @@ CREATE TABLE `flight_info_zdq` (
   `arrival_time` DATETIME,
   `flight_duration` INT
 );
+
+-- 创建座位详情表
+CREATE TABLE `seat_detail_zdq` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `flight_id` BIGINT NOT NULL,
+  `seat_number` VARCHAR(10) NOT NULL,
+  `seat_type` ENUM('ECONOMY', 'BUSINESS', 'FIRST_CLASS') NOT NULL,
+  `seat_status` ENUM('AVAILABLE', 'RESERVED', 'OCCUPIED') NOT NULL DEFAULT 'AVAILABLE',
+  `price` DECIMAL(10, 2) NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_seat_detail_flight_id` FOREIGN KEY (`flight_id`) REFERENCES `flight_info_zdq` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- 步骤 4: 插入测试数据
 
 -- 插入用户 (密码原文均为 'password')
