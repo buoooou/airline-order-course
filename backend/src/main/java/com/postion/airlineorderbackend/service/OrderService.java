@@ -1,69 +1,103 @@
 package com.postion.airlineorderbackend.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import com.postion.airlineorderbackend.dto.OrderResponseDTO;
-import com.postion.airlineorderbackend.entity.Flight;
-import com.postion.airlineorderbackend.entity.Order;
+import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
+
 import com.postion.airlineorderbackend.entity.OrderStatus;
-import com.postion.airlineorderbackend.entity.User;
-import com.postion.airlineorderbackend.repository.FlightRepository;
-import com.postion.airlineorderbackend.repository.OrderRepository;
-import com.postion.airlineorderbackend.repository.UserRepository;
+import com.postion.airlineorderbackend.exception.DataNotFoundException;
+import com.postion.airlineorderbackend.exception.InvalidOrderStatusException;
+import com.postion.airlineorderbackend.exception.UserNotFoundException;
 
-import lombok.RequiredArgsConstructor;
+public interface OrderService {
 
-@Service
-@RequiredArgsConstructor
-public class OrderService {
+        /**
+         * Get all orders.
+         * 
+         * @return List of all orders.
+         */
+        List<OrderDto> getAllOrders();
 
-    private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final FlightRepository flightRepository;
-    private final IOrderStateService orderStateService; // 注入状态机
+        /**
+         * Get order by order id.
+         * 
+         * @param id Order id.
+         * @return Found order.
+         * @throws DataNotFoundException
+         */
+        OrderDto getOrderById(Long id) throws DataNotFoundException;
 
-    // 获取订单并返回 DTO
-    public OrderResponseDTO getOrderById(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        /**
+         * Pay order.
+         * 
+         * @param orderid
+         * @param userid
+         * @return
+         * @throws DataNotFoundException
+         * @throws UserNotFoundException
+         * @throws InvalidOrderStatusException
+         */
+        OrderDto payOrder(Long orderid, Long userid)
+                        throws DataNotFoundException, UserNotFoundException, InvalidOrderStatusException;
 
-        return convertToDTO(order);
-    }
+        /**
+         * Cancel order.
+         * 
+         * @param orderid
+         * @param userid
+         * @return
+         * @throws DataNotFoundException
+         * @throws UserNotFoundException
+         * @throws InvalidOrderStatusException
+         */
+        OrderDto cancelOrder(Long orderid, Long userid)
+                        throws DataNotFoundException, UserNotFoundException, InvalidOrderStatusException;
 
-    // 创建新订单
-    public OrderResponseDTO createOrder(String userEmail, Long flightId) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        /**
+         * Retry order.
+         * 
+         * @param orderid
+         * @param userid
+         * @return
+         * @throws DataNotFoundException
+         * @throws UserNotFoundException
+         * @throws InvalidOrderStatusException
+         */
+        OrderDto retryOrder(Long orderid, Long userid)
+                        throws DataNotFoundException, UserNotFoundException, InvalidOrderStatusException;
 
-        Flight flight = flightRepository.findById(flightId)
-                .orElseThrow(() -> new RuntimeException("Flight not found"));
+        /**
+         * Request ticket issuance.
+         */
+        void requestTicketIssuance();
 
-        Order order = Order.builder()
-                .user(user)
-                .flight(flight)
-                .status(OrderStatus.PENDING_PAYMENT)
-                .build();
+        /**
+         * Verify ticket issuance.
+         */
+        void verifyTicketIssuance();
 
-        return convertToDTO(orderRepository.save(order));
-    }
+        /**
+         * Update order to specified status.
+         * 
+         * @param id     The order id.
+         * @param status The order status.
+         * @return The order updated. Return null if not found.
+         */
+        OrderDto updateOrderStatus(Long id, OrderStatus status);
 
-    // 更新订单状态（通过状态机校验）
-    public OrderResponseDTO updateOrderStatus(Long orderId, OrderStatus nextStatus) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        /**
+         * Cancel payment expired tickets.
+         */
+        void cancelPaymentExpiredTickets();
 
-        OrderStatus updatedStatus = orderStateService.updateStatus(order.getStatus(), nextStatus);
-        order.setStatus(updatedStatus);
+        /**
+         * Get all orders of user with specified user id.
+         * 
+         * @param id The user id.
+         * @return All orders of the user.
+         */
+        List<OrderDto> getAllOrdersByUserId(Long id);
 
-        return convertToDTO(orderRepository.save(order));
-    }
+		Object createOrder(String email, Long flightId);
 
-    private OrderResponseDTO convertToDTO(Order order) {
-        OrderResponseDTO dto = new OrderResponseDTO();
-        dto.setOrderId(order.getId());
-        dto.setFlightNumber(order.getFlight().getFlightNumber());
-        dto.setStatus(order.getStatus());
-        dto.setUserEmail(order.getUser().getEmail());
-        return dto;
-    }
 }
