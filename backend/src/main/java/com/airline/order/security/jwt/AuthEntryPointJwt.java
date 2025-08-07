@@ -1,5 +1,6 @@
 package com.airline.order.security.jwt;
 
+import com.airline.order.dto.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * JWT认证入口点
@@ -32,13 +31,10 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        final Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", "未授权");
-        body.put("message", authException.getMessage());
-        body.put("path", request.getServletPath());
+        // 使用ApiResponse格式返回错误信息
+        ApiResponse<Object> apiResponse = ApiResponse.error("未授权访问: " + authException.getMessage());
 
         final ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getOutputStream(), body);
+        mapper.writeValue(response.getOutputStream(), apiResponse);
     }
 }

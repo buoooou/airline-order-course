@@ -50,6 +50,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             logger.error("无法设置用户认证: {}", e.getMessage());
+            // 这里不抛出异常，因为过滤器中的异常不会被全局异常处理器捕获
+            // 而是由AuthEntryPointJwt处理
         }
 
         filterChain.doFilter(request, response);

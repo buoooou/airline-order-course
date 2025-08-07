@@ -2,6 +2,8 @@ package com.airline.order.controller;
 
 import com.airline.order.dto.ApiResponse;
 import com.airline.order.dto.UserDTO;
+import com.airline.order.exception.GlobalExceptionHandler;
+import com.airline.order.exception.ResourceNotFoundException;
 import com.airline.order.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +37,11 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        // 添加全局异常处理器
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(userController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         objectMapper = new ObjectMapper();
     }
 
@@ -70,13 +76,13 @@ class UserControllerTest {
 
         // Mock service 抛出异常
         when(userService.getUserById(userId))
-                .thenThrow(new RuntimeException("用户不存在"));
+                .thenThrow(new ResourceNotFoundException("用户", userId));
 
         // 执行测试
         mockMvc.perform(get("/api/users/{userId}", userId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("用户不存在"))
+                .andExpect(jsonPath("$.message").value("用户不存在，ID: 999"))
                 .andExpect(jsonPath("$.data").isEmpty());
 
         verify(userService, times(1)).getUserById(userId);

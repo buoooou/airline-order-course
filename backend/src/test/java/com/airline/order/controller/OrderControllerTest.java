@@ -4,6 +4,10 @@ import com.airline.order.dto.ApiResponse;
 import com.airline.order.dto.CreateOrderRequest;
 import com.airline.order.dto.OrderDTO;
 import com.airline.order.enums.OrderStatus;
+import com.airline.order.exception.BusinessException;
+import com.airline.order.exception.GlobalExceptionHandler;
+import com.airline.order.exception.ResourceNotFoundException;
+import com.airline.order.exception.ValidationException;
 import com.airline.order.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +52,11 @@ class OrderControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(orderController).build();
+        // 添加全局异常处理器
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(orderController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         objectMapper = new ObjectMapper();
     }
 
@@ -105,7 +113,7 @@ class OrderControllerTest {
 
         // Mock service 抛出异常
         when(orderService.createOrder(any(CreateOrderRequest.class)))
-                .thenThrow(new RuntimeException("座位已被占用"));
+                .thenThrow(new ValidationException("座位已被占用"));
 
         // 执行测试
         mockMvc.perform(post("/api/orders")
@@ -197,13 +205,13 @@ class OrderControllerTest {
 
         // Mock service 抛出异常
         when(orderService.cancelOrder(orderId))
-                .thenThrow(new RuntimeException("订单不存在"));
+                .thenThrow(new ResourceNotFoundException("订单", orderId));
 
         // 执行测试
         mockMvc.perform(put("/api/orders/{orderId}/cancel", orderId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("订单不存在"))
+                .andExpect(jsonPath("$.message").value("订单不存在，ID: 999"))
                 .andExpect(jsonPath("$.data").isEmpty());
 
         verify(orderService, times(1)).cancelOrder(orderId);
@@ -243,13 +251,13 @@ class OrderControllerTest {
 
         // Mock service 抛出异常
         when(orderService.updateOrderStatus(orderId, "INVALID_STATUS"))
-                .thenThrow(new RuntimeException("无效的订单状态"));
+                .thenThrow(new BusinessException("无效的订单状态"));
 
         // 执行测试
         mockMvc.perform(put("/api/orders/{orderId}/status", orderId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(statusRequest)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("无效的订单状态"))
                 .andExpect(jsonPath("$.data").isEmpty());
@@ -284,13 +292,13 @@ class OrderControllerTest {
 
         // Mock service 抛出异常
         when(orderService.getOrderByNumber(orderNumber))
-                .thenThrow(new RuntimeException("订单不存在"));
+                .thenThrow(new ResourceNotFoundException("订单号为 " + orderNumber + " 的订单"));
 
         // 执行测试
         mockMvc.perform(get("/api/orders/by-number/{orderNumber}", orderNumber))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("订单不存在"))
+                .andExpect(jsonPath("$.message").value("订单号为 NONEXISTENT 的订单不存在"))
                 .andExpect(jsonPath("$.data").isEmpty());
 
         verify(orderService, times(1)).getOrderByNumber(orderNumber);

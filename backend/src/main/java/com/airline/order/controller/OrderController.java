@@ -6,8 +6,6 @@ import com.airline.order.dto.OrderDTO;
 import com.airline.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -30,16 +28,9 @@ public class OrderController {
      * @return 创建结果
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<OrderDTO>> createOrder(@RequestBody CreateOrderRequest request) {
-        try {
-            OrderDTO orderDTO = orderService.createOrder(request);
-            return ResponseEntity.ok(ApiResponse.success("订单创建成功", orderDTO));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("创建订单失败: " + e.getMessage()));
-        }
+    public ApiResponse<OrderDTO> createOrder(@RequestBody CreateOrderRequest request) {
+        OrderDTO orderDTO = orderService.createOrder(request);
+        return ApiResponse.success("订单创建成功", orderDTO);
     }
     
     /**
@@ -51,28 +42,22 @@ public class OrderController {
      * @return 订单列表
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getOrders(
+    public ApiResponse<Map<String, Object>> getOrders(
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
-        try {
-            Page<OrderDTO> orderPage = orderService.getOrders(userId, status, page, size);
-            
-            Map<String, Object> pageData = new HashMap<>();
-            pageData.put("orders", orderPage.getContent());
-            pageData.put("totalElements", orderPage.getTotalElements());
-            pageData.put("totalPages", orderPage.getTotalPages());
-            pageData.put("currentPage", page);
-            pageData.put("pageSize", size);
-            
-            return ResponseEntity.ok(ApiResponse.success(pageData));
-            
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("查询订单失败: " + e.getMessage()));
-        }
+        Page<OrderDTO> orderPage = orderService.getOrders(userId, status, page, size);
+        
+        Map<String, Object> pageData = new HashMap<>();
+        pageData.put("orders", orderPage.getContent());
+        pageData.put("totalElements", orderPage.getTotalElements());
+        pageData.put("totalPages", orderPage.getTotalPages());
+        pageData.put("currentPage", page);
+        pageData.put("pageSize", size);
+        
+        return ApiResponse.success(pageData);
     }
     
     /**
@@ -81,17 +66,9 @@ public class OrderController {
      * @return 订单详情
      */
     @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<OrderDTO>> getOrderById(@PathVariable Long orderId) {
-        try {
-            OrderDTO orderDTO = orderService.getOrderById(orderId);
-            return ResponseEntity.ok(ApiResponse.success(orderDTO));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("获取订单详情失败: " + e.getMessage()));
-        }
+    public ApiResponse<OrderDTO> getOrderById(@PathVariable Long orderId) {
+        OrderDTO orderDTO = orderService.getOrderById(orderId);
+        return ApiResponse.success(orderDTO);
     }
     
     /**
@@ -100,16 +77,9 @@ public class OrderController {
      * @return 取消结果
      */
     @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<ApiResponse<OrderDTO>> cancelOrder(@PathVariable Long orderId) {
-        try {
-            OrderDTO orderDTO = orderService.cancelOrder(orderId);
-            return ResponseEntity.ok(ApiResponse.success("订单已取消", orderDTO));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("取消订单失败: " + e.getMessage()));
-        }
+    public ApiResponse<OrderDTO> cancelOrder(@PathVariable Long orderId) {
+        OrderDTO orderDTO = orderService.cancelOrder(orderId);
+        return ApiResponse.success("订单已取消", orderDTO);
     }
     
     /**
@@ -119,20 +89,13 @@ public class OrderController {
      * @return 修改结果
      */
     @PutMapping("/{orderId}/status")
-    public ResponseEntity<ApiResponse<OrderDTO>> updateOrderStatus(
+    public ApiResponse<OrderDTO> updateOrderStatus(
             @PathVariable Long orderId,
             @RequestBody Map<String, String> statusRequest) {
         
-        try {
-            String newStatusStr = statusRequest.get("status");
-            OrderDTO orderDTO = orderService.updateOrderStatus(orderId, newStatusStr);
-            return ResponseEntity.ok(ApiResponse.success("订单状态已更新", orderDTO));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("更新订单状态失败: " + e.getMessage()));
-        }
+        String newStatusStr = statusRequest.get("status");
+        OrderDTO orderDTO = orderService.updateOrderStatus(orderId, newStatusStr);
+        return ApiResponse.success("订单状态已更新", orderDTO);
     }
     
     /**
@@ -141,17 +104,9 @@ public class OrderController {
      * @return 订单信息
      */
     @GetMapping("/by-number/{orderNumber}")
-    public ResponseEntity<ApiResponse<OrderDTO>> getOrderByNumber(@PathVariable String orderNumber) {
-        try {
-            OrderDTO orderDTO = orderService.getOrderByNumber(orderNumber);
-            return ResponseEntity.ok(ApiResponse.success(orderDTO));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("查询订单失败: " + e.getMessage()));
-        }
+    public ApiResponse<OrderDTO> getOrderByNumber(@PathVariable String orderNumber) {
+        OrderDTO orderDTO = orderService.getOrderByNumber(orderNumber);
+        return ApiResponse.success(orderDTO);
     }
     
 }

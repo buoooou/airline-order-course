@@ -3,6 +3,9 @@ package com.airline.order.controller;
 import com.airline.order.dto.JwtResponse;
 import com.airline.order.dto.UserDTO;
 import com.airline.order.dto.UserRegistrationRequest;
+import com.airline.order.exception.BusinessException;
+import com.airline.order.exception.GlobalExceptionHandler;
+import com.airline.order.exception.UnauthorizedException;
 import com.airline.order.security.jwt.JwtUtils;
 import com.airline.order.security.services.UserDetailsImpl;
 import com.airline.order.service.UserService;
@@ -53,7 +56,11 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+        // 添加全局异常处理器
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(authController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         objectMapper = new ObjectMapper();
     }
 
@@ -98,13 +105,13 @@ class AuthControllerTest {
 
         // Mock service 抛出异常
         when(userService.registerUser(any(UserRegistrationRequest.class)))
-                .thenThrow(new RuntimeException("用户名已存在"));
+                .thenThrow(new BusinessException("用户名已存在"));
 
         // 执行测试
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("用户名已存在"))
                 .andExpect(jsonPath("$.data").isEmpty());
@@ -166,7 +173,7 @@ class AuthControllerTest {
 
         // Mock authenticationManager 抛出异常
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenThrow(new RuntimeException("用户名或密码错误"));
+                .thenThrow(new UnauthorizedException("用户名或密码错误"));
 
         // 执行测试
         mockMvc.perform(post("/api/auth/login")
@@ -174,7 +181,7 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("登录失败: 用户名或密码错误"))
+                .andExpect(jsonPath("$.message").value("用户名或密码错误"))
                 .andExpect(jsonPath("$.data").isEmpty());
 
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
