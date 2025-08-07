@@ -1,0 +1,225 @@
+<div class="order-detail-container">
+  <!-- 加载状态 -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>正在加载订单详情...</p>
+  </div>
+
+  <!-- 订单详情内容 -->
+  <div *ngIf="!loading && order" class="order-content">
+    <!-- 页面标题和返回按钮 -->
+    <div class="page-header">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>订单详情</h1>
+    </div>
+
+    <!-- 订单基本信息卡片 -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>receipt</mat-icon>
+          订单信息
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">订单号：</span>
+            <span class="value">{{ order.orderNumber }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">订单状态：</span>
+            <mat-chip 
+              [color]="getStatusChipColor(order.status)" 
+              selected>
+              <mat-icon>{{ getStatusIcon(order.status) }}</mat-icon>
+              {{ order.statusDescription }}
+            </mat-chip>
+          </div>
+          <div class="info-item">
+            <span class="label">订单金额：</span>
+            <span class="value amount">{{ formatAmount(order.amount) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">创建时间：</span>
+            <span class="value">{{ formatDateTime(order.creationDate) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">最后更新：</span>
+            <span class="value">{{ formatDateTime(order.lastUpdated) }}</span>
+          </div>
+          <div class="info-item" *ngIf="order.username">
+            <span class="label">用户名：</span>
+            <span class="value">{{ order.username }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- 航班信息卡片 -->
+    <mat-card class="info-card" *ngIf="order.flightNumber">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>flight</mat-icon>
+          航班信息
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="flight-info">
+          <div class="flight-route">
+            <div class="airport">
+              <div class="airport-code">{{ order.departureAirport }}</div>
+              <div class="time">{{ formatDateTime(order.departureTime) }}</div>
+            </div>
+            <div class="flight-path">
+              <mat-icon>flight_takeoff</mat-icon>
+              <div class="flight-number">{{ order.flightNumber }}</div>
+              <div class="airline">{{ order.airline }}</div>
+              <mat-icon>flight_land</mat-icon>
+            </div>
+            <div class="airport">
+              <div class="airport-code">{{ order.arrivalAirport }}</div>
+              <div class="time">{{ formatDateTime(order.arrivalTime) }}</div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- 乘客信息卡片 -->
+    <mat-card class="info-card" *ngIf="order.passengerNames">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>people</mat-icon>
+          乘客信息
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="passenger-info">
+          <div class="info-item">
+            <span class="label">乘客数量：</span>
+            <span class="value">{{ order.passengerCount || 1 }}人</span>
+          </div>
+          <div class="info-item">
+            <span class="label">乘客姓名：</span>
+            <span class="value">{{ order.passengerNames }}</span>
+          </div>
+          <div class="info-item" *ngIf="order.contactPhone">
+            <span class="label">联系电话：</span>
+            <span class="value">{{ order.contactPhone }}</span>
+          </div>
+          <div class="info-item" *ngIf="order.contactEmail">
+            <span class="label">联系邮箱：</span>
+            <span class="value">{{ order.contactEmail }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- 订单时间线卡片 -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>timeline</mat-icon>
+          订单时间线
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list class="timeline">
+          <mat-list-item>
+            <mat-icon matListItemIcon>add_circle</mat-icon>
+            <div matListItemTitle>订单创建</div>
+            <div matListItemLine>{{ formatDateTime(order.creationDate) }}</div>
+          </mat-list-item>
+          
+          <mat-divider></mat-divider>
+          
+          <mat-list-item *ngIf="order.paymentTime">
+            <mat-icon matListItemIcon color="primary">payment</mat-icon>
+            <div matListItemTitle>订单支付</div>
+            <div matListItemLine>{{ formatDateTime(order.paymentTime) }}</div>
+          </mat-list-item>
+          
+          <mat-divider *ngIf="order.paymentTime"></mat-divider>
+          
+          <mat-list-item *ngIf="order.ticketingStartTime">
+            <mat-icon matListItemIcon color="accent">hourglass_empty</mat-icon>
+            <div matListItemTitle>开始出票</div>
+            <div matListItemLine>{{ formatDateTime(order.ticketingStartTime) }}</div>
+          </mat-list-item>
+          
+          <mat-divider *ngIf="order.ticketingStartTime"></mat-divider>
+          
+          <mat-list-item *ngIf="order.ticketingCompletionTime">
+            <mat-icon matListItemIcon color="primary">confirmation_number</mat-icon>
+            <div matListItemTitle>出票完成</div>
+            <div matListItemLine>{{ formatDateTime(order.ticketingCompletionTime) }}</div>
+          </mat-list-item>
+          
+          <mat-divider *ngIf="order.ticketingCompletionTime"></mat-divider>
+          
+          <mat-list-item *ngIf="order.ticketingFailureReason">
+            <mat-icon matListItemIcon color="warn">error</mat-icon>
+            <div matListItemTitle>出票失败</div>
+            <div matListItemLine>{{ order.ticketingFailureReason }}</div>
+          </mat-list-item>
+          
+          <mat-divider *ngIf="order.ticketingFailureReason"></mat-divider>
+          
+          <mat-list-item *ngIf="order.cancellationTime">
+            <mat-icon matListItemIcon>cancel</mat-icon>
+            <div matListItemTitle>订单取消</div>
+            <div matListItemLine>
+              {{ formatDateTime(order.cancellationTime) }}
+              <span *ngIf="order.cancellationReason"> - {{ order.cancellationReason }}</span>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- 操作按钮 -->
+    <div class="action-buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        *ngIf="canPayOrder()"
+        (click)="payOrder()"
+        [disabled]="loading">
+        <mat-icon>payment</mat-icon>
+        立即支付
+      </button>
+      
+      <button 
+        mat-raised-button 
+        color="warn" 
+        *ngIf="canCancelOrder()"
+        (click)="cancelOrder()"
+        [disabled]="loading">
+        <mat-icon>cancel</mat-icon>
+        取消订单
+      </button>
+      
+      <button 
+        mat-raised-button 
+        (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        返回列表
+      </button>
+    </div>
+  </div>
+
+  <!-- 订单不存在或加载失败 -->
+  <div *ngIf="!loading && !order" class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h2>订单不存在</h2>
+    <p>抱歉，找不到您要查看的订单信息。</p>
+    <button mat-raised-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      返回订单列表
+    </button>
+  </div>
+</div>
+
