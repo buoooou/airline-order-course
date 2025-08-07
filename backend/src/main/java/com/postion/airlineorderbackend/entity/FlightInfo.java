@@ -112,12 +112,6 @@ public class FlightInfo {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
     
-    /**
-     * 关联的订单 - 一对一关系
-     * 一个航班信息对应一个订单
-     */
-    @OneToOne(mappedBy = "flightInfo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Order order;
     
     /**
      * 在持久化之前设置创建时间和更新时间

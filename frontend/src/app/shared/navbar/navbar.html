@@ -1,0 +1,130 @@
+<mat-toolbar color="primary" class="navbar">
+  <div class="navbar-content">
+    <!-- 左侧：应用标题和导航链接 -->
+    <div class="navbar-left">
+      <span class="app-title">
+        <mat-icon>flight</mat-icon>
+        航空订单管理系统
+      </span>
+      
+      <!-- 导航菜单（仅登录用户可见） -->
+      <nav class="nav-links" *ngIf="isLoggedIn()">
+        <button 
+          mat-button 
+          routerLink="/orders" 
+          routerLinkActive="active-link"
+          class="nav-button">
+          <mat-icon>list_alt</mat-icon>
+          {{ isAdmin() ? '订单管理' : '我的订单' }}
+        </button>
+        
+        <button 
+          mat-button 
+          routerLink="/flights" 
+          routerLinkActive="active-link"
+          class="nav-button"
+          *ngIf="isAdmin()">
+          <mat-icon>airplanemode_active</mat-icon>
+          航班管理
+        </button>
+        
+        <button 
+          mat-button 
+          routerLink="/scheduled-tasks" 
+          routerLinkActive="active-link"
+          class="nav-button"
+          *ngIf="isAdmin()">
+          <mat-icon>schedule</mat-icon>
+          定时任务
+        </button>
+      </nav>
+    </div>
+
+    <!-- 右侧：用户信息和操作 -->
+    <div class="navbar-right">
+      <!-- 未登录状态 -->
+      <div *ngIf="!isLoggedIn() && !isOnAuthPage()" class="auth-actions">
+        <button 
+          mat-raised-button 
+          color="accent" 
+          (click)="navigateToLogin()"
+          class="login-button">
+          <mat-icon>login</mat-icon>
+          登录
+        </button>
+      </div>
+
+      <!-- 在登录页面显示注册按钮 -->
+      <div *ngIf="!isLoggedIn() && isOnLoginPage()" class="auth-actions">
+        <button 
+          mat-raised-button 
+          color="accent" 
+          (click)="navigateToRegister()"
+          class="register-button">
+          <mat-icon>person_add</mat-icon>
+          注册
+        </button>
+      </div>
+
+      <!-- 在注册页面显示登录按钮 -->
+      <div *ngIf="!isLoggedIn() && isOnRegisterPage()" class="auth-actions">
+        <button 
+          mat-raised-button 
+          color="accent" 
+          (click)="navigateToLogin()"
+          class="login-button">
+          <mat-icon>login</mat-icon>
+          登录
+        </button>
+      </div>
+
+      <!-- 已登录状态 -->
+      <div *ngIf="isLoggedIn()" class="user-menu">
+        <button 
+          mat-button 
+          [matMenuTriggerFor]="userMenu"
+          class="user-button">
+          <mat-icon>account_circle</mat-icon>
+          <span class="username">{{ currentUser?.username }}</span>
+          <span class="user-role" [class.admin-role]="isAdmin()">
+            {{ isAdmin() ? '管理员' : '用户' }}
+          </span>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+
+        <mat-menu #userMenu="matMenu" class="user-dropdown">
+          <div class="user-info">
+            <div class="user-details">
+              <strong>{{ currentUser?.username }}</strong>
+              <small>{{ isAdmin() ? '系统管理员' : '普通用户' }}</small>
+            </div>
+          </div>
+          
+          <mat-divider></mat-divider>
+          
+          <button mat-menu-item (click)="navigateToOrders()">
+            <mat-icon>list_alt</mat-icon>
+            <span>{{ isAdmin() ? '订单管理' : '我的订单' }}</span>
+          </button>
+          
+          <button mat-menu-item (click)="navigateToFlights()" *ngIf="isAdmin()">
+            <mat-icon>airplanemode_active</mat-icon>
+            <span>航班管理</span>
+          </button>
+          
+          <button mat-menu-item (click)="navigateToScheduledTasks()" *ngIf="isAdmin()">
+            <mat-icon>schedule</mat-icon>
+            <span>定时任务管理</span>
+          </button>
+          
+          <mat-divider></mat-divider>
+          
+          <button mat-menu-item (click)="onLogout()" class="logout-item">
+            <mat-icon>logout</mat-icon>
+            <span>退出登录</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+</mat-toolbar>

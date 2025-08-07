@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class OrderService {
+public class OrderService implements IOrderService {
     
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;

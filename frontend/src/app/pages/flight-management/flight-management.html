@@ -1,0 +1,271 @@
+<div class="flight-management-container">
+  <!-- 页面标题 -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>flight</mat-icon>
+      航班管理
+    </h1>
+    <div class="header-actions">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="addFlight()"
+        *ngIf="isAdmin()">
+        <mat-icon>add</mat-icon>
+        添加航班
+      </button>
+      <button 
+        mat-icon-button 
+        (click)="refreshData()"
+        matTooltip="刷新数据">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- 搜索区域 -->
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>search</mat-icon>
+        搜索航班
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="searchForm" class="search-form">
+        <div class="search-row">
+          <mat-form-field appearance="outline">
+            <mat-label>航班号</mat-label>
+            <input matInput formControlName="flightNumber" placeholder="如：CA1234">
+            <mat-icon matSuffix>flight_takeoff</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>出发机场</mat-label>
+            <input matInput formControlName="departureAirport" placeholder="如：PEK">
+            <mat-icon matSuffix>flight_takeoff</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>到达机场</mat-label>
+            <input matInput formControlName="arrivalAirport" placeholder="如：SHA">
+            <mat-icon matSuffix>flight_land</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>航班状态</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="">全部状态</mat-option>
+              <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                {{ status.label }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>info</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="search-row">
+          <mat-form-field appearance="outline">
+            <mat-label>出发日期（开始）</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>出发日期（结束）</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>最低价格</mat-label>
+            <input matInput type="number" formControlName="minPrice" placeholder="0">
+            <span matSuffix>¥</span>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>最高价格</mat-label>
+            <input matInput type="number" formControlName="maxPrice" placeholder="10000">
+            <span matSuffix>¥</span>
+          </mat-form-field>
+        </div>
+
+        <div class="search-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="onSearch()"
+            [disabled]="loading">
+            <mat-icon>search</mat-icon>
+            搜索
+          </button>
+          <button 
+            mat-button 
+            (click)="onResetSearch()"
+            [disabled]="loading">
+            <mat-icon>clear</mat-icon>
+            重置
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- 航班列表 -->
+  <mat-card class="flights-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>list</mat-icon>
+        航班列表
+        <span class="flight-count" *ngIf="!loading">（共 {{ totalElements }} 个航班）</span>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- 加载状态 -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>正在加载航班数据...</p>
+      </div>
+
+      <!-- 航班表格 -->
+      <div *ngIf="!loading" class="table-container">
+        <table mat-table [dataSource]="getCurrentPageData()" class="flights-table">
+          <!-- 航班号列 -->
+          <ng-container matColumnDef="flightNumber">
+            <th mat-header-cell *matHeaderCellDef>航班号</th>
+            <td mat-cell *matCellDef="let flight">
+              <div class="flight-number">
+                <strong>{{ flight.flightNumber }}</strong>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- 航空公司列 -->
+          <ng-container matColumnDef="airline">
+            <th mat-header-cell *matHeaderCellDef>航空公司</th>
+            <td mat-cell *matCellDef="let flight">{{ flight.airline }}</td>
+          </ng-container>
+
+          <!-- 航线列 -->
+          <ng-container matColumnDef="route">
+            <th mat-header-cell *matHeaderCellDef>航线</th>
+            <td mat-cell *matCellDef="let flight">
+              <div class="route-info">
+                <span class="airport">{{ flight.departureAirport }}</span>
+                <mat-icon class="route-arrow">arrow_forward</mat-icon>
+                <span class="airport">{{ flight.arrivalAirport }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- 出发时间列 -->
+          <ng-container matColumnDef="departureTime">
+            <th mat-header-cell *matHeaderCellDef>出发时间</th>
+            <td mat-cell *matCellDef="let flight">
+              <div class="time-info">
+                {{ formatDateTime(flight.departureTime) }}
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- 到达时间列 -->
+          <ng-container matColumnDef="arrivalTime">
+            <th mat-header-cell *matHeaderCellDef>到达时间</th>
+            <td mat-cell *matCellDef="let flight">
+              <div class="time-info">
+                {{ formatDateTime(flight.arrivalTime) }}
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- 价格列 -->
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef>价格</th>
+            <td mat-cell *matCellDef="let flight">
+              <div class="price-info">
+                {{ formatPrice(flight.price) }}
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- 座位列 -->
+          <ng-container matColumnDef="seats">
+            <th mat-header-cell *matHeaderCellDef>座位</th>
+            <td mat-cell *matCellDef="let flight">
+              <div class="seats-info">
+                <span class="available">{{ flight.availableSeats }}</span>
+                <span class="separator">/</span>
+                <span class="total">{{ flight.totalSeats }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- 状态列 -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>状态</th>
+            <td mat-cell *matCellDef="let flight">
+              <mat-chip 
+                [color]="getStatusInfo(flight.status).color"
+                class="status-chip">
+                {{ getStatusInfo(flight.status).label }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- 操作列 -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>操作</th>
+            <td mat-cell *matCellDef="let flight">
+              <div class="action-buttons">
+                <button 
+                  mat-icon-button 
+                  color="primary"
+                  (click)="editFlight(flight)"
+                  matTooltip="编辑航班"
+                  *ngIf="isAdmin()">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button 
+                  mat-icon-button 
+                  color="warn"
+                  (click)="deleteFlight(flight)"
+                  matTooltip="删除航班"
+                  *ngIf="isAdmin()">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- 无数据提示 -->
+        <div *ngIf="filteredFlights.length === 0" class="no-data">
+          <mat-icon>flight_takeoff</mat-icon>
+          <p>暂无航班数据</p>
+          <button mat-button color="primary" (click)="refreshData()">
+            <mat-icon>refresh</mat-icon>
+            刷新数据
+          </button>
+        </div>
+      </div>
+
+      <!-- 分页器 -->
+      <mat-paginator 
+        *ngIf="!loading && filteredFlights.length > 0"
+        [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageIndex]="currentPage"
+        [pageSizeOptions]="[5, 10, 20, 50]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

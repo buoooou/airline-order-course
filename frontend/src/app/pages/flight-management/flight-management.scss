@@ -1,0 +1,447 @@
+.flight-management-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 64px);
+}
+
+// 页面标题
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #1976d2;
+    }
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+}
+
+// 搜索卡片
+.search-card {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  mat-card-header {
+    padding-bottom: 16px;
+    
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      color: #333;
+      
+      mat-icon {
+        color: #1976d2;
+      }
+    }
+  }
+}
+
+// 搜索表单
+.search-form {
+  .search-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+    
+    mat-form-field {
+      width: 100%;
+    }
+  }
+  
+  .search-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 16px;
+    
+    button {
+      min-width: 100px;
+    }
+  }
+}
+
+// 航班列表卡片
+.flights-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  mat-card-header {
+    padding-bottom: 16px;
+    
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      color: #333;
+      
+      mat-icon {
+        color: #1976d2;
+      }
+      
+      .flight-count {
+        font-size: 14px;
+        color: #666;
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+// 加载状态
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  
+  mat-spinner {
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+// 表格容器
+.table-container {
+  overflow-x: auto;
+  
+  .flights-table {
+    width: 100%;
+    min-width: 800px;
+    
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    td {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 12px 8px;
+    }
+    
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+// 表格单元格样式
+.flight-number {
+  strong {
+    color: #1976d2;
+    font-size: 14px;
+  }
+}
+
+.route-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .airport {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .route-arrow {
+    font-size: 16px;
+    color: #666;
+  }
+}
+
+.time-info {
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.price-info {
+  font-weight: 600;
+  color: #2e7d32;
+  font-size: 14px;
+}
+
+.seats-info {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  
+  .available {
+    color: #2e7d32;
+    font-weight: 600;
+  }
+  
+  .separator {
+    color: #666;
+  }
+  
+  .total {
+    color: #666;
+  }
+}
+
+.status-chip {
+  font-size: 12px;
+  height: 24px;
+  
+  &.mat-mdc-chip {
+    --mdc-chip-label-text-size: 12px;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  
+  button {
+    width: 32px;
+    height: 32px;
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// 无数据状态
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #666;
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  p {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+  }
+}
+
+// 分页器样式
+mat-paginator {
+  margin-top: 16px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fafafa;
+}
+
+// 全局消息样式
+::ng-deep {
+  .success-snackbar {
+    background-color: #4caf50;
+    color: white;
+    
+    .mat-mdc-snack-bar-action {
+      color: white;
+    }
+  }
+  
+  .error-snackbar {
+    background-color: #f44336;
+    color: white;
+    
+    .mat-mdc-snack-bar-action {
+      color: white;
+    }
+  }
+  
+  .info-snackbar {
+    background-color: #2196f3;
+    color: white;
+    
+    .mat-mdc-snack-bar-action {
+      color: white;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 1200px) {
+  .flight-management-container {
+    padding: 16px;
+  }
+  
+  .search-form .search-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .flight-management-container {
+    padding: 12px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    
+    .header-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+  
+  .search-form {
+    .search-row {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    
+    .search-actions {
+      justify-content: center;
+      
+      button {
+        flex: 1;
+        max-width: 120px;
+      }
+    }
+  }
+  
+  .table-container {
+    .flights-table {
+      font-size: 12px;
+      
+      th, td {
+        padding: 8px 4px;
+      }
+    }
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 2px;
+    
+    button {
+      width: 28px;
+      height: 28px;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header .page-title {
+    font-size: 24px;
+    
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+  
+  .search-card mat-card-content {
+    padding: 12px;
+  }
+  
+  .flights-card mat-card-content {
+    padding: 12px;
+  }
+  
+  // 在小屏幕上隐藏部分列
+  .flights-table {
+    .mat-column-airline,
+    .mat-column-arrivalTime {
+      display: none;
+    }
+  }
+}
+
+// 表格行悬停效果
+.flights-table tr.mat-mdc-row:hover {
+  background-color: rgba(25, 118, 210, 0.04);
+  transition: background-color 0.2s ease;
+}
+
+// 状态芯片颜色自定义
+.status-chip {
+  &.mat-primary {
+    background-color: #1976d2;
+    color: white;
+  }
+  
+  &.mat-accent {
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  &.mat-warn {
+    background-color: #f44336;
+    color: white;
+  }
+}
+
+// 搜索表单字段图标
+mat-form-field {
+  .mat-mdc-form-field-icon-suffix {
+    color: #666;
+  }
+}
+
+// 按钮样式增强
+.header-actions button {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+  }
+}
+
+// 卡片阴影增强
+mat-card {
+  transition: box-shadow 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}

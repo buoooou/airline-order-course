@@ -157,15 +157,15 @@ public interface FlightInfoRepository extends JpaRepository<FlightInfo, Long> {
     List<FlightInfo> findByAircraftType(String aircraftType);
     
     /**
-     * 查找热门航线（按订单数量排序）
+     * 查找热门航线（按航班数量排序）
      * 用于数据分析功能
      * 
      * @param limit 返回数量限制
      * @return 热门航线的航班信息
      */
-    @Query("SELECT f FROM FlightInfo f JOIN f.order o " +
+    @Query("SELECT f FROM FlightInfo f " +
            "GROUP BY f.departureAirport, f.arrivalAirport " +
-           "ORDER BY COUNT(o) DESC")
+           "ORDER BY COUNT(f) DESC")
     List<FlightInfo> findPopularRoutes(@Param("limit") int limit);
     
     /**

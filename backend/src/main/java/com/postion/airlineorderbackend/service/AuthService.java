@@ -30,7 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class AuthService {
+public class AuthService implements IAuthService {
     
     private final AuthenticationManager authenticationManager;
     private final UserService userService;

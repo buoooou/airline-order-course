@@ -1,0 +1,223 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-button {
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  &.active-link {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.auth-actions {
+  .login-button, .register-button {
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+  
+  .register-button {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-color: rgba(76, 175, 80, 0.3);
+    
+    &:hover {
+      background-color: rgba(76, 175, 80, 0.2);
+      border-color: rgba(76, 175, 80, 0.5);
+    }
+  }
+}
+
+.user-menu {
+  .user-button {
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .username {
+      font-weight: 500;
+    }
+    
+    .user-role {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.2);
+      
+      &.admin-role {
+        background-color: #ff9800;
+        color: white;
+      }
+    }
+  }
+}
+
+// 用户下拉菜单样式
+::ng-deep .user-dropdown {
+  .mat-mdc-menu-content {
+    padding: 0;
+  }
+  
+  .user-info {
+    padding: 16px;
+    background-color: #f5f5f5;
+    
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      
+      strong {
+        font-size: 14px;
+        color: #333;
+      }
+      
+      small {
+        font-size: 12px;
+        color: #666;
+      }
+    }
+  }
+  
+  .mat-mdc-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    
+    mat-icon {
+      color: #666;
+    }
+    
+    &:hover {
+      background-color: #f0f0f0;
+    }
+    
+    &.logout-item {
+      color: #f44336;
+      
+      mat-icon {
+        color: #f44336;
+      }
+      
+      &:hover {
+        background-color: #ffebee;
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .navbar-content {
+    padding: 0 8px;
+  }
+  
+  .navbar-left {
+    gap: 16px;
+  }
+  
+  .app-title {
+    font-size: 16px;
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+  
+  .nav-links {
+    display: none; // 在小屏幕上隐藏导航链接，可以后续添加移动端菜单
+  }
+  
+  .user-button {
+    .username {
+      display: none; // 在小屏幕上隐藏用户名
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .app-title {
+    span {
+      display: none; // 在很小的屏幕上只显示图标
+    }
+  }
+}

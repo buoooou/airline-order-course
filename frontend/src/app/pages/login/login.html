@@ -1,0 +1,70 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>航空订单管理系统</mat-card-title>
+      <mat-card-subtitle>请登录您的账户</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form class="login-form" (ngSubmit)="onLogin()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>用户名</mat-label>
+          <input 
+            matInput 
+            type="text" 
+            [(ngModel)]="loginRequest.username"
+            name="username"
+            required
+            (keypress)="onKeyPress($event)"
+            [disabled]="isLoading">
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>密码</mat-label>
+          <input 
+            matInput 
+            type="password" 
+            [(ngModel)]="loginRequest.password"
+            name="password"
+            required
+            (keypress)="onKeyPress($event)"
+            [disabled]="isLoading">
+          <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+
+        <div class="login-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit"
+            class="login-button"
+            [disabled]="isLoading || !loginRequest.username || !loginRequest.password">
+            <mat-spinner *ngIf="isLoading" diameter="20" class="login-spinner"></mat-spinner>
+            <span *ngIf="!isLoading">登录</span>
+            <span *ngIf="isLoading">登录中...</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer class="login-footer">
+      <div class="register-link">
+        <span>还没有账号？</span>
+        <button 
+          mat-button 
+          color="primary" 
+          (click)="navigateToRegister()"
+          class="link-button">
+          立即注册
+        </button>
+      </div>
+      
+      <p class="demo-info">
+        <strong>演示账户：</strong><br>
+        管理员：admin / admin123<br>
+        普通用户：user / user123
+      </p>
+    </mat-card-footer>
+  </mat-card>
+</div>

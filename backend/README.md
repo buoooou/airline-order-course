@@ -10,6 +10,7 @@
 - **数据库**: MySQL 8.0
 - **ORM**: Spring Data JPA + Hibernate
 - **安全**: Spring Security + JWT
+- **定时任务**: Spring Scheduler + ShedLock 4.43.0
 - **文档**: Swagger/OpenAPI 3.0
 - **构建工具**: Maven 3.6+
 - **Java版本**: JDK 1.8+
@@ -37,7 +38,14 @@
 - 我的订单列表（分页）
 - 订单状态更新
 
-### 4. 状态机设计
+### 4. 定时任务管理系统
+- ShedLock分布式定时任务
+- 订单超时处理
+- 系统状态监控
+- 任务执行历史记录
+- 手动任务触发
+
+### 5. 状态机设计
 
 #### 订单状态流转
 ```
@@ -121,6 +129,17 @@ CREATE TABLE `orders_qiaozhe` (
 );
 ```
 
+#### ShedLock分布式锁表 (shedlock)
+```sql
+CREATE TABLE `shedlock` (
+  `name` varchar(64) NOT NULL COMMENT '锁名称',
+  `lock_until` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '锁定到期时间',
+  `locked_at` timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '锁定时间',
+  `locked_by` varchar(255) NOT NULL COMMENT '锁定者标识',
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='ShedLock分布式锁表';
+```
+
 ## 环境配置
 
 ### 数据库配置
@@ -140,6 +159,16 @@ jwt.expiration.ms=86400000
 
 # Swagger配置
 springdoc.swagger-ui.path=/swagger-ui.html
+
+# 定时任务配置
+app.order.payment-timeout-minutes=30
+app.order.ticketing-timeout-minutes=60
+app.order.ticketing-failed-timeout-hours=24
+app.scheduled.enabled=true
+
+# ShedLock配置
+app.shedlock.default-lock-at-most-for=10m
+app.shedlock.table-name=shedlock
 ```
 
 ## 快速开始
@@ -333,17 +362,63 @@ Content-Type: application/json
 }
 ```
 
+### 定时任务管理 API (需要ADMIN权限)
+
+#### 获取定时任务配置
+```http
+GET /api/admin/scheduled-tasks/config
+Authorization: Bearer <admin-jwt-token>
+```
+
+#### 获取系统健康状态
+```http
+GET /api/admin/scheduled-tasks/health
+Authorization: Bearer <admin-jwt-token>
+```
+
+#### 获取定时任务统计
+```http
+GET /api/admin/scheduled-tasks/statistics
+Authorization: Bearer <admin-jwt-token>
+```
+
+#### 手动触发取消超时待支付订单任务
+```http
+POST /api/admin/scheduled-tasks/cancel-timeout-payment-orders
+Authorization: Bearer <admin-jwt-token>
+```
+
+#### 手动触发处理超时出票订单任务
+```http
+POST /api/admin/scheduled-tasks/handle-timeout-ticketing-orders
+Authorization: Bearer <admin-jwt-token>
+```
+
+#### 手动触发取消长时间出票失败订单任务
+```http
+POST /api/admin/scheduled-tasks/cancel-long-time-failed-orders
+Authorization: Bearer <admin-jwt-token>
+```
+
+#### 手动触发每日维护任务
+```http
+POST /api/admin/scheduled-tasks/daily-maintenance
+Authorization: Bearer <admin-jwt-token>
+```
+
 ## 项目结构
 
 ```
 src/main/java/com/postion/airlineorderbackend/
 ├── config/                 # 配置类
 │   ├── SecurityConfig.java     # Spring Security配置
-│   └── JwtRequestFilter.java   # JWT请求过滤器
+│   ├── JwtRequestFilter.java   # JWT请求过滤器
+│   └── ShedLockConfig.java     # ShedLock分布式锁配置
 ├── controller/             # 控制器层
 │   ├── AuthController.java     # 认证控制器
 │   ├── FlightInfoController.java # 航班控制器
-│   └── OrderController.java    # 订单控制器
+│   ├── OrderController.java    # 订单控制器
+│   └── ScheduledTaskController.java # 定时任务管理控制器
 ├── dto/                    # 数据传输对象
 │   ├── AuthResponse.java       # 认证响应DTO
 │   ├── FlightInfoDTO.java      # 航班信息DTO
@@ -365,7 +440,8 @@ src/main/java/com/postion/airlineorderbackend/
 │   ├── AuthService.java       # 认证服务
 │   ├── UserService.java       # 用户服务
 │   ├── FlightInfoService.java # 航班服务
-│   └── OrderService.java      # 订单服务
+│   ├── OrderService.java      # 订单服务
+│   └── ScheduledTaskService.java # 定时任务服务
 ├── util/                   # 工具类
 │   └── JwtUtil.java           # JWT工具类
 └── AirlineOrderBackendApplication.java # 主启动类
@@ -427,6 +503,107 @@ public class NewFeatureService {
 1. 修改Entity类
 2. 在`src/main/resources/sql/`目录下创建迁移脚本
 3. 更新`application.properties`中的`spring.jpa.hibernate.ddl-auto`配置
+
+## ⏰ 定时任务管理
+
+### ShedLock分布式锁
+
+系统使用ShedLock确保在分布式环境中定时任务只在一个实例上执行，避免重复处理。
+
+#### 配置说明
+
+```java
+@Configuration
+@EnableScheduling
+@EnableSchedulerLock(defaultLockAtMostFor = "10m")
+public class ShedLockConfig {
+    
+    @Bean
+    public LockProvider lockProvider(DataSource dataSource) {
+        return new JdbcTemplateLockProvider(
+            JdbcTemplateLockProvider.Configuration.builder()
+                .withJdbcTemplate(new JdbcTemplate(dataSource))
+                .withTableName("shedlock")
+                .build()
+        );
+    }
+}
+```
+
+### 定时任务类型
+
+#### 1. 取消超时待支付订单
+- **执行频率**: 每5分钟执行一次
+- **超时时间**: 30分钟
+- **处理逻辑**: 将状态为`PENDING_PAYMENT`且创建时间超过30分钟的订单标记为`CANCELLED`
+
+```java
+@Scheduled(fixedRate = 300000) // 5分钟
+@SchedulerLock(name = "cancelTimeoutPaymentOrders", lockAtMostFor = "4m", lockAtLeastFor = "1m")
+public void cancelTimeoutPaymentOrders() {
+    // 实现逻辑
+}
+```
+
+#### 2. 处理超时出票订单
+- **执行频率**: 每10分钟执行一次
+- **超时时间**: 60分钟
+- **处理逻辑**: 将状态为`TICKETING_IN_PROGRESS`且超过60分钟的订单标记为`TICKETING_FAILED`
+
+#### 3. 取消长时间出票失败订单
+- **执行频率**: 每小时执行一次
+- **超时时间**: 24小时
+- **处理逻辑**: 将状态为`TICKETING_FAILED`且超过24小时的订单标记为`CANCELLED`
+
+#### 4. 每日维护任务
+- **执行频率**: 每天凌晨2点执行
+- **处理逻辑**: 清理过期数据、更新统计信息等维护操作
+
+### 手动任务触发
+
+系统提供管理员接口，支持手动触发各类定时任务：
+
+```java
+@RestController
+@RequestMapping("/api/admin/scheduled-tasks")
+public class ScheduledTaskController {
+    
+    @PostMapping("/cancel-timeout-payment-orders")
+    public ApiResponse<Map<String, Object>> manualCancelTimeoutPaymentOrders() {
+        scheduledTaskService.cancelTimeoutPaymentOrders();
+        return ApiResponse.success("任务执行成功");
+    }
+}
+```
+
+### 监控和统计
+
+#### 系统健康状态
+- 定时任务启用状态
+- 数据库连接状态
+- ShedLock服务状态
+- 系统运行状态
+
+#### 任务执行统计
+- 各状态订单数量统计
+- 任务执行历史记录
+- 系统配置参数展示
+
+### 配置参数
+
+```properties
+# 订单超时配置
+app.order.payment-timeout-minutes=30        # 待支付订单超时时间（分钟）
+app.order.ticketing-timeout-minutes=60      # 出票中订单超时时间（分钟）
+app.order.ticketing-failed-timeout-hours=24 # 出票失败订单自动取消时间（小时）
+
+# 定时任务开关
+app.scheduled.enabled=true                   # 定时任务总开关
+
+# ShedLock配置
+app.shedlock.default-lock-at-most-for=10m    # 默认最长锁定时间
+app.shedlock.table-name=shedlock             # 锁表名称
+```
 
 ### 安全配置
 
@@ -574,6 +751,15 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--logging.level.org.springframe
 - ✅ 添加Swagger文档
 - ✅ 完善错误处理机制
 - ✅ 实现状态机管理
+
+### v1.1.0 (2025-08-05)
+- ✅ 集成ShedLock分布式定时任务
+- ✅ 实现订单超时自动处理
+- ✅ 添加定时任务管理API
+- ✅ 实现系统状态监控
+- ✅ 支持手动任务触发
+- ✅ 完善任务执行统计
+- ✅ 优化订单状态流转
 
 ---
 

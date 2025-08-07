@@ -1,0 +1,267 @@
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.register-card-wrapper {
+  width: 100%;
+  max-width: 480px;
+}
+
+.register-card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.register-avatar {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+mat-card-header {
+  padding: 24px 24px 16px 24px;
+  
+  mat-card-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+  }
+  
+  mat-card-subtitle {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+  }
+}
+
+mat-card-content {
+  padding: 0 24px 16px 24px;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-form-field {
+  .mat-mdc-form-field-subscript-wrapper {
+    margin-top: 4px;
+  }
+  
+  .mat-mdc-form-field-hint-wrapper {
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .mat-mdc-form-field-error-wrapper {
+    font-size: 12px;
+    color: #f44336;
+  }
+}
+
+.register-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.register-button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  position: relative;
+  
+  .button-spinner {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+  
+  &:disabled {
+    background-color: #e0e0e0;
+    color: #9e9e9e;
+  }
+}
+
+.card-actions {
+  padding: 16px 24px 24px 24px;
+  justify-content: center;
+}
+
+.login-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #666;
+  
+  .link-button {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 8px;
+    min-width: auto;
+    
+    &:hover {
+      background-color: rgba(25, 118, 210, 0.04);
+    }
+  }
+}
+
+// 表单验证状态样式
+.mat-mdc-form-field.mat-form-field-invalid {
+  .mat-mdc-text-field-wrapper {
+    .mat-mdc-form-field-flex {
+      .mat-mdc-form-field-outline {
+        .mat-mdc-form-field-outline-thick {
+          border-color: #f44336;
+        }
+      }
+    }
+  }
+}
+
+// 成功和错误消息样式
+::ng-deep {
+  .success-snackbar {
+    background-color: #4caf50;
+    color: white;
+    
+    .mat-mdc-snack-bar-action {
+      color: white;
+    }
+  }
+  
+  .error-snackbar {
+    background-color: #f44336;
+    color: white;
+    
+    .mat-mdc-snack-bar-action {
+      color: white;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 600px) {
+  .register-container {
+    padding: 16px;
+  }
+  
+  .register-card-wrapper {
+    max-width: 100%;
+  }
+  
+  mat-card-header {
+    padding: 20px 20px 12px 20px;
+    
+    mat-card-title {
+      font-size: 20px;
+    }
+    
+    mat-card-subtitle {
+      font-size: 13px;
+    }
+  }
+  
+  mat-card-content {
+    padding: 0 20px 12px 20px;
+  }
+  
+  .card-actions {
+    padding: 12px 20px 20px 20px;
+  }
+  
+  .register-form {
+    gap: 12px;
+  }
+  
+  .register-button {
+    height: 44px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-container {
+    padding: 12px;
+  }
+  
+  mat-card-header {
+    padding: 16px 16px 8px 16px;
+    
+    mat-card-title {
+      font-size: 18px;
+    }
+  }
+  
+  mat-card-content {
+    padding: 0 16px 8px 16px;
+  }
+  
+  .card-actions {
+    padding: 8px 16px 16px 16px;
+  }
+}
+
+// 加载状态动画
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.button-spinner {
+  animation: spin 1s linear infinite;
+}
+
+// 输入框聚焦效果
+mat-form-field.mat-focused {
+  .mat-mdc-form-field-outline {
+    .mat-mdc-form-field-outline-thick {
+      border-color: #1976d2;
+      border-width: 2px;
+    }
+  }
+}
+
+// 密码可见性按钮样式
+.mat-mdc-form-field-suffix {
+  .mat-mdc-icon-button {
+    width: 40px;
+    height: 40px;
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
