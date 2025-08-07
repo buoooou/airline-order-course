@@ -1,21 +1,27 @@
 package com.postion.airlineorderbackend.controller;
 
+
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/orders/{id}")
 @RequiredArgsConstructor
 public class OrderActionController {
+
     private final OrderService orderService;
 
-    public OrderActionController(OrderService orderService) {
-        this.orderService = orderService;
-    }
-
+    /**
+     * pay
+     *
+     * @param id
+     */
     @PostMapping("/pay")
     public ResponseEntity<OrderDto> pay(@PathVariable Long id) {
         try {
@@ -25,6 +31,11 @@ public class OrderActionController {
         }
     }
 
+    /**
+     * cancel
+     *
+     * @param id
+     */
     @PostMapping("/cancel")
     public ResponseEntity<OrderDto> cancel(@PathVariable Long id) {
         try {
@@ -34,9 +45,14 @@ public class OrderActionController {
         }
     }
 
+    /**
+     * retryTicketing
+     *
+     * @param id
+     */
     @PostMapping("/retry-ticketing")
     public ResponseEntity<Void> retryTicketing(@PathVariable Long id) {
-        // 直接调用降伤方法，立即返回 202 Accepted
+        // 直接调用异步方法，立即返回202 Accepted
         orderService.requestTicketIssuance(id);
         return ResponseEntity.accepted().build();
     }

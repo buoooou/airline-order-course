@@ -14,7 +14,7 @@ public class OrderDto {
     private BigDecimal amount;
     private LocalDateTime creationDate;
     private UserDto user;
-    private Map<String, Object> flightInfo; // 用于存储航班信息
+    private Map<String, Object> flightInfo;
 
     @Data
     public static class UserDto {
