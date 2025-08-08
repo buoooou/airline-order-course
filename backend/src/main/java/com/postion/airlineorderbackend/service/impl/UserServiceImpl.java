@@ -1,17 +1,12 @@
 package com.postion.airlineorderbackend.service.impl;
 
-import com.postion.airlineorderbackend.model.User;
-import com.postion.airlineorderbackend.repo.*;
-import com.postion.airlineorderbackend.service.UserService;
 import com.postion.airlineorderbackend.exception.BusinessException;
+import com.postion.airlineorderbackend.model.User;
+import com.postion.airlineorderbackend.repo.UserRepository;
+import com.postion.airlineorderbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-/**
- * 用户服务实现类
- */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -20,42 +15,56 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new BusinessException("USERNAME_REQUIRED", "用户名不能为空");
+        }
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new BusinessException("USER_NOT_FOUND", "用户不存在: " + username));
     }
 
     @Override
     public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return findByUsername(username);
+        throw new BusinessException("NOT_IMPLEMENTED", "请通过安全上下文实现获取当前用户逻辑");
     }
 
     @Override
     public User findById(Long id) {
+        if (id == null) {
+            throw new BusinessException("USER_ID_REQUIRED", "用户ID不能为空");
+        }
         return userRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("USER_NOT_FOUND", "用户ID不存在: " + id));
     }
 
     @Override
     public User createUser(User user) {
-        // 验证用户名是否已存在
+        if (user == null) {
+            throw new BusinessException("USER_REQUIRED", "用户信息不能为空");
+        }
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            throw new BusinessException("USERNAME_REQUIRED", "用户名不能为空");
+        }
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new BusinessException("USERNAME_EXISTS", "用户名已被占用");
         }
-
         return userRepository.save(user);
     }
 
     @Override
     public User updateUser(User user) {
-        // 确认用户存在
+        if (user == null || user.getId() == null) {
+            throw new BusinessException("USER_ID_REQUIRED", "用户ID不能为空");
+        }
         findById(user.getId());
         return userRepository.save(user);
     }
 
     @Override
     public void deleteUser(Long id) {
+        if (id == null) {
+            throw new BusinessException("USER_ID_REQUIRED", "用户ID不能为空");
+        }
+        findById(id);
         userRepository.deleteById(id);
     }
 } 
