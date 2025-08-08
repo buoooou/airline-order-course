@@ -116,9 +116,19 @@ CREATE TABLE IF NOT EXISTS `state_machine_transition` (
   PRIMARY KEY (`machine_id`, `source_state`, `target_state`, `event`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 步骤 6: 创建 ShedLock 分布式锁表结构
+-- 用于支持分布式定时任务调度
+CREATE TABLE IF NOT EXISTS `shedlock` (
+  `name` VARCHAR(64) NOT NULL,
+  `lock_until` TIMESTAMP(3) NULL,
+  `locked_at` TIMESTAMP(3) NULL,
+  `locked_by` VARCHAR(255) NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 打印成功信息
 SELECT '数据库和测试数据初始化成功！' AS '状态';
 SELECT COUNT(*) AS '用户总数' FROM `app_users`;
 SELECT COUNT(*) AS '航班总数' FROM `flight_info`;
-SELECT COUNT(*) AS '订单总数' FROM `orders';
+SELECT COUNT(*) AS '订单总数' FROM `orders`;
 SELECT status, COUNT(*) AS '订单数量' FROM `orders` GROUP BY status;

@@ -2,6 +2,7 @@ package com.postion.airlineorderbackend.statemachine;
 
 import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.repository.OrderRepository;
+import com.postion.airlineorderbackend.service.OrderStateHistoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -39,6 +40,7 @@ public class OrderStateMachineService {
     private final StateMachinePersister<OrderState, OrderEvent, String> stateMachinePersister;
     private final OrderRepository orderRepository;
     private final JpaStateMachineRepository jpaStateMachineRepository;
+    private final OrderStateHistoryService orderStateHistoryService;
 
     // 缓存状态机实例
     private final ConcurrentHashMap<String, StateMachine<OrderState, OrderEvent>> stateMachineCache = new ConcurrentHashMap<>();
@@ -88,33 +90,50 @@ public class OrderStateMachineService {
             String userRole) {
         log.info("开始状态转换: 订单={}, 事件={}, 用户={}, 用户角色={}", orderId, event, userId, userRole);
 
-        try {
-            String machineId = OrderStateMachineIdGenerator.generateMachineId(orderId);
+        String machineId = OrderStateMachineIdGenerator.generateMachineId(orderId);
+        OrderState currentDbState = null;
+        OrderState newState = null;
+        String errorMessage = null;
+        boolean success = false;
 
+        try {
             // 1. 预先检查订单状态和权限
             Order order = orderRepository.findById(orderId).orElse(null);
             if (order == null) {
-                log.error("订单不存在: {}", orderId);
+                errorMessage = "订单不存在: " + orderId;
+                log.error(errorMessage);
+                recordStateTransition(orderId, null, null, null, event.name(), 
+                        String.valueOf(userId), userRole, false, errorMessage, String.valueOf(message));
                 return false;
             }
 
-            OrderState currentDbState = OrderState.valueOf(order.getStatus());
+            currentDbState = OrderState.valueOf(order.getStatus());
             log.debug("数据库当前状态: 订单={}, 状态={}", orderId, currentDbState);
 
             // 2. 验证转换合法性
             if (!isValidTransition(currentDbState, event)) {
-                log.error("非法状态转换: 订单={}, 当前状态={}, 事件={}", orderId, currentDbState, event);
+                errorMessage = String.format("非法状态转换: 订单=%d, 当前状态=%s, 事件=%s", 
+                        orderId, currentDbState, event);
+                log.error(errorMessage);
+                recordStateTransition(orderId, order.getOrderNumber(), currentDbState.name(), 
+                        null, event.name(), String.valueOf(userId), userRole, false, 
+                        errorMessage, String.valueOf(message));
                 return false;
             }
 
             // 3. 验证权限
             if (!"admin".equalsIgnoreCase(userRole) && !userId.equals(order.getUserId())) {
-                log.error("权限不足: 订单={}, 用户={}, 用户角色={}, 订单所有者={}",
+                errorMessage = String.format("权限不足: 订单=%d, 用户=%d, 用户角色=%s, 订单所有者=%d",
                         orderId, userId, userRole, order.getUserId());
+                log.error(errorMessage);
+                recordStateTransition(orderId, order.getOrderNumber(), currentDbState.name(), 
+                        null, event.name(), String.valueOf(userId), userRole, false, 
+                        errorMessage, String.valueOf(message));
                 return false;
             }
 
             StateMachine<OrderState, OrderEvent> stateMachine = getStateMachine(machineId, orderId);
+            newState = stateMachine.getState().getId();
 
             // 创建状态上下文
             OrderStateContext context = new OrderStateContext();
@@ -138,25 +157,43 @@ public class OrderStateMachineService {
                 try {
                     // 持久化状态机状态 - 只在状态实际发生变化时执行
                     stateMachinePersister.persist(stateMachine, machineId);
-
-                    // 状态更新由OrderStateActionHandler处理，这里只记录日志
-                    OrderState newState = stateMachine.getState().getId();
+                    newState = stateMachine.getState().getId();
+                    
                     log.info("状态转换成功: 订单={}, 事件={}, 旧状态={}, 新状态={}, 用户={}",
                             orderId, event, currentDbState, newState, userId);
+                    
+                    recordStateTransition(orderId, order.getOrderNumber(), currentDbState.name(), 
+                            newState.name(), event.name(), String.valueOf(userId), userRole, 
+                            true, null, String.valueOf(message));
+                    success = true;
+                    return true;
                 } catch (Exception e) {
-                    // 如果持久化失败，记录警告但不中断流程
+                    errorMessage = "状态机持久化失败: " + e.getMessage();
                     log.warn("状态机持久化失败，但状态转换成功: 订单={}, 事件={}, 错误: {}",
                             orderId, event, e.getMessage());
+                    recordStateTransition(orderId, order.getOrderNumber(), currentDbState.name(), 
+                            newState.name(), event.name(), String.valueOf(userId), userRole, 
+                            true, errorMessage, String.valueOf(message));
+                    return true;
                 }
             } else {
+                errorMessage = "状态转换失败: 状态机拒绝事件";
                 log.warn("状态转换失败: 订单={}, 事件={}, 当前状态={}, 用户={}",
                         orderId, event, stateMachine.getState().getId(), userId);
+                recordStateTransition(orderId, order.getOrderNumber(), currentDbState.name(), 
+                        null, event.name(), String.valueOf(userId), userRole, false, 
+                        errorMessage, String.valueOf(message));
+                return false;
             }
 
-            return result;
-
         } catch (Exception e) {
+            errorMessage = "状态转换异常: " + e.getMessage();
             log.error("状态转换异常: 订单={}, 事件={}, 用户={}, 错误: {}", orderId, event, userId, e.getMessage(), e);
+            recordStateTransition(orderId, null, 
+                    currentDbState != null ? currentDbState.name() : null, 
+                    newState != null ? newState.name() : null, 
+                    event.name(), String.valueOf(userId), userRole, false, 
+                    errorMessage, String.valueOf(message));
             throw new RuntimeException("状态转换失败: " + e.getMessage(), e);
         }
     }
@@ -336,6 +373,34 @@ public class OrderStateMachineService {
                 return false; // 终止状态，不允许任何转换
             default:
                 return false;
+        }
+    }
+
+    /**
+     * 记录状态转换历史
+     * 
+     * @param orderId 订单ID
+     * @param orderNumber 订单号
+     * @param fromState 源状态
+     * @param toState 目标状态
+     * @param event 事件名称
+     * @param operator 操作人
+     * @param operatorRole 操作人角色
+     * @param success 是否成功
+     * @param errorMessage 错误信息
+     * @param requestData 请求数据
+     */
+    private void recordStateTransition(Long orderId, String orderNumber, String fromState, 
+                                     String toState, String event, String operator, 
+                                     String operatorRole, boolean success, String errorMessage, 
+                                     String requestData) {
+        try {
+            orderStateHistoryService.recordStateTransition(
+                    orderId, orderNumber, fromState, toState, event, 
+                    operator, operatorRole, success, errorMessage, requestData);
+        } catch (Exception e) {
+            log.error("记录状态转换历史失败: {}", e.getMessage(), e);
+            // 不影响主业务流程
         }
     }
 
