@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.postion.airlineorderbackend.auth.AuthUtil;
 import com.postion.airlineorderbackend.dto.CommonResponseDto;
-import com.postion.airlineorderbackend.dto.OrderResponseDTO;
 import com.postion.airlineorderbackend.dto.RequestDto;
 import com.postion.airlineorderbackend.dto.UserDto;
 import com.postion.airlineorderbackend.entity.OrderStatus;
