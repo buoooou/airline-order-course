@@ -78,7 +78,7 @@ public class OrderStateMachineUtil {
         }
 
         return Arrays.stream(OrderState.values())
-                .filter(state -> isValidTransition(currentState, state))
+                .filter(state -> isValidStateToStateTransition(currentState, state))
                 .map(state -> Map.of(
                         "code", state.name(),
                         "description", state.getDescription(),
@@ -102,9 +102,15 @@ public class OrderStateMachineUtil {
     }
 
     /**
-     * 验证状态转换是否有效
+     * 验证状态到状态的直接转换是否有效
+     * 
+     * 用于获取订单在当前状态下可以转换到的所有可能状态
+     * 
+     * @param from 源状态
+     * @param to 目标状态
+     * @return true 转换有效，false 转换无效
      */
-    private boolean isValidTransition(OrderState from, OrderState to) {
+    private boolean isValidStateToStateTransition(OrderState from, OrderState to) {
         // 基于状态机配置验证转换
         switch (from) {
             case PENDING_PAYMENT:

@@ -11,7 +11,8 @@ import com.postion.airlineorderbackend.statemachine.OrderStateMachineUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +26,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/orders/state")
 @RequiredArgsConstructor
-@Slf4j
 public class OrderStateController {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderStateController.class);
 
     private final OrderStateMachineService stateMachineService;
     private final OrderStateMachineUtil stateMachineUtil;
@@ -73,6 +75,7 @@ public class OrderStateController {
     public ResponseEntity<ApiResponse<Map<String, Object>>> triggerStateTransition(
             @PathVariable Long orderId,
             @RequestBody StateTransitionRequest request) {
+        log.info("触发状态转换: 订单={}, 事件={}", orderId, request.event());
         try {
             // 验证事件参数
             if (request.event() == null || request.event().trim().isEmpty()) {

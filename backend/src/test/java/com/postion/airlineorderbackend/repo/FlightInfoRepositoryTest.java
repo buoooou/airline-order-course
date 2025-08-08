@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import com.postion.airlineorderbackend.entity.AppUser;
 import com.postion.airlineorderbackend.entity.FlightInfo;
 import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.statemachine.OrderState;
@@ -34,8 +35,14 @@ public class FlightInfoRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        // 1. 创建并保存 FlightInfo 和关联的 Orders
-        // 初始化测试数据
+        // 1. 创建并保存测试用户
+        AppUser testUser = new AppUser();
+        testUser.setUsername("testUser");
+        testUser.setPassword("testPassword");
+        testUser.setRole("USER");
+        entityManager.persist(testUser);
+
+        // 2. 创建并保存 FlightInfo
         testFlightInfo = new FlightInfo();
         testFlightInfo.setArrivalCity("Shanghai");
         testFlightInfo.setDepartureCity("Beijing");
@@ -43,14 +50,14 @@ public class FlightInfoRepositoryTest {
         testFlightInfo.setDepartureTime(LocalDateTime.now());
 
         entityManager.persist(testFlightInfo);
-        // entityManager.flush();
 
+        // 3. 创建并保存关联的 Order
         testOrder = new Order();
         testOrder.setOrderNumber("ORD456");
         testOrder.setStatus(OrderState.PAID.name());
         testOrder.setAmount(new BigDecimal("99.99"));
         testOrder.setCreationDate(LocalDateTime.now());
-        testOrder.setUserId(1L);
+        testOrder.setUserId(testUser.getId());
         testOrder.setFlightId(testFlightInfo.getId());
         testOrder.setFlightInfo(testFlightInfo);
         testFlightInfo.setOrder(testOrder);

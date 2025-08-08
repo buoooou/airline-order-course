@@ -56,27 +56,28 @@ public class GlobalExceptionHandler {
     /**
      * 处理参数校验异常
      * 
-     * @param e 参数校验异常
+     * @param e       参数校验异常
      * @param request HTTP请求
      * @return 错误响应
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<?>> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<?>> handleValidationException(MethodArgumentNotValidException e,
+            HttpServletRequest request) {
         log.error("参数校验异常 - 路径: {}", request.getRequestURI(), e);
-        
+
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        
+
         // 将错误信息Map转换为字符串消息
         StringBuilder errorMessage = new StringBuilder(Constants.ErrorMessage.VALIDATION_FAILED + ": ");
         errors.forEach((field, message) -> {
             errorMessage.append("[").append(field).append(": ").append(message).append("] ");
         });
-        
+
         return errorResponseEntity(errorMessage.toString().trim(), HttpStatus.BAD_REQUEST);
     }
 
@@ -104,6 +105,36 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("非法参数异常", e);
         return errorResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 处理运行时异常
+     * 
+     * @param ex 运行时异常
+     * @return 错误响应
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<?>> handleRuntimeException(RuntimeException ex) {
+        if (ex.getMessage() != null && ex.getMessage().contains("状态转换")) {
+            return errorResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return errorResponseEntity("系统内部错误: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * 处理事务系统异常
+     * 
+     * @param ex 事务系统异常
+     * @return 错误响应
+     */
+    @ExceptionHandler(org.springframework.transaction.TransactionSystemException.class)
+    public ResponseEntity<ApiResponse<?>> handleTransactionSystemException(
+            org.springframework.transaction.TransactionSystemException ex) {
+        Throwable rootCause = ex.getRootCause();
+        if (rootCause != null) {
+            return errorResponseEntity("事务异常: " + rootCause.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return errorResponseEntity("事务处理异常", HttpStatus.BAD_REQUEST);
     }
 
     /**

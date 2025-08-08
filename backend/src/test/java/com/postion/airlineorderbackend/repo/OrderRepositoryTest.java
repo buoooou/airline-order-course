@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import com.postion.airlineorderbackend.entity.AppUser;
 import com.postion.airlineorderbackend.entity.FlightInfo;
 import com.postion.airlineorderbackend.entity.Order;
 import com.postion.airlineorderbackend.statemachine.OrderState;
@@ -33,6 +34,13 @@ public class OrderRepositoryTest {
 
     @BeforeEach
     public void setUp() {
+        // 初始化 AppUser
+        AppUser testUser = new AppUser();
+        testUser.setUsername("testUser");
+        testUser.setPassword("testPassword");
+        testUser.setRole("USER");
+        entityManager.persist(testUser);
+
         // 初始化 FlightInfo
         testFlightInfo = new FlightInfo();
         testFlightInfo.setArrivalCity("Shanghai");
@@ -47,7 +55,7 @@ public class OrderRepositoryTest {
         testOrder.setStatus(OrderState.PAID.name());
         testOrder.setAmount(new BigDecimal("99.99"));
         testOrder.setCreationDate(LocalDateTime.now());
-        testOrder.setUserId(1L);
+        testOrder.setUserId(testUser.getId());
         testOrder.setFlightId(testFlightInfo.getId());
         testOrder.setFlightInfo(testFlightInfo);
         testFlightInfo.setOrder(testOrder);
@@ -58,7 +66,7 @@ public class OrderRepositoryTest {
 
     @AfterEach
     public void tearDown() {
-        // 清理测试数据
+        // 清理测试数据 - 使用级联删除，无需手动清理用户
         entityManager.remove(testOrder);
         entityManager.remove(testFlightInfo);
         entityManager.flush();

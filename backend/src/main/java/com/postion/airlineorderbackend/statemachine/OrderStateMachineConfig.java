@@ -13,7 +13,11 @@ import java.util.EnumSet;
 
 /**
  * 订单状态机配置
- * 定义状态机的状态、转换规则和行为
+ * 定义订单生命周期的状态、转换规则和行为
+ * 
+ * 持久化策略说明：
+ * - 生产环境：使用JPA持久化（OrderStateMachinePersisterConfig）
+ * - 测试/开发环境：使用内存持久化（MemoryStateMachinePersisterConfig）
  */
 @Configuration
 @EnableStateMachineFactory(name = "orderStateMachineFactory")

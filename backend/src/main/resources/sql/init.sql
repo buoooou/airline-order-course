@@ -87,8 +87,38 @@ INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user
 ('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, 2, 2);
 
 
+-- 步骤 5: 创建 Spring StateMachine JPA 表结构 (如果Spring Boot没有自动创建)
+-- 这些表由Spring StateMachine自动使用，但预先创建可以避免ID生成问题
+
+-- 状态机持久化表
+CREATE TABLE IF NOT EXISTS `state_machine` (
+  `id` VARCHAR(255) NOT NULL,
+  `state_machine_context` LONGBLOB,
+  `lock_time` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 状态表 (Spring StateMachine内部使用)
+CREATE TABLE IF NOT EXISTS `state_machine_state` (
+  `machine_id` VARCHAR(255) NOT NULL,
+  `state` VARCHAR(255) NOT NULL,
+  `state_machine_context` LONGBLOB,
+  PRIMARY KEY (`machine_id`, `state`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 转换表 (Spring StateMachine内部使用)
+CREATE TABLE IF NOT EXISTS `state_machine_transition` (
+  `machine_id` VARCHAR(255) NOT NULL,
+  `source_state` VARCHAR(255) NOT NULL,
+  `target_state` VARCHAR(255) NOT NULL,
+  `event` VARCHAR(255) DEFAULT NULL,
+  `transition_context` LONGBLOB,
+  PRIMARY KEY (`machine_id`, `source_state`, `target_state`, `event`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 打印成功信息
 SELECT '数据库和测试数据初始化成功！' AS '状态';
 SELECT COUNT(*) AS '用户总数' FROM `app_users`;
 SELECT COUNT(*) AS '航班总数' FROM `flight_info`;
+SELECT COUNT(*) AS '订单总数' FROM `orders';
 SELECT status, COUNT(*) AS '订单数量' FROM `orders` GROUP BY status;
