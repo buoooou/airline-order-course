@@ -4,10 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 @Schema(description = "错误信息")
 public class ErrorResponse {
 	@Schema(description = "HTTP 状态码", example = "400")

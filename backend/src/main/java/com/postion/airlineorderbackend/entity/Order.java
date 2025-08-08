@@ -6,10 +6,11 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.postion.airlineorderbackend.enums.OrderStatus;
+
 @Entity
 @Table(name = "orders")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,8 +23,9 @@ public class Order {
     @Column(name = "order_number", nullable = false, unique = true, length = 100)
     private String orderNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String status;
+    private OrderStatus status;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;

@@ -12,5 +12,6 @@ public interface OrderService {
     Optional<OrderDTO> getOrderById(Long id);
     OrderDTO createOrder(CreateOrderRequest request);
     Optional<OrderDTO> updateOrder(Long id, UpdateOrderRequest request);
+    void cancelUnpaidOrders();
 
 }
