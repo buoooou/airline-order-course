@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.position.airline_order_course.dto.OrderDto;
 import com.position.airline_order_course.service.OrderService;
 
+/*
+ * 航空订单Controller
+ */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/order")
 public class OrderController {
 
     @Autowired

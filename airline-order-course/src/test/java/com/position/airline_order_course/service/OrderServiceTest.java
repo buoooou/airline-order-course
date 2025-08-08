@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.position.airline_order_course.dto.OrderDto;
 import com.position.airline_order_course.model.Order;
 import com.position.airline_order_course.repo.OrderRepository;
+import com.position.airline_order_course.service.Impl.OrderServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
@@ -27,7 +28,7 @@ public class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @InjectMocks
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
 
     private Order order1;
     private Order order2;

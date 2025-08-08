@@ -8,6 +8,9 @@ import org.mapstruct.factory.Mappers;
 import com.position.airline_order_course.dto.OrderDto;
 import com.position.airline_order_course.model.Order;
 
+/*
+ * Order实体对象转Dto
+ */
 @Mapper
 public interface OrderMapper {
 

@@ -1,6 +1,8 @@
 package com.position.airline_order_course.dto;
 
-// 枚举类型定义
+/*
+ * 订单状态（枚举类型定义）
+ */
 public enum OrderStatus {
     PENDING_PAYMENT,
     PAID,

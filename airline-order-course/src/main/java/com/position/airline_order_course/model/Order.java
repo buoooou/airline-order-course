@@ -17,6 +17,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+/*
+ * orders表对应的实体类
+ */
 @Entity
 @Table(name = "orders")
 @Data
