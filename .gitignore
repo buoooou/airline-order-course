@@ -1,1 +1,9 @@
 /.idea/
+/.vscode/
+/backend/target/
+/backend/env.sh
+/frontend/.env
+/frontend/node_modules/
+/frontend/.vscode/
+.env
+.DS_STORE
