@@ -41,12 +41,12 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
     }
     
-    public LoginResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {    	 
     	User user = userRepository.findByUsername(request.getUsername())
-    			.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login.invalid"));
+    			.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login.invalid: the user is not exist:"+request.getUsername()));
     	
     	if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-    		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login.invalid");
+    		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login.invalid: password is not correct.");
     	}
     	
     	String token = jwtTokenProvider.generateToken(user);
