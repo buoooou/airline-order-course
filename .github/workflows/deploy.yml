@@ -46,7 +46,7 @@ jobs:
     - name: Copy frontend build to backend
       run: |
         mkdir -p backend/target/frontend
-        cp -r frontend/dist/airline-order-frontend/* backend/target/frontend/
+        cp -r frontend/dist/airline-order-frontend/browser/* backend/target/frontend/
 
     - name: Build backend
       run: |
@@ -111,6 +111,12 @@ jobs:
           sudo systemctl start airline-order
           sudo systemctl enable airline-order
           
-          # Check service status
-          sleep 5
-          sudo systemctl is-active airline-order
+          # Debugging info
+          echo "=== Service Status ==="
+          sudo systemctl status airline-order --no-pager || true
+          echo "=== Service Logs ==="
+          sudo journalctl -u airline-order --no-pager -l --since "1 minute ago" || true
+          echo "=== Directory Contents ==="
+          ls -la /opt/airline-order/
+          echo "=== Java Version ==="
+          java -version
