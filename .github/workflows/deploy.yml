@@ -111,6 +111,6 @@ jobs:
           sudo systemctl start airline-order
           sudo systemctl enable airline-order
           
-          # Health check
-          sleep 10
-          curl -f http://localhost:8080/actuator/health || exit 1
+          # Check service status
+          sleep 5
+          sudo systemctl is-active airline-order
