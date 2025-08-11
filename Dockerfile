@@ -16,7 +16,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # --- 阶段 2: 构建 Spring Boot 后端 ---
-FROM maven:3.8.5-openjdk-8 AS backend-builder
+FROM maven:3.8.5-openjdk-17 AS backend-builder
 WORKDIR /app
 # 缓存 Maven 依赖
 COPY backend/pom.xml .
