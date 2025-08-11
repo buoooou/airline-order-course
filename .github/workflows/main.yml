@@ -12,7 +12,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Login to Docker Hub;${{ secrets.ec2-xyl.DOCKERHUB_USERNAME }};${{ secrets.ec2-xyl.DOCKERHUB_TOKEN }};
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -28,7 +28,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-manage:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-manage:${{ github.sha }}
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2;${{ secrets.EC2_HOST }};${{ secrets.EC2_USERNAME }};
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -36,6 +36,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/airline-cicd
+            echo ${{ secrets.EC2_HOST }}
+            echo ${{ secrets.EC2_USERNAME }}
+            echo ${{ secrets.SSH_PRIVATE_KEY }}
             docker-compose pull
             docker-compose up -d --remove-orphans
             docker image prune -f
