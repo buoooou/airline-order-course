@@ -51,6 +51,8 @@ sudo systemctl enable nginx
 sudo ufw allow ssh
 sudo ufw allow 80
 sudo ufw allow 443
+sudo ufw allow 4200
+sudo ufw allow 8080
 sudo ufw --force enable
 
 echo "EC2 setup completed successfully!"
