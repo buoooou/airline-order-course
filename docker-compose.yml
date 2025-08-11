@@ -1,0 +1,36 @@
+service:
+    database:
+        image: "mysql:8.0"
+        container_name: "aireline-mysql-db"
+        restart: always
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: "airlineTest1234"
+            MYSQL_DATABASE: "myappdb"
+            MYSQL_USER: "myappuser"
+            MYSQL_PASSWORD: "airelineTest1234"
+        volumes:
+            - ./db-data:/var/lib/mysql
+        networks:
+            - aireline-network
+    app:
+        image: "aire-line-source:latest"
+        container_name: "my-aireline-app"
+        restart: always
+        ports:
+            - 8080:8080
+        depends_on:
+            - database
+        environment:
+            - SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/myappdb?useSSL=false&allowPublicKeyRetrieval=true
+            - SPRING_DATASOURCE_USERNAME: myappuser
+            - SPRING_DATASOURCE_PASSWORD: airelineTest1234
+        networks:
+            - aireline-network
+
+volumes:
+    db-data:
+
+networks:
+    aireline-network:
