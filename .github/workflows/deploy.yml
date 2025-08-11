@@ -69,10 +69,19 @@ jobs:
         key: ${{ secrets.EC2_PRIVATE_KEY }}
         port: 22
         script: |
+          # 创建应用目录（首次部署）
+          sudo mkdir -p /opt/airline-order
+          sudo chown $USER:$USER /opt/airline-order
           cd /opt/airline-order
+          
+          # 停止服务（如果存在）
           sudo systemctl stop airline-order || true
+          
+          # 备份当前版本
           rm -rf old_backup
-          mv current old_backup || true
+          if [ -d "current" ]; then
+            mv current old_backup
+          fi
           mkdir -p current
 
     - name: Upload deployment package
