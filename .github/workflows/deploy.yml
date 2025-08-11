@@ -43,25 +43,18 @@ jobs:
         cd frontend
         npm run build
 
-    - name: Copy frontend build to backend
-      run: |
-        mkdir -p backend/target/frontend
-        cp -r frontend/dist/airline-order-frontend/browser/* backend/target/frontend/
-        echo "=== Frontend files copied ==="
-        ls -la backend/target/frontend/
-
     - name: Build backend
       run: |
         cd backend
         mvn clean package -DskipTests
-        echo "=== Checking JAR contents ==="
-        jar -tf target/*.jar | grep static | head -10 || echo "No static files found"
 
     - name: Create deployment package
       run: |
         mkdir -p deploy
         cp backend/target/*.jar deploy/
         cp -r scripts deploy/
+        mkdir -p deploy/frontend
+        cp -r frontend/dist/airline-order-frontend/browser/* deploy/frontend/
         tar -czf deployment.tar.gz deploy/
 
     - name: Deploy to EC2
