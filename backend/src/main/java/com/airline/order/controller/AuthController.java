@@ -7,10 +7,13 @@ import com.airline.order.dto.UserRegistrationRequest;
 import com.airline.order.security.jwt.JwtUtils;
 import com.airline.order.security.services.UserDetailsImpl;
 import com.airline.order.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +28,8 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class AuthController {
     
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     @Autowired
     private AuthenticationManager authenticationManager;
     
@@ -43,24 +48,31 @@ public class AuthController {
     public ApiResponse<JwtResponse> authenticateUser(@RequestBody Map<String, String> loginRequest) {
         String username = loginRequest.get("username");
         String password = loginRequest.get("password");
-        
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password));
-        
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        UserDTO userDTO = userService.getUserByUsername(userDetails.getUsername());
-        
-        JwtResponse jwtResponse = new JwtResponse(
-            jwt,
-            userDetails.getId(),
-            userDetails.getUsername(),
-            userDTO.getRole()
-        );
-        
-        return ApiResponse.success("登录成功", jwtResponse);
+        logger.info("Attempting login for user: {}", username);
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            UserDTO userDTO = userService.getUserByUsername(userDetails.getUsername());
+
+            JwtResponse jwtResponse = new JwtResponse(
+                    jwt,
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDTO.getRole()
+            );
+
+            logger.info("User '{}' logged in successfully.", username);
+            return ApiResponse.success("登录成功", jwtResponse);
+        } catch (AuthenticationException e) {
+            logger.error("Authentication failed for user '{}': {}", username, e.getMessage());
+            throw e;
+        }
     }
     
     /**

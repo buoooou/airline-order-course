@@ -1,0 +1,327 @@
+.order-list-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.error-message {
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #ffebee;
+  color: #d32f2f;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.status-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  background-color: #f5f5f5;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.filter-btn.active {
+  background-color: #1976d2;
+  color: white;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.no-orders {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.order-number {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.order-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-pending {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
+.status-paid {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-processing {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.status-success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-canceled {
+  background-color: #f5f5f5;
+  color: #757575;
+}
+
+.status-refunded {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.order-flight {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.flight-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flight-number {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.flight-route {
+  font-size: 14px;
+  color: #666;
+}
+
+.flight-time {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.departure-time, .arrival-time {
+  text-align: center;
+}
+
+.time {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.date {
+  font-size: 12px;
+  color: #666;
+}
+
+.duration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+.duration-line {
+  width: 100px;
+  height: 2px;
+  background-color: #ddd;
+  position: relative;
+}
+
+.duration-line::before, .duration-line::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #ddd;
+  border-radius: 50%;
+  top: -2px;
+}
+
+.duration-line::before {
+  left: 0;
+}
+
+.duration-line::after {
+  right: 0;
+}
+
+.duration-text {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.order-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 12px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.passenger-info, .seat-info, .price-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 12px;
+  color: #666;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.value.price {
+  font-size: 18px;
+  color: #d32f2f;
+}
+
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-cancel, .btn-detail {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+}
+
+.btn-cancel:hover {
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+.btn-detail {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+}
+
+.btn-detail:hover {
+  background-color: #1565c0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.page-btn {
+  padding: 8px 16px;
+  background-color: #f5f5f5;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.page-btn:disabled {
+  color: #bdbdbd;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .order-flight {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .order-details {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

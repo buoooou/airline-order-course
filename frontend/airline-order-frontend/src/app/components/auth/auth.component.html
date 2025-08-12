@@ -1,0 +1,136 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2 class="auth-title">{{ isLoginMode ? '用户登录' : '用户注册' }}</h2>
+    
+    <!-- 错误提示 -->
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+    
+    <!-- 登录表单 -->
+    <form *ngIf="isLoginMode" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          [(ngModel)]="loginForm.username" 
+          required
+          placeholder="请输入用户名"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          [(ngModel)]="loginForm.password" 
+          required
+          placeholder="请输入密码"
+        >
+      </div>
+      
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn-primary" 
+          [disabled]="isLoading || !loginForm.username || !loginForm.password"
+        >
+          {{ isLoading ? '登录中...' : '登录' }}
+        </button>
+        <button 
+          type="button" 
+          class="btn-secondary" 
+          (click)="toggleMode()"
+          [disabled]="isLoading"
+        >
+          没有账号？去注册
+        </button>
+      </div>
+    </form>
+    
+    <!-- 注册表单 -->
+    <form *ngIf="!isLoginMode" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="reg-username">用户名</label>
+        <input 
+          type="text" 
+          id="reg-username" 
+          name="username" 
+          [(ngModel)]="registerForm.username" 
+          required
+          placeholder="请输入用户名"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="reg-password">密码</label>
+        <input 
+          type="password" 
+          id="reg-password" 
+          name="password" 
+          [(ngModel)]="registerForm.password" 
+          required
+          placeholder="请输入密码"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="email">邮箱</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          [(ngModel)]="registerForm.email" 
+          required
+          placeholder="请输入邮箱"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="fullName">姓名</label>
+        <input 
+          type="text" 
+          id="fullName" 
+          name="fullName" 
+          [(ngModel)]="registerForm.fullName" 
+          required
+          placeholder="请输入姓名"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="phoneNumber">手机号</label>
+        <input 
+          type="tel" 
+          id="phoneNumber" 
+          name="phoneNumber" 
+          [(ngModel)]="registerForm.phoneNumber" 
+          required
+          placeholder="请输入手机号"
+        >
+      </div>
+      
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn-primary" 
+          [disabled]="isLoading || !registerForm.username || !registerForm.password || !registerForm.email || !registerForm.fullName || !registerForm.phoneNumber"
+        >
+          {{ isLoading ? '注册中...' : '注册' }}
+        </button>
+        <button 
+          type="button" 
+          class="btn-secondary" 
+          (click)="toggleMode()"
+          [disabled]="isLoading"
+        >
+          已有账号？去登录
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

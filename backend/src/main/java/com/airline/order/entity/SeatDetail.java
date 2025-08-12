@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * 座位详情实体类
  */
 @Entity
-@Table(name = "seat_detail_zdq")
+@Table(name = "seat_detail")
 public class SeatDetail {
     
     @Id
