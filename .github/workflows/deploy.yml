@@ -45,3 +45,5 @@ jobs:
             export MYSQL_DATABASE=airline_order_db
             export MYSQL_USER=${{ secrets.MYSQL_USER }}
             export MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+            docker compose pull
+            docker compose down
