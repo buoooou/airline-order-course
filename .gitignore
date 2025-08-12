@@ -1,4 +1,5 @@
 /.idea/
+
 /.metadata/
 target/
 .gitignore
@@ -8,3 +9,8 @@ target/
 /backend/.project
 /backend/.factorypath
 /backend/logs/
+
+
+/frontend/.angular/
+/frontend/node_modules/
+/frontend/.vscode/
