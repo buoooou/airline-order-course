@@ -32,3 +32,4 @@ ng serve
 编写 DTO ↔ Entity 的转换方法（使用 MapStruct 自动生成）。
 
 ## CICD
+GitHub Secrets
