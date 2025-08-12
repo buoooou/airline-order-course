@@ -1,5 +1,5 @@
 # 构建阶段：用 Maven + JDK 21 构建 Spring Boot 应用
-FROM maven:3.8.1-openjdk-21 AS backend-builder
+FROM maven:3.8.6-openjdk-21 AS backend-builder
 WORKDIR /app
 
 # 复制 Maven 配置文件，缓存依赖
