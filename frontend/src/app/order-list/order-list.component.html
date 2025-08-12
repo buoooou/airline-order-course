@@ -1,0 +1,25 @@
+<div class="order-list-container">
+  <h2>订单列表</h2>
+  <div *ngIf="isLoading" class="loading">加载中...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <table *ngIf="!isLoading && !error">
+    <thead>
+      <tr>
+        <th>订单号</th>
+        <th>旅客</th>
+        <th>状态</th>
+        <th>航班号</th>
+        <th>起飞时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{ order.id }}</td>
+        <td>{{ order.passengerName }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.flightNumber }}</td>
+        <td>{{ order.departureTime }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

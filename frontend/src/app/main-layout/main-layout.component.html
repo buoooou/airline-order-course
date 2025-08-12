@@ -1,0 +1,23 @@
+<div class="main-container">
+  <!-- 顶部栏 -->
+  <div class="header">
+    <div class="header-right">
+      <button (click)="logout()">注销</button>
+    </div>
+  </div>
+
+  <!-- 主体内容 -->
+  <div class="content-container">
+    <!-- 左侧菜单 -->
+    <div class="sidebar">
+      <ul>
+        <li routerLink="/orders" routerLinkActive="active">订单列表</li>
+      </ul>
+    </div>
+
+    <!-- 右侧内容区域 -->
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<div class="orders-container">
+  <h2>订单列表</h2>
+
+  <!-- 添加/编辑表单 -->
+  <div class="form-container">
+    <input [(ngModel)]="newOrder.name" placeholder="订单名称" />
+    <input [(ngModel)]="newOrder.status" placeholder="状态" />
+    <button (click)="isEditing ? updateOrder() : addOrder()">
+      {{ isEditing ? '更新' : '添加' }}
+    </button>
+    <button *ngIf="isEditing" (click)="cancelEdit()">取消</button>
+  </div>
+
+  <!-- 订单列表 -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>名称</th>
+        <th>状态</th>
+        <th>创建时间</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{ order.id }}</td>
+        <td>{{ order.name }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.createdAt | date }}</td>
+        <td>
+          <button (click)="editOrder(order)">编辑</button>
+          <button (click)="deleteOrder(order.id)">删除</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
