@@ -1,0 +1,34 @@
+.main-content-container {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 60px);
+}
+
+.orders-card {
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.orders-card .ant-card-head-title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.ant-table-thead > tr > th {
+  font-weight: 600;
+  background: #fafafa;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f5f5f5;
+}
+
+@media (max-width: 768px) {
+  .main-content-container {
+    padding: 12px;
+  }
+  
+  .orders-card {
+    margin: 0;
+  }
+}

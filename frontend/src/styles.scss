@@ -1,0 +1,30 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* 导入 NG-ZORRO 核心样式 */
+@import "ng-zorro-antd/ng-zorro-antd.min.css";
+
+/* 消息居中显示样式 */
+.cdk-overlay-container .cdk-overlay-pane {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+/* 确保消息容器居中 */
+.ant-message {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin-left: 0 !important;
+}
+
+/* 消息内容样式优化 */
+.ant-message-notice {
+  text-align: center;
+}
+
+.ant-message-notice-content {
+  display: inline-block;
+  max-width: 600px;
+}

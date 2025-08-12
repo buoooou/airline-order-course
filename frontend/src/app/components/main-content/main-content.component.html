@@ -1,0 +1,42 @@
+<div class="main-content-container">
+  <nz-card nzTitle="我的订单" class="orders-card">
+    <nz-spin [nzSpinning]="loading">
+      <ng-container *ngIf="orders.length > 0; else emptyTemplate">
+        <nz-table #orderTable [nzData]="orders" [nzPageSize]="10" nzShowSizeChanger>
+          <thead>
+            <tr>
+              <th nzColumnKey="id" nzShowSort nzSortOrder="descend">订单ID</th>
+              <th nzColumnKey="orderNumber">订单号</th>
+              <th nzColumnKey="status">状态</th>
+              <th nzColumnKey="amount">金额</th>
+              <th nzColumnKey="creationDate">创建时间</th>
+              <th nzColumnKey="flightId">航班号</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orderTable.data">
+              <td>{{ order.id }}</td>
+              <td>{{ order.orderNumber }}</td>
+              <td>
+                <nz-tag [nzColor]="getStatusColor(order.status)">
+                    <ng-container *ngTemplateOutlet="order.status === 'COMPLETED' ? completedTemplate : null"></ng-container>
+                    <ng-template #completedTemplate><span>已完成</span></ng-template>
+                    <ng-container *ngTemplateOutlet="order.status === 'CANCELLED' ? cancelledTemplate : null"></ng-container>
+                    <ng-template #cancelledTemplate><span>已取消</span></ng-template>
+                  {{ order.status }}
+                </nz-tag>
+              </td>
+              <td>{{ formatAmount(order.amount) }}</td>
+              <td>{{ formatDate(order.creationDate) }}</td>
+              <td>{{ order.flightId }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </ng-container>
+
+      <ng-template #emptyTemplate>
+        <nz-empty nzNotFoundContent="暂无订单数据"></nz-empty>
+      </ng-template>
+    </nz-spin>
+  </nz-card>
+</div>
