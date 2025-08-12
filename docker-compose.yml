@@ -28,16 +28,17 @@ services:
       - database
     environment:
       # 通过环境变量将数据库链接信息注入到Spring Boot中
-      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/myappdb?useSSL=flase&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=myappuser
-      - SPRING_DATASOURCE_PASSWORD=airlineTest1234
-      - DB_HOST=171.213.136.201
-      - DB_PORT=13306
-      - DB_PASS=xylmysql1
-      - DB_NAME=airline_order_db
+      #- DB_HOST=3.22.168.207
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_PASS=airlineTest1234
+      - DB_NAME=myappdb
       - DB_USER=root
       - JWT_SECRET=63ffbc2b8d13ad5180ed7ae7c67f18c85d86046732fc9ced6a02a9d50abb1a03
       - JWT_EXPIRATION_MS=86400000
+      #- SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/myappdb?useSSL=flase&allowPublicKeyRetrieval=true
+      #- SPRING_DATASOURCE_USERNAME=myappuser
+      #- SPRING_DATASOURCE_PASSWORD=airlineTest1234
     networks:
       - app-network
 
