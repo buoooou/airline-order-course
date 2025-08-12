@@ -21,7 +21,7 @@ services:
   app:
     image: xieyl83/airline-order-manage:latest
     container_name: my-springboot-angular-app
-    restart: always
+    #restart: always
     ports:
       - "8080:8080"
     depends_on:
