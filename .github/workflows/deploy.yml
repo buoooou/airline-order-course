@@ -36,14 +36,12 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/airline-cicd
-
+            cd ~/airline-cicd
             export SPRING_PROFILES_ACTIVE=prod
             export MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
             export MYSQL_DATABASE=airline_order_db
             export MYSQL_USER=${{ secrets.MYSQL_USER }}
             export MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-
             docker compose pull
             docker compose down
             docker compose up -d
