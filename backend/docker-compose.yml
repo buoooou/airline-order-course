@@ -1,20 +1,6 @@
 version: '3.9'
 
 services:
-  mysql-db:
-    image: mysql:8.0
-    container_name: airline-mysql-db
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: airline_order_db
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - app-network
-
   backend-app:
     image: zjiayan/airline-order-backend:latest
     container_name: airline-backend
@@ -26,13 +12,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/airline_order_db?useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
-    depends_on:
-      - mysql-db
     networks:
       - app-network
-
-volumes:
-  db_data:
 
 networks:
   app-network:
