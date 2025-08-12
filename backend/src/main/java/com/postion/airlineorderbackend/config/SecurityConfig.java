@@ -141,7 +141,9 @@ public class SecurityConfig {
                     "/api/flights/bookable",     // 可预订航班（公开）
                     "/swagger-ui/**",            // Swagger UI
                     "/swagger-ui.html",          // Swagger UI首页
+                    "/swagger-ui/index.html",    // Swagger UI主页
                     "/v3/api-docs/**",           // OpenAPI文档
+                    "/api-docs/**",              // API文档（兼容路径）
                     "/swagger-resources/**",     // Swagger资源
                     "/webjars/**",               // Web资源
                     "/favicon.ico",              // 网站图标
