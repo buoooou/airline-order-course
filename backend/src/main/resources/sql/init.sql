@@ -16,7 +16,7 @@ USE `airline_order_db`;
 DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `app_users`;
 
-CREATE TABLE `app_users` (
+CREATE TABLE `app_users_ycr` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE `app_users` (
 
 -- 步骤 3: 创建 orders 表
 -- 用于存储订单信息，对应 Order.java 实体
-CREATE TABLE `orders` (
+CREATE TABLE `orders_ycr` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `order_number` VARCHAR(255) NOT NULL,
   `status` ENUM('PENDING_PAYMENT', 'PAID', 'TICKETING_IN_PROGRESS', 'TICKETING_FAILED', 'TICKETED', 'CANCELLED') NOT NULL,
@@ -34,20 +34,27 @@ CREATE TABLE `orders` (
   `creation_date` DATETIME(6) NOT NULL,
   `user_id` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`)
+  CONSTRAINT `fk_orders_user_id_ycr` FOREIGN KEY (`user_id`) REFERENCES `app_users_ycr` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `shedlock` (
+  `name` varchar(64) NOT NULL,
+  `lock_until` timestamp(3) NOT NULL,
+  `locked_at` timestamp(3) NOT NULL,
+  `locked_by` varchar(255) NOT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 步骤 4: 插入测试数据
 
 -- 插入用户 (密码原文均为 'password')
 -- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
-INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
+INSERT INTO `app_users_ycr` (`id`, `username`, `password`, `role`) VALUES
 (1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
 (2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
 
 -- 插入覆盖所有场景的订单数据
-INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
+INSERT INTO `orders_ycr` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
 -- 订单 1 (admin): 已支付 -> 用于测试异步出票
 ('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, 1),
 
@@ -72,5 +79,5 @@ INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user
 
 -- 打印成功信息
 SELECT '数据库和测试数据初始化成功！' AS '状态';
-SELECT COUNT(*) AS '用户总数' FROM `app_users`;
-SELECT status, COUNT(*) AS '订单数量' FROM `orders` GROUP BY status;
+SELECT COUNT(*) AS '用户总数' FROM `app_users_ycr`;
+SELECT status, COUNT(*) AS '订单数量' FROM `orders_ycr` GROUP BY status;
