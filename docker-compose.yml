@@ -47,4 +47,5 @@ volues:
 
 # 定义网络，让两个容器可以互相通信
 networks:
-  app-network
+  app-network:
+    driver: bridge
