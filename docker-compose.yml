@@ -19,7 +19,7 @@ services:
 
   # Spring Boot + Angular 应用服务
   app:
-    image: xieyl/airline-order-manage:latest
+    image: xieyl83/airline-order-manage:latest
     container_name: my-springboot-angular-app
     restart: always
     ports:
