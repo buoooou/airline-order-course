@@ -14,10 +14,10 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     // 将 User (Entity) 映射到 UserDTO
-    @Mapping(source = "username", target = "userName")
+//    @Mapping(source = "username", target = "userName")
     UserDto userToUserDto(User user);
 
     // 将 UserDto 映射到 User (Entity)
-    @Mapping(source = "userName", target = "username")
+//    @Mapping(source = "userName", target = "username")
     User userDtoToUser(UserDto userDto);
 }

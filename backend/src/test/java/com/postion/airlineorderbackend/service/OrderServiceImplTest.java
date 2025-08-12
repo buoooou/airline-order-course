@@ -64,7 +64,7 @@ public class OrderServiceImplTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("ORD-2023-001", result.get(0).getOrderNumber());
-        assertEquals("testUser", result.get(0).getUser().getUserName());   
+        assertEquals("testUser", result.get(0).getUser().getUsername());   
 
         verify(orderRepository, times(1)).findAll();
     }
@@ -79,7 +79,7 @@ public class OrderServiceImplTest {
         assertNotNull(result);
         assertEquals(100L, result.getId());
         assertEquals("ORD-2023-001", result.getOrderNumber());
-        assertEquals("testUser", result.getUser().getUserName());   
+        assertEquals("testUser", result.getUser().getUsername());   
 
         verify(orderRepository, times(1)).findById(100L);
     }
