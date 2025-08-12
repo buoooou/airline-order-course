@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { Order, OrderStatus, OrderStatusUpdateRequest, OrderQueryParams } from '../models/order.model';
 import { ApiResponse } from '../models/user.model';
 import { AuthService } from './auth';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private readonly API_URL = 'http://localhost:8080/api/orders';
+  private readonly API_URL = `${environment.apiUrl}/api/orders`;
 
   constructor(
     private http: HttpClient,

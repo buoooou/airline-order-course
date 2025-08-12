@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: airline-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootroot
+      MYSQL_DATABASE: airline_order_db
+      MYSQL_USER: airline
+      MYSQL_PASSWORD: airlineTest1234
+    ports:
+      - '3306:3306'
+    networks:
+      - airline-network
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    image: 381492153714.dkr.ecr.us-east-2.amazonaws.com/fuser23-airline-order-app:latest
+    container_name: airline-backend
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_PRIMARY_URL: jdbc:mysql://mysql:3306/airline_order_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_PRIMARY_USERNAME: airline
+      SPRING_DATASOURCE_PRIMARY_PASSWORD: airlineTest1234
+      SPRING_DATASOURCE_FALLBACK_URL: jdbc:mysql://mysql:3306/airline_order_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_FALLBACK_USERNAME: airline
+      SPRING_DATASOURCE_FALLBACK_PASSWORD: airlineTest1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JWT_SECRET: 63ffbc2b8d13ad5180ed7ae7c67f18c85d86046732fc9ced6a02a9d50abb1a03
+    depends_on:
+      - mysql
+    networks:
+      - airline-network
+
+  frontend:
+    image: 381492153714.dkr.ecr.us-east-2.amazonaws.com/fuser23-airline-order-frontend:latest
+    container_name: airline-frontend
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    depends_on:
+      - backend
+    networks:
+      - airline-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  airline-network:
+    driver: bridge

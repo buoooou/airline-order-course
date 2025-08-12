@@ -1,0 +1,24 @@
+=== 航空订单系统部署信息 ===
+用户: fuser23
+部署时间: 2025年 8月11日 星期一 22时28分00秒 CST
+AWS区域: us-east-2
+实例ID: i-04e546d6113e3294e
+公网IP: 18.116.240.81
+密钥文件: fuser23-airline-order-keypair.pem
+安全组: sg-04f9694b837dcca7f
+ECR仓库: 381492153714.dkr.ecr.us-east-2.amazonaws.com/fuser23-airline-order-app
+
+=== 访问信息 ===
+SSH连接: ssh -i fuser23-airline-order-keypair.pem ec2-user@18.116.240.81
+应用地址: http://18.116.240.81
+API文档: http://18.116.240.81/swagger-ui/index.html
+健康检查: http://18.116.240.81/api/actuator/health
+
+=== 管理命令 ===
+查看日志: ssh -i fuser23-airline-order-keypair.pem ec2-user@18.116.240.81 "docker logs airline-backend"
+重启应用: ssh -i fuser23-airline-order-keypair.pem ec2-user@18.116.240.81 "cd /opt/airline-order && docker-compose restart"
+停止应用: ssh -i fuser23-airline-order-keypair.pem ec2-user@18.116.240.81 "cd /opt/airline-order && docker-compose down"
+
+=== 清理资源 ===
+运行清理脚本: ./cleanup.sh
+或手动清理: aws ec2 terminate-instances --instance-ids i-04e546d6113e3294e --region us-east-2
