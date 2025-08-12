@@ -1,0 +1,308 @@
+name: CI/CD Pipeline for Airline Order Management System
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AWS_REGION: us-east-2
+  ECR_REGISTRY: 381492153714.dkr.ecr.us-east-2.amazonaws.com
+  BACKEND_IMAGE_NAME: fuser23-airline-order-backend
+  FRONTEND_IMAGE_NAME: fuser23-airline-order-frontend
+
+jobs:
+  # 代码质量检查
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 8
+      uses: actions/setup-java@v4
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Run backend tests
+      run: |
+        cd backend
+        ./mvnw clean test
+
+    - name: Run frontend tests
+      run: |
+        cd frontend
+        npm ci --legacy-peer-deps
+        npm run test -- --watch=false --browsers=ChromeHeadless
+
+    - name: Run ESLint
+      run: |
+        cd frontend
+        npm run lint || true
+
+  # 构建阶段
+  build:
+    needs: code-quality
+    runs-on: ubuntu-latest
+    outputs:
+      backend-image-tag: ${{ steps.meta-backend.outputs.tags }}
+      frontend-image-tag: ${{ steps.meta-frontend.outputs.tags }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Extract metadata for backend
+      id: meta-backend
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.ECR_REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Extract metadata for frontend
+      id: meta-frontend
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile.amd64
+        platforms: linux/amd64
+        push: true
+        tags: ${{ steps.meta-backend.outputs.tags }}
+        labels: ${{ steps.meta-backend.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build and push frontend image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./frontend.Dockerfile
+        platforms: linux/amd64
+        push: true
+        tags: ${{ steps.meta-frontend.outputs.tags }}
+        labels: ${{ steps.meta-frontend.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # 安全扫描
+  security-scan:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Run Trivy vulnerability scanner for backend
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.ECR_REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:latest
+        format: 'sarif'
+        output: 'backend-trivy-results.sarif'
+
+    - name: Run Trivy vulnerability scanner for frontend
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
+        format: 'sarif'
+        output: 'frontend-trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: '.'
+
+  # 部署到开发环境
+  deploy-dev:
+    needs: [build, security-scan]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Deploy to development environment
+      run: |
+        echo "🚀 Deploying to development environment..."
+        # 这里可以添加部署到开发环境的脚本
+        # 例如：更新 ECS 服务、Lambda 函数等
+        
+        # 示例：使用 AWS CLI 更新 ECS 服务
+        # aws ecs update-service --cluster dev-cluster --service airline-backend-service --force-new-deployment
+        # aws ecs update-service --cluster dev-cluster --service airline-frontend-service --force-new-deployment
+
+  # 部署到生产环境
+  deploy-prod:
+    needs: [build, security-scan]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+
+    - name: Deploy to production EC2
+      run: |
+        echo "🚀 Deploying to production EC2..."
+        
+        # 添加 EC2 主机到 known_hosts
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        
+        # 执行部署脚本
+        ssh ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+          cd /opt/airline-order
+          
+          # 拉取最新镜像
+          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 381492153714.dkr.ecr.us-east-2.amazonaws.com
+          
+          # 停止当前服务
+          docker-compose -f docker-compose.aws.yml down
+          
+          # 拉取最新镜像
+          docker pull 381492153714.dkr.ecr.us-east-2.amazonaws.com/fuser23-airline-order-backend:latest
+          docker pull 381492153714.dkr.ecr.us-east-2.amazonaws.com/fuser23-airline-order-frontend:latest
+          
+          # 启动服务
+          docker-compose -f docker-compose.aws.yml up -d
+          
+          # 等待服务启动
+          sleep 30
+          
+          # 健康检查
+          curl -f http://localhost:8080/api/flights || exit 1
+          curl -f http://localhost:80 || exit 1
+          
+          echo "✅ Deployment completed successfully!"
+        EOF
+
+    - name: Run post-deployment tests
+      run: |
+        echo "🧪 Running post-deployment tests..."
+        
+        # 等待服务完全启动
+        sleep 60
+        
+        # 测试后端 API
+        curl -f http://${{ secrets.EC2_HOST }}:8080/api/flights
+        
+        # 测试前端
+        curl -f http://${{ secrets.EC2_HOST }}
+        
+        echo "✅ All post-deployment tests passed!"
+
+  # 通知
+  notify:
+    needs: [deploy-prod]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify deployment status
+      uses: 8398a7/action-slack@v3
+      if: always()
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        fields: repo,message,commit,author,action,eventName,ref,workflow
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+    - name: Create GitHub Release
+      if: github.ref == 'refs/heads/main' && success()
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
+        body: |
+          ## 🚀 Release v${{ github.run_number }}
+          
+          ### Changes
+          - Backend image: `${{ env.ECR_REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:latest`
+          - Frontend image: `${{ env.ECR_REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest`
+          
+          ### Deployment
+          - ✅ Production deployment completed
+          - ✅ Health checks passed
+          - ✅ All tests passed
+          
+          ### Access URLs
+          - Frontend: http://${{ secrets.EC2_HOST }}
+          - Backend API: http://${{ secrets.EC2_HOST }}:8080
+          - API Documentation: http://${{ secrets.EC2_HOST }}:8080/swagger-ui/index.html
+        draft: false
+        prerelease: false

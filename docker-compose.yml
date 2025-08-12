@@ -1,0 +1,179 @@
+# 航空订单系统 - Docker Compose 配置
+# 这个文件需要放在EC2服务器的 ~/airline-deployment 目录下
+
+services:
+  # MySQL 数据库服务
+  database:
+    image: mysql:8.0
+    container_name: airline-mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-AirlineRoot2024!}
+      MYSQL_DATABASE: ${DB_NAME:-airline_order_db}
+      MYSQL_USER: ${DB_USER:-airline_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-AirlinePass2024!}
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d:ro
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - airline-network
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Redis 缓存服务（可选，用于会话管理和缓存）
+  redis:
+    image: redis:7-alpine
+    container_name: airline-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - airline-network
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-RedisPass2024!}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 主应用服务（航空订单系统）
+  app:
+    image: ${DOCKERHUB_USERNAME:-your-dockerhub-username}/airline-order-system:latest
+    container_name: airline-order-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # 数据库配置
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/${DB_NAME:-airline_order_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf8&useUnicode=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-airline_user}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-AirlinePass2024!}
+      
+      # Redis配置
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-RedisPass2024!}
+      
+      # 应用配置
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8080
+      
+      # JWT配置
+      JWT_SECRET: ${JWT_SECRET:-63ffbc2b8d13ad5180ed7ae7c67f18c85d86046732fc9ced6a02a9d50abb1a03}
+      JWT_EXPIRATION_MS: 86400000
+      
+      # 日志配置
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_COM_POSTION: DEBUG
+      
+      # JVM配置
+      JAVA_OPTS: -Xmx512m -Xms256m -XX:+UseG1GC -XX:+UseContainerSupport
+      
+    volumes:
+      - app_logs:/app/logs
+      - ./config:/app/config:ro
+    networks:
+      - airline-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Nginx 反向代理（可选，用于负载均衡和SSL终止）
+  nginx:
+    image: nginx:alpine
+    container_name: airline-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - app
+    networks:
+      - airline-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 监控服务 - Prometheus（可选）
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: airline-prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - airline-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+
+  # 监控服务 - Grafana（可选）
+  grafana:
+    image: grafana/grafana:latest
+    container_name: airline-grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin123}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - airline-network
+
+# 数据卷定义
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_logs:
+    driver: local
+  nginx_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# 网络定义
+networks:
+  airline-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

@@ -1,0 +1,6 @@
+{
+    "deployment_time": "2025-08-11T17:34:41Z",
+    "previous_image": "none",
+    "new_image": "381492153714.dkr.ecr.us-east-2.amazonaws.com/fuser23-airline-order-frontend:latest",
+    "backup_tag": "backup-20250812-013439"
+}

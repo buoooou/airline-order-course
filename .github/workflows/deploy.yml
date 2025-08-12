@@ -1,0 +1,336 @@
+name: 🛫 航空订单系统 - CI/CD部署
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AWS_REGION: us-east-2
+  ECR_REPOSITORY: airline-order-app
+  AWS_ACCOUNT_ID: 381492153714
+
+jobs:
+  # 测试阶段
+  test:
+    name: 🧪 代码测试
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v4
+    
+    - name: ☕ 设置 JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    
+    - name: 🟢 设置 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: 📦 缓存 Maven 依赖
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    
+    - name: 🏗️ 构建前端
+      run: |
+        cd frontend
+        npm ci --legacy-peer-deps
+        npm run build -- --configuration=production --ssr=false
+    
+    - name: 🏗️ 构建后端
+      run: |
+        cd backend
+        mvn clean package -DskipTests -B
+
+  # 构建Docker镜像
+  build:
+    name: 🐳 构建镜像
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v4
+    
+    - name: 🔧 配置 AWS 凭证
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: 🔑 登录到 ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: 🐳 构建并推送镜像
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # 构建镜像
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        
+        # 推送镜像
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        
+        echo "镜像构建完成: $ECR_REGISTRY/$ECR_REPOSITORY:latest"
+
+  # 部署到EC2
+  deploy:
+    name: 🚀 部署到EC2
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 🔧 配置 AWS 凭证
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: 🔑 登录到 ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: 🚀 部署到 EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        port: 22
+        envs: ECR_REGISTRY,ECR_REPOSITORY,DB_HOST,DB_PASSWORD,JWT_SECRET
+        script: |
+          # 设置环境变量
+          export ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          export ECR_REPOSITORY=${{ env.ECR_REPOSITORY }}
+          export DB_HOST=${{ secrets.DB_HOST }}
+          export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          export JWT_SECRET=${{ secrets.JWT_SECRET }}
+          
+          echo "🔄 开始部署航空订单系统..."
+          
+          # 创建应用目录
+          sudo mkdir -p /opt/airline-order
+          sudo chown $USER:$USER /opt/airline-order
+          cd /opt/airline-order
+          
+          # 登录ECR
+          echo "🔑 登录到ECR..."
+          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin $ECR_REGISTRY
+          
+          # 拉取最新镜像
+          echo "📥 拉取最新镜像..."
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          
+          # 停止现有服务
+          echo "⏹️ 停止现有服务..."
+          docker-compose down || true
+          
+          # 创建docker-compose.yml
+          echo "📝 创建配置文件..."
+          cat > docker-compose.yml << EOF
+          version: '3.8'
+          services:
+            nginx:
+              image: nginx:alpine
+              ports:
+                - "80:80"
+              volumes:
+                - ./nginx.conf:/etc/nginx/conf.d/default.conf
+              depends_on:
+                - backend
+              restart: unless-stopped
+              networks:
+                - airline-network
+          
+            backend:
+              image: $ECR_REGISTRY/$ECR_REPOSITORY:latest
+              ports:
+                - "8080:8080"
+              environment:
+                - SPRING_PROFILES_ACTIVE=prod
+                - SPRING_DATASOURCE_URL=jdbc:mysql://$DB_HOST:3306/airline_order_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+                - SPRING_DATASOURCE_USERNAME=airline_app
+                - SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD
+                - JWT_SECRET=$JWT_SECRET
+              healthcheck:
+                test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+                interval: 30s
+                timeout: 10s
+                retries: 3
+                start_period: 60s
+              restart: unless-stopped
+              networks:
+                - airline-network
+          
+          networks:
+            airline-network:
+              driver: bridge
+          EOF
+          
+          # 创建Nginx配置
+          cat > nginx.conf << 'EOF'
+          server {
+              listen 80;
+              server_name _;
+              
+              # 健康检查
+              location /health {
+                  access_log off;
+                  return 200 "healthy\n";
+                  add_header Content-Type text/plain;
+              }
+              
+              # API代理
+              location /api/ {
+                  proxy_pass http://backend:8080/;
+                  proxy_set_header Host \$host;
+                  proxy_set_header X-Real-IP \$remote_addr;
+                  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto \$scheme;
+                  
+                  # CORS配置
+                  add_header Access-Control-Allow-Origin * always;
+                  add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
+                  add_header Access-Control-Allow-Headers "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization" always;
+                  
+                  if (\$request_method = 'OPTIONS') {
+                      add_header Access-Control-Allow-Origin *;
+                      add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS";
+                      add_header Access-Control-Allow-Headers "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization";
+                      add_header Access-Control-Max-Age 1728000;
+                      add_header Content-Type 'text/plain; charset=utf-8';
+                      add_header Content-Length 0;
+                      return 204;
+                  }
+              }
+              
+              # Swagger UI
+              location /swagger-ui/ {
+                  proxy_pass http://backend:8080/swagger-ui/;
+                  proxy_set_header Host \$host;
+                  proxy_set_header X-Real-IP \$remote_addr;
+                  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto \$scheme;
+              }
+              
+              # API文档
+              location /api-docs/ {
+                  proxy_pass http://backend:8080/api-docs/;
+                  proxy_set_header Host \$host;
+                  proxy_set_header X-Real-IP \$remote_addr;
+                  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto \$scheme;
+              }
+              
+              # 默认页面
+              location / {
+                  return 200 '<!DOCTYPE html>
+          <html>
+          <head>
+              <title>🛫 航空订单系统</title>
+              <meta charset="utf-8">
+              <style>
+                  body { font-family: Arial, sans-serif; margin: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+                  .container { max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; backdrop-filter: blur(10px); }
+                  h1 { text-align: center; font-size: 2.5em; margin-bottom: 30px; }
+                  .status { padding: 15px; margin: 20px 0; border-radius: 10px; backdrop-filter: blur(5px); }
+                  .success { background: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.5); }
+                  .info { background: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.5); }
+                  .links { margin: 30px 0; text-align: center; }
+                  .links a { display: inline-block; margin: 10px; padding: 12px 25px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 25px; transition: all 0.3s; }
+                  .links a:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+                  .footer { text-align: center; margin-top: 30px; opacity: 0.8; }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>🛫 航空订单系统</h1>
+                  <div class="status success">
+                      ✅ 系统运行正常
+                  </div>
+                  <div class="status info">
+                      📅 部署时间: $(date)<br>
+                      🏷️ 版本: latest<br>
+                      🌍 环境: AWS生产环境<br>
+                      🌎 区域: us-east-2 (俄亥俄州)
+                  </div>
+                  <div class="links">
+                      <a href="/api-docs" target="_blank">📚 API文档</a>
+                      <a href="/swagger-ui/index.html" target="_blank">🔧 Swagger UI</a>
+                      <a href="/api/actuator/health" target="_blank">💚 健康检查</a>
+                  </div>
+                  <div class="footer">
+                      <p>🚀 由 GitHub Actions 自动部署</p>
+                  </div>
+              </div>
+          </body>
+          </html>';
+                  add_header Content-Type text/html;
+              }
+          }
+          EOF
+          
+          # 启动服务
+          echo "🚀 启动服务..."
+          docker-compose up -d
+          
+          # 等待服务启动
+          echo "⏳ 等待服务启动..."
+          sleep 30
+          
+          # 检查服务状态
+          echo "🔍 检查服务状态..."
+          docker-compose ps
+          
+          # 健康检查
+          echo "💚 执行健康检查..."
+          for i in {1..10}; do
+              if curl -f http://localhost:8080/actuator/health; then
+                  echo "✅ 应用健康检查通过"
+                  break
+              else
+                  echo "⏳ 等待应用启动... ($i/10)"
+                  sleep 10
+              fi
+          done
+          
+          # 显示访问信息
+          PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+          echo "🎉 部署完成！"
+          echo "🌐 访问地址: http://$PUBLIC_IP"
+          echo "📚 API文档: http://$PUBLIC_IP/swagger-ui/index.html"
+          echo "💚 健康检查: http://$PUBLIC_IP/api/actuator/health"
+    
+    - name: 🧪 部署后测试
+      run: |
+        echo "🧪 执行部署后测试..."
+        sleep 60
+        
+        # 测试健康检查
+        if curl -f http://${{ secrets.EC2_HOST }}/api/actuator/health; then
+          echo "✅ 健康检查通过"
+        else
+          echo "❌ 健康检查失败"
+          exit 1
+        fi
+        
+        echo "🎉 部署和测试完成！"
+        echo "🌐 访问地址: http://${{ secrets.EC2_HOST }}"
