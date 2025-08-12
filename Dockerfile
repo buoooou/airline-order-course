@@ -3,11 +3,11 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 
 # (关键修复) 先安装 pnpm 工具
-RUN npm install -g pnpm
+RUN npm install -g pnpm@8.15.3
 
 # 复制依赖描述文件以利用缓存
 COPY frontend/package.json frontend/pnpm-lock.yaml ./ 
-RUN pnpm install 
+RUN pnpm install --frozen-lockfile
 # 复制所有剩余源代码
 COPY frontend/ ./
 RUN pnpm run build
@@ -33,4 +33,4 @@ WORKDIR /app
 # 使用通配符复制 JAR 包
 COPY --from=backend-builder /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
