@@ -23,11 +23,14 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build and push Docker image
-        run: |
-          cd backend
-          IMAGE_NAME=zjiayan/airline-order-backend
-          docker build -t $IMAGE_NAME:latest .
-          docker push $IMAGE_NAME:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/airline-order-manage:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/airline-order-manage:${{ github.sha }}
 
       - name: Deploy on EC2 via SSH
         uses: appleboy/ssh-action@v0.1.6
