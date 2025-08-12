@@ -31,20 +31,3 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/airline-order-manage:latest
             ${{ secrets.DOCKER_HUB_USERNAME }}/airline-order-manage:${{ github.sha }}
-
-      - name: Deploy on EC2 via SSH
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd ~/airline-cicd
-            export SPRING_PROFILES_ACTIVE=prod
-            export MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-            export MYSQL_DATABASE=airline_order_db
-            export MYSQL_USER=${{ secrets.MYSQL_USER }}
-            export MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-            docker compose pull
-            docker compose down
-            docker compose up -d
