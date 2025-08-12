@@ -32,4 +32,6 @@ ng serve
 编写 DTO ↔ Entity 的转换方法（使用 MapStruct 自动生成）。
 
 ## CICD
-GitHub Secrets
+GitHub Secrets：
+	在EC2生成SSH Key并复制到GitHub（GitHub Actions用来免密登录EC2）：
+	ssh-keygen -t rsa -b 4096 -f ~/.ssh/github_actions -N ""
