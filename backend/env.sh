@@ -1,7 +1,7 @@
 # export DB_HOST="18.207.201.92"
 # export DB_PORT="3306"
 # export DB_PASS="airlineTest1234"
-export DB_HOST="171.213.136.201"
+export DB_HOST="171.213.143.53"
 export DB_PORT="13306"
 export DB_PASS="xylmysql1"
 export DB_NAME="airline_order_db"

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.postion.airlineorderbackend.dto.OrderDto;
-import com.postion.airlineorderbackend.service.impl.OrderServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderServiceTest {
 
-  private final OrderServiceImpl orderService;
+  private final OrderService orderService;
 
   @Test
   @DisplayName("test orderService.getAllOrders(), should get all orders")
