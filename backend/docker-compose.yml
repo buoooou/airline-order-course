@@ -16,7 +16,7 @@ services:
       - app-network
 
   backend-app:
-    build: .
+    image: zjiayan/airline-order-backend:latest
     container_name: airline-backend
     restart: always
     ports:

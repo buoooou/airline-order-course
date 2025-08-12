@@ -24,6 +24,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
+          cd backend
           IMAGE_NAME=zjiayan/airline-order-backend
           docker build -t $IMAGE_NAME:latest .
           docker push $IMAGE_NAME:latest
