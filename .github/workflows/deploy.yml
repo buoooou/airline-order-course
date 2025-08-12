@@ -31,14 +31,6 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/airline-order-manage:latest
             ${{ secrets.DOCKER_HUB_USERNAME }}/airline-order-manage:${{ github.sha }}
+            
       - name: Deploy on EC2 via SSH
         uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd ~/airline-cicd
-            docker compose pull
-            docker compose down
-            docker compose up -d
