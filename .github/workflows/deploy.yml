@@ -41,7 +41,7 @@ jobs:
     - name: Debug SSH connection
       run: |
         echo "Testing SSH connection..."
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+        echo "${{ secrets.EC2_PREM_KEY }}" > private_key.pem
         chmod 600 private_key.pem
         ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "echo Connection successful"
         
@@ -50,7 +50,7 @@ jobs:
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        key: ${{ secrets.EC2_PREM_KEY }}
         port: 22
         script_stop: true
         debug: true
