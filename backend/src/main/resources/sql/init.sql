@@ -13,8 +13,9 @@ USE `airline_order_db`;
 
 -- 步骤 2: 创建 app_users 表
 -- 用于存储用户信息，对应 User.java 实体
-DROP TABLE IF EXISTS `orders`;
-DROP TABLE IF EXISTS `app_users`;
+DROP TABLE IF EXISTS `orders_ycr`;
+DROP TABLE IF EXISTS `app_users_ycr`;
+DROP TABLE IF EXISTS `shedlock`;
 
 CREATE TABLE `app_users_ycr` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
