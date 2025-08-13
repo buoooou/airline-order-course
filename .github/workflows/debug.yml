@@ -1,0 +1,14 @@
+name: debug
+on: [workflow_dispatch]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump secret length
+        run: |
+          echo "Length=${#DOCKERHUB_USERNAME}"
+          echo "Hex dump:"
+          echo -n "$DOCKERHUB_USERNAME" | hexdump -C
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
