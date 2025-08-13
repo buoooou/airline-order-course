@@ -6,7 +6,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # 复制依赖描述文件以利用缓存
-COPY frontend/package.json frontend/pnpm-lock.yaml ./ 
+COPY frontend/package*.json frontend/pnpm-lock.yaml ./ 
 RUN pnpm install
 # 复制所有剩余源代码
 COPY frontend/ ./
