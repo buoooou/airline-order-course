@@ -1,0 +1,75 @@
+name: CICD (Build, Test, Push and Deploy)# 工作流名称（在 GitHub 界面显示）
+
+# 触发条件：指定何时执行工作流
+on:
+  push:          # 推送代码时触发
+    branches: [ "main" ]  # 只在 main 分支推送时触发
+  pull_request:  # 提交 PR 时触发
+    branches: [ "main" ]
+  schedule:                      # 定时触发（UTC 时间）
+    - cron:  '0 0 * * *'         # 每天凌晨执行
+
+# 任务集：一个工作流可包含多个 jobs，默认并行执行
+jobs:
+  build:  # 任务名称（自定义）
+    runs-on: ubuntu-latest  # 运行环境（可选：ubuntu-latest、windows-latest、macos-latest）
+
+    # 步骤：按顺序执行的命令/操作
+    steps:
+    - name: Checkout Code        # 步骤1：拉取当前仓库代码（必选）
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17        # 步骤2：配置 JDK 环境
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven  # 缓存 Maven 依赖，加速构建
+      
+    - name: Build with Maven     # 步骤3：执行构建命令
+      run: mvn -B package --file pom.xml  # 终端命令
+      
+    - name: Run tests            # 步骤4：运行测试
+      working-directory: ./backend 
+      run: mvn test
+
+    - name: Setup Node.js 20      # 步骤5：设置Node.js环境
+      uses: actions/setup-node@v4 # 下载Node.js时npm会自动安装
+      with:
+        node-version: '20'
+        cache: 'npm'              # 可选：缓存 npm 依赖以加速构建
+
+    - name: Install Frontend Dependencies & Test # 步骤6：安装前端依赖并与行测试
+      working-directory: ./airline-order-frontend
+      run: |
+        npm install
+        # 如果需要前端测试，执行如下命令
+        # npm test
+
+    - name: Login to Docker Hub     # 步骤7：登录到 Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USENAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and Push Docker Image    # 步骤8：使用Dockerfile 从源码开始完整构建
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USENAME }}/airline-order-manage:latest
+          ${{ secrets.DOCKERHUB_USENAME }}/airline-order-manage:latest:${{ github.sha }}
+
+    - name: Deploy to EC2      # 步骤9：部署到EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd ~/airline-cicd
+          docker-compose pull
+          docker-compose up -d -remove-orphans
+          docker image prune -f
