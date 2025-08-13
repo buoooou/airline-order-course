@@ -1,6 +1,6 @@
 package airline.repository;
 
-import com.airline.entity.User;
+import airline.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

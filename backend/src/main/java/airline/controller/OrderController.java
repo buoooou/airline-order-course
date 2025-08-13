@@ -1,12 +1,12 @@
 package airline.controller;
 
-import com.airline.dto.OrderDetailDto;
-import com.airline.dto.OrderListDto;
-import com.airline.dto.PageParam;
-import com.airline.entity.Order;
-import com.airline.enums.OrderStatus;
-import com.airline.mapper.OrderMapper;
-import com.airline.service.OrderService;
+import airline.dto.OrderDetailDto;
+import airline.dto.OrderListDto;
+import airline.dto.PageParam;
+import airline.entity.Order;
+import airline.enums.OrderStatus;
+import airline.mapper.OrderMapper;
+import airline.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

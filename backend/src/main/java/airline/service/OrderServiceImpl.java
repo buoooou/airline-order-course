@@ -1,8 +1,8 @@
 package airline.service;
 
-import com.airline.entity.Order;
-import com.airline.enums.OrderStatus;
-import com.airline.repository.OrderRepository;
+import airline.entity.Order;
+import airline.enums.OrderStatus;
+import airline.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

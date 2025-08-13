@@ -1,7 +1,7 @@
 package airline.service;
 
-import com.airline.entity.Order;
-import com.airline.enums.OrderStatus;
+import airline.entity.Order;
+import airline.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

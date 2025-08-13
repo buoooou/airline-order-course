@@ -1,12 +1,12 @@
 package airline.mapper;
 
-import com.airline.dto.FlightInfoDto;
-import com.airline.dto.OrderDetailDto;
-import com.airline.dto.OrderListDto;
-import com.airline.entity.FlightInfo;
-import com.airline.entity.Order;
-import com.airline.repository.FlightInfoRepository;
-import com.airline.repository.OrderRepository;
+import airline.dto.FlightInfoDto;
+import airline.dto.OrderDetailDto;
+import airline.dto.OrderListDto;
+import airline.entity.FlightInfo;
+import airline.entity.Order;
+import airline.repository.FlightInfoRepository;
+import airline.repository.OrderRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

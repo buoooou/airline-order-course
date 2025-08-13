@@ -1,8 +1,8 @@
 package airline.service;
 
-import com.airline.entity.User;
-import com.airline.repository.UserRepository;
-import com.airline.security.JwtUtil;
+import airline.entity.User;
+import airline.repository.UserRepository;
+import airline.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

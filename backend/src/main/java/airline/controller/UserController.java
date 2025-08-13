@@ -1,9 +1,10 @@
 package airline.controller;
 
-import com.airline.dto.JwtResponse;
-import com.airline.entity.User;
-import com.airline.exception.ServiceException;
-import com.airline.service.UserService;
+import airline.service.UserService;
+import airline.dto.JwtResponse;
+import airline.entity.User;
+import airline.exception.ServiceException;
+import airline.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

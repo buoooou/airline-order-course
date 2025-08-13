@@ -1,6 +1,6 @@
 package airline.config;
 
-import com.airline.interceptor.LoginCheckInterceptor;
+import airline.interceptor.LoginCheckInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

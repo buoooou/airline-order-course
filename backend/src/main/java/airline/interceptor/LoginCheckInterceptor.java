@@ -1,10 +1,10 @@
 package airline.interceptor;
 
 
-import com.airline.security.JwtUtil;
+import airline.security.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.airline.dto.JwtResponse;
-import com.airline.exception.ServiceException;
+import airline.dto.JwtResponse;
+import airline.exception.ServiceException;
 import io.jsonwebtoken.Claims;
 
 import lombok.extern.slf4j.Slf4j;
