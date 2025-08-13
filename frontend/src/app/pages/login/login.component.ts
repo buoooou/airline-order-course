@@ -45,7 +45,7 @@ export class LoginComponent {
     private message: NzMessageService
   ) {
     this.loginForm = this.fb.group({
-      username: ['admin', [Validators.required]],
+      username: ['test', [Validators.required]],
       password: ['123456', [Validators.required]],
     });
   }
