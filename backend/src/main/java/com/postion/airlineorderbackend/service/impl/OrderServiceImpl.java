@@ -50,8 +50,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("Start getOrderById(), orderId:{}", id);
 
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST,
-                        "Order not found with id: " + id));
+                .orElseThrow(() -> BusinessException.orderNotFound());
 
         OrderDto orderDto = orderMapper.toDto(order);
 
@@ -70,13 +69,12 @@ public class OrderServiceImpl implements OrderService {
         log.info("Start payOrder(), orderId:{}", id);
 
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+                .orElseThrow(() -> BusinessException.orderNotFound());
 
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             log.info("End payOrder() failure, orderId:{} is not PENDING_PAYMENT, current status is{}", id,
                     order.getStatus());
-            throw new BusinessException(HttpStatus.BAD_REQUEST,
-                    "Order cannot be paid as it's not in PENDING status。current status: " + order.getStatus());
+            throw BusinessException.paymentFailed();
         }
 
         order.setStatus(OrderStatus.PAID);
@@ -97,11 +95,10 @@ public class OrderServiceImpl implements OrderService {
         log.info("Start requestTicketIssuance(), orderId:{}", id);
 
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "Order not found with id: " + id));
+                .orElseThrow(() ->  BusinessException.orderNotFound());
 
         if (order.getStatus() != OrderStatus.PAID) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST,
-                    "Ticket can only be issued for PAID orders。orderID: " + order.getId());
+            throw BusinessException.notPaidStatus();
         }
 
         order.setStatus(OrderStatus.TICKETED);
@@ -122,16 +119,10 @@ public class OrderServiceImpl implements OrderService {
         log.info("Start cancelOrder(), orderId:{}", id);
 
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "Order not found with id: " + id));
+                .orElseThrow(() ->  BusinessException.orderNotFound());
 
-        if (order.getStatus() == OrderStatus.CANCELLED) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST,
-                    "Order is already cancelled。orderID: " + order.getId());
-        }
-
-        if (order.getStatus() == OrderStatus.TICKETED) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST,
-                    "Completed orders cannot be cancelled。orderID: " + order.getId());
+        if (order.getStatus() == OrderStatus.CANCELLED || order.getStatus() == OrderStatus.TICKETED ) {
+            throw BusinessException.orderAlreadyCancelled();
         }
 
         order.setStatus(OrderStatus.CANCELLED);
@@ -154,15 +145,14 @@ public class OrderServiceImpl implements OrderService {
         log.info("Start updateStatus(), orderId: {}, newStatus: {}", id, newStatus);
 
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "Order not found with id: " + id));
+                .orElseThrow(() -> BusinessException.orderNotFound());
 
         OrderStatus currentStatus = order.getStatus();
 
         // Validate status transition
         if (!isValidStatusTransition(currentStatus, newStatus)) {
-            throw new IllegalStateException(String.format(
-                    "Invalid status transition from %s to %s for order %d",
-                    currentStatus, newStatus, id));
+            log.info("Invalid status transition from: {}, to newStatus: {} for order{}", currentStatus, newStatus, id);
+            throw BusinessException.invalidStatus();
         }
 
         order.setStatus(newStatus);
@@ -232,7 +222,7 @@ public class OrderServiceImpl implements OrderService {
                 return false;
 
             default:
-                throw new IllegalArgumentException("Unknown order status: " + currentStatus);
+                throw new BusinessException(HttpStatus.BAD_REQUEST, "Unknown order status: " + currentStatus);
         }
     }
 
