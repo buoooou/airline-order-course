@@ -1,0 +1,8 @@
+<div class="passenger-detail-container" *ngIf="passenger$ | async as passenger">
+  <h2>Passenger Detail</h2>
+  <div>
+    <p>ID: {{ passenger.id }}</p>
+    <p>Name: {{ passenger.name }}</p>
+    <p>Contact: {{ passenger.contact }}</p>
+  </div>
+</div>

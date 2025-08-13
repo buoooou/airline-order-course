@@ -15,10 +15,12 @@ public class OrderDto {
     private String orderNumber;
     private OrderStatus status;
     private BigDecimal amount;
-    private LocalDateTime createionDate;
+    private LocalDateTime creationDate;
 
     private UserDto user;
-    private Map<String, String> flightInfo;
+    private String paymentMethod;
+    private String paymentStatus;
+    private LocalDateTime paymentTime;
 
     @Data
     public static class UserDto{

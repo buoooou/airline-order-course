@@ -49,7 +49,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 request.getRequestURI().startsWith("/webjars/") || 
                 request.getRequestURI().startsWith("/swagger-resources/") || 
                 request.getRequestURI().startsWith("/favicon.ico") || 
-                request.getRequestURI().startsWith("/api/public/") || 
+                request.getRequestURI().startsWith("/api/auth/") || 
                 request.getRequestURI().startsWith("/actuator/")) {
                 filterChain.doFilter(request, response);
                 return;
@@ -72,7 +72,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 request.getRequestURI().startsWith("/webjars/") || 
                 request.getRequestURI().startsWith("/swagger-resources/") || 
                 request.getRequestURI().startsWith("/favicon.ico") || 
-                request.getRequestURI().startsWith("/api/public/") || 
+                request.getRequestURI().startsWith("/api/auth/") || 
                 request.getRequestURI().startsWith("/actuator/")) {
                 filterChain.doFilter(request, response);
                 return;

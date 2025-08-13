@@ -1,0 +1,5 @@
+{
+  "paymentMethod": "支付方式",
+  "paymentStatus": "支付状态",
+  "paymentTime": "支付时间"
+}

@@ -1,0 +1,25 @@
+<div class="order-info-container">
+  <h2>订单详情</h2>
+  <div class="info-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>订单ID: {{order?.id}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>订单号:</strong> {{order?.orderNumber}}</p>
+        <p><strong>状态:</strong> {{order?.status}}</p>
+        <p><strong>创建时间:</strong> {{order?.createdAt | date}}</p>
+        <p><strong>更新时间:</strong> {{order?.updatedAt | date}}</p>
+        <p><strong>乘客姓名:</strong> {{order?.passengerName}}</p>
+        <p><strong>航班号:</strong> {{order?.flightNumber}}</p>
+        <p><strong>出发地:</strong> {{order?.departure}}</p>
+        <p><strong>目的地:</strong> {{order?.destination}}</p>
+        <p><strong>出发时间:</strong> {{order?.departureTime | date}}</p>
+        <p><strong>到达时间:</strong> {{order?.arrivalTime | date}}</p>
+        <p><strong>座位号:</strong> {{order?.seatNumber}}</p>
+        <p><strong>票价:</strong> {{order?.price | currency}}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <button mat-raised-button color="primary" (click)="goBack()">返回</button>
+</div>

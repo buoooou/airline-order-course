@@ -6,19 +6,18 @@ import com.postion.airlineorderbackend.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Mapper
-@Component
+@Mapper(componentModel = "spring")
 public interface OrderMapper {
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
-    OrderDto orderToOrderDto(Order order);
+    OrderDto toDto(Order order);
 
-    List<OrderDto> ordersToOrderDtos(List<Order> orders);
+    List<OrderDto> toDtoList(List<Order> orders);
 
+    Order toEntity(OrderDto orderDto);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "username", source = "username")

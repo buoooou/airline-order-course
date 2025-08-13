@@ -1,0 +1,161 @@
+<div class="order-detail-container">
+  <div class="header">
+    <h1>航班订单详情</h1>
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="printOrder()">打印行程单</button>
+      <button mat-raised-button color="accent" (click)="exportToPDF()">保存电子票</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="order" class="order-info">
+    <!-- 机票卡片 -->
+    <div class="ticket-card">
+      <div class="ticket-header">
+        <div class="airline-logo"></div>
+        <div class="flight-number">{{ order.flightNumber }}</div>
+      </div>
+      
+      <div class="flight-info">
+        <div class="departure">
+          <div class="time">{{ order.departureTime | date:'HH:mm' }}</div>
+          <div class="airport">PEK</div>
+        </div>
+        
+        <div class="duration">
+          <div class="route-line"></div>
+          <div class="duration-text">{{ calculateDuration(order.departureTime, order.arrivalTime) }}</div>
+        </div>
+        
+        <div class="arrival">
+          <div class="time">{{ order.arrivalTime | date:'HH:mm' }}</div>
+          <div class="airport">SHA</div>
+        </div>
+      </div>
+      
+      <div class="ticket-footer">
+        <div class="passenger">
+          <span>乘客</span>
+          <strong>{{ order.passengerName }}</strong>
+        </div>
+        <div class="seat">
+          <span>座位</span>
+          <strong>{{ order.seatNumber }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- 订单详情区块 -->
+    <div class="detail-sections">
+      <div class="section status-section">
+        <h2><mat-icon>flight_takeoff</mat-icon><span>订单状态</span></h2>
+        <div class="status-progress">
+          <div class="progress-bar">
+            <div class="progress-step" [class.active]="order.status === 'PENDING_PAYMENT'">
+              <div class="step-icon">1</div>
+              <div class="step-label">待支付</div>
+            </div>
+            <div class="progress-step" [class.active]="order.status === 'PAID'">
+              <div class="step-icon">2</div>
+              <div class="step-label">已支付</div>
+            </div>
+            <div class="progress-step">
+              <i *ngIf="order.status === 'TICKETING_IN_PROGRESS'" class="fas fa-hourglass-half"></i>
+              <div class="step-icon">3</div>
+              <div class="step-label">出票中</div>
+            </div>
+            <div class="progress-step">
+              <i *ngIf="order.status === 'TICKETED'" class="fas fa-ticket-alt"></i>
+              <div class="step-icon">4</div>
+              <div class="step-label">已出票</div>
+            </div>
+          </div>
+          
+          <div class="current-status">
+            <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+              {{ order.status }}
+            </span>
+            <span class="status-time">更新时间: {{ order.updatedAt | date:'yyyy-MM-dd HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section passenger-section">
+        <h2><mat-icon>person</mat-icon><span>乘客信息</span></h2>
+        <div class="info-grid">
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>姓名</label>
+            <p>{{ order.passengerName }}</p>
+          </div>
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>证件类型</label>
+            <p>{{ order.passengerIdType }}</p>
+          </div>
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>证件号码</label>
+            <p>{{ order.passengerId }}</p>
+          </div>
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>联系方式</label>
+            <p>{{ order.passengerPhone }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section flight-section">
+        <h2><mat-icon>airplanemode_active</mat-icon><span>航班详情</span></h2>
+        <div class="info-grid">
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>航班号</label>
+            <p>{{ order.flightNumber }}</p>
+          </div>
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>舱位等级</label>
+            <p>经济舱</p>
+          </div>
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>起飞时间</label>
+            <p>{{ order.departureTime | date:'yyyy-MM-dd HH:mm' }}</p>
+          </div>
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>到达时间</label>
+            <p>{{ order.arrivalTime | date:'yyyy-MM-dd HH:mm' }}</p>
+          </div>
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>出发机场</label>
+            <p>{{ order.departureAirport}}</p>
+          </div>
+          <div class="info-item" [style.min-height]="'24px'">
+            <label>到达机场</label>
+            <p>{{ order.arrivalAirport}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section payment-section">
+        <h2><mat-icon>payment</mat-icon><span>支付信息</span></h2>
+        <div class="payment-details">
+          <div class="amount">
+            <span>{{ 'paymentAmount' | translate }}</span>
+            <strong>{{ order.paymentAmount | currency:'CNY' }}</strong>
+          </div>
+          <div class="method">
+            <span>{{ 'paymentMethod' | translate }}</span>
+            <strong>{{ order.paymentMethod }}</strong>
+          </div>
+          <div class="status">
+            <span>{{ 'paymentStatus' | translate }}</span>
+            <strong>{{ order.paymentStatus }}</strong>
+          </div>
+          <div class="time">
+            <span>{{ 'paymentTime' | translate }}</span>
+            <strong>{{ order.paymentTime ? (order.paymentTime | date:'yyyy-MM-dd HH:mm') : '--' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

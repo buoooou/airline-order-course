@@ -1,60 +1,56 @@
 package com.postion.airlineorderbackend.controller;
 
-import com.postion.airlineorderbackend.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.postion.airlineorderbackend.dto.ApiResponse;
+import com.postion.airlineorderbackend.dto.AuthResponse;
+import com.postion.airlineorderbackend.dto.LoginRequest;
+import com.postion.airlineorderbackend.dto.RegisterRequest;
+import com.postion.airlineorderbackend.service.AuthService;
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.google.common.util.concurrent.RateLimiter;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final AuthService authService;
+    private final RateLimiter rateLimiter = RateLimiter.create(10.0); // 每秒10次
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(userDetails.getUsername());
-        return ResponseEntity.ok(token);
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+        if (!rateLimiter.tryAcquire()) {
+            log.warn("Rate limit exceeded for user: {}", loginRequest.getUsernameOrEmail());
+            return ResponseEntity.status(429).body(ApiResponse.error(429,"Rate limit exceeded"));
+           
+        }
+        String username = loginRequest.getUsernameOrEmail();
+        String password = loginRequest.getPassword();
+        log.info("Login attempt for user: {}", username);
+        AuthResponse authResponse = authService.login(username, password);
+        return ResponseEntity.ok(authResponse);
     }
 
-    public static class LoginRequest {
-        private String username;
-        private String password;
-
-        // Getters and Setters
-        public String getUsername() {
-            return username;
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+        String username = registerRequest.getUsername();
+        String email = registerRequest.getEmail();
+        String password = registerRequest.getPassword();
+        
+        log.info("Register attempt for user: {}", username);
+        String result = authService.register(username, email, password);
+        if (result.equals("Username already exists") || result.equals("Email already exists")) {
+            return ResponseEntity.badRequest().body(result);
         }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
+        return ResponseEntity.ok(result);
     }
 }

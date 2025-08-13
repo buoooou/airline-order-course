@@ -47,14 +47,16 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 启用CORS配置
             // 配置默认规则
             .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 允许所有OPTIONS请求
                 .requestMatchers(
-                    "/api/public/**", //开放性的API接口免认证
+                    "/api/**", //开放性的API接口免认证
                     "/swagger-ui.html", "/swagger-ui/**",
                     "/v3/api-docs", "/v3/api-docs/**",
                     "/webjars/**", "/swagger-resources/**",
                     "/favicon.ico",
                     "/actuator/**"  // 显式放行Actuator监控路径
                 ).permitAll()
+
                 .anyRequest().authenticated()
             )
             // .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
@@ -104,13 +106,10 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8080"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        // 如果设置为 true，则 allowedOrigins 不能为 "*"（必须明确指定域名）。
         configuration.setAllowCredentials(true);
-        // configuration.setAllowCredentials(false);  // 明确禁用
-        // configuration.setAllowedOrigins(List.of("*"));  // 允许所有来源
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

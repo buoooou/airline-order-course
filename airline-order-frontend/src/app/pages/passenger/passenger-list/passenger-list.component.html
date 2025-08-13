@@ -1,0 +1,8 @@
+<div class="passenger-list-container">
+  <h2>Passenger List</h2>
+  <ul *ngIf="passengers$ | async as passengers">
+    <li *ngFor="let passenger of passengers">
+      <a [routerLink]="['/passenger', passenger.id]">{{ passenger.name }} - {{ passenger.contact }}</a>
+    </li>
+  </ul>
+</div>

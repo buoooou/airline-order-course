@@ -1,0 +1,20 @@
+/* 报表组件样式 */
+.reports-container {
+  width: 100%;
+  padding: 16px;
+
+  /* 标题样式 */
+  .report-title {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    color: #333;
+  }
+
+  /* 内容区域样式 */
+  .report-content {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}

@@ -20,6 +20,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
+        if (user == null) {
+            user = userRepository.findByEmail(username);
+        }
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username or email: " + username);
+        }
 
         // 从 User 模型中获取 role 字段
         String role = user.getRole(); // 假设 role 是 String 类型

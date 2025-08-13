@@ -38,9 +38,20 @@ app.use(
 /**
  * Handle all other requests by rendering the Angular application.
  */
+// Define prerender parameters for dynamic routes
+const getPrerenderParams = (route: string) => {
+  if (route.includes('order/:id')) {
+    return { id: ['1', '2', '3'] }; // Example IDs for prerendering
+  }
+  if (route.includes('passenger/:id')) {
+    return { id: ['101', '102', '103'] }; // Example IDs for prerendering
+  }
+  return {};
+};
+
 app.use((req, res, next) => {
   angularApp
-    .handle(req)
+    .handle(req, { getPrerenderParams })
     .then((response) =>
       response ? writeResponseToNodeResponse(response, res) : next(),
     )

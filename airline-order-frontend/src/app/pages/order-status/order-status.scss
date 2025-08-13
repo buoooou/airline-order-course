@@ -1,0 +1,82 @@
+/* 现代化表格样式 */
+.table-container {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+mat-table {
+  background: transparent;
+  width: 100%;
+
+  .mat-header-cell {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3a5c8f;
+    padding: 16px;
+  }
+
+  .mat-cell {
+    padding: 12px 16px;
+    color: #4a5568;
+    transition: all 0.2s ease;
+  }
+
+  .mat-row {
+    &:hover {
+      background: rgba(58, 92, 143, 0.05);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+
+  .action-button {
+    border-radius: 8px;
+    padding: 0 16px;
+    min-width: 80px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+.mat-paginator {
+  background: transparent;
+  margin-top: 16px;
+}
+
+/* 状态图标样式 */
+.status-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+
+  &.cancelled {
+    color: #f44336;
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .table-container {
+    padding: 12px;
+  }
+
+  mat-table {
+    .mat-header-cell, .mat-cell {
+      padding: 8px 12px;
+    }
+  }
+}

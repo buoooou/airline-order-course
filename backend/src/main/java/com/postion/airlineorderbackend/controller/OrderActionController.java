@@ -1,10 +1,10 @@
 package com.postion.airlineorderbackend.controller;
 
+import net.javacrumbs.shedlock.support.LockException;
+
 import java.util.ConcurrentModificationException;
 
-import javax.naming.ServiceUnavailableException;
-
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +24,13 @@ import lombok.RequiredArgsConstructor;
 public class OrderActionController {
     private final OrderService orderService;
 
+    /**
+     * 处理订单支付请求。
+     *
+     * @param id 订单的唯一标识符。
+     * @return 包含订单支付结果的响应实体。如果支付成功，返回订单信息；如果支付失败（例如订单状态非法），返回错误响应。
+     * @throws IllegalStateException 如果订单状态不满足支付条件。
+     */
     @PostMapping("/pay")
     public ResponseEntity<ApiResponse<OrderDto>> pay(@PathVariable Long id){
         try{
@@ -34,13 +41,19 @@ public class OrderActionController {
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<ApiResponse<OrderDto>> cancel(@PathVariable Long id){
-        try{
-            return ResponseEntity.ok(ApiResponse.success(orderService.cancelOrder(id)));
-        } catch(IllegalStateException e){
+    public ResponseEntity<ApiResponse<OrderDto>> cancel(@PathVariable Long id) {
+        try {
+            OrderDto orderDto = orderService.cancelOrder(id);
+            if (orderDto == null) {
+                return ResponseEntity.internalServerError().body(null);
+            } else {
+                return ResponseEntity.ok(ApiResponse.success(orderDto));
+            }
+        } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
 
     @PostMapping("/retry-ticketing")
     @Operation(summary = "重新尝试出票", description = "提交异步任务以重新尝试为订单出票")

@@ -1,0 +1,60 @@
+<div class="table-container">
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+    <!-- 列定义 -->
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">ID</mat-header-cell>
+      <mat-cell *matCellDef="let row" class="cell">{{row.id}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="orderNumber">
+      <mat-header-cell *matHeaderCellDef class="header-cell">订单号</mat-header-cell>
+      <mat-cell *matCellDef="let row" class="cell">{{row.orderNumber}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef class="header-cell">状态</mat-header-cell>
+      <mat-cell *matCellDef="let row" class="cell">
+      <span *ngIf="row.status === 'TICKETED'" class="status-badge text-primary"><i class="fas fa-paper-plane"></i> 已出票</span>
+      <span *ngIf="row.status === 'PAID'" class="status-badge text-success"><i class="fas fa-check-circle"></i> 已支付</span>
+      <span *ngIf="row.status === 'TICKETING_IN_PROGRESS'" color="info" class="status-badge" matBadgeSize="medium">
+        <i class="fas fa-sync-alt fa-spin"></i> <span class="text-info">出票中</span>
+      </span>
+      <span *ngIf="row.status === 'PENDING_PAYMENT'" color="warn" class="status-badge" matBadgeSize="medium">
+        <i class="fas fa-clock"></i> <span class="text-warning">待支付</span>
+      </span>
+      <span *ngIf="row.status === 'PAYMENT_FAILED'" color="danger" class="status-badge" matBadgeSize="medium">
+        <i class="fas fa-times-circle"></i> <span class="text-danger">支付失败</span>
+      </span>
+      <span *ngIf="row.status === 'TICKETING_FAILED'" color="warning" class="status-badge" matBadgeSize="medium">
+        <i class="fas fa-exclamation-circle"></i> <span class="text-warning">出票失败</span>
+      </span>
+      <span *ngIf="row.status === 'CANCELLED'" color="disabled" class="status-badge" matBadgeSize="medium">
+        <i class="fas fa-ban"></i> <span class="text-secondary">已取消</span>
+      </span>
+    </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef class="header-cell">操作</mat-header-cell>
+      <mat-cell *matCellDef="let row" class="cell">
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="viewDetails(row.id)" class="action-button">查看详情</button>
+          <button mat-raised-button color="warn" (click)="cancelOrder(row.id)" class="action-button">取消订单</button>
+          <button mat-raised-button color="accent" (click)="rebookOrder(row.id)" class="action-button">重新预订</button>
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <!-- 表格行定义 -->
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="row"></mat-row>
+  </mat-table>
+
+  <!-- 分页控件 -->
+  <mat-paginator [length]="total" 
+                [pageSize]="pageSize" 
+                [pageIndex]="pageIndex"
+                [pageSizeOptions]="[5, 10, 20]" 
+                (page)="onPageChange($event)">
+  </mat-paginator>
+</div>

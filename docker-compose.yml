@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "4200:80"
+    networks:
+      - app-network
+
+  backend:
+    build: ../backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/airline_order_db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+    volumes:
+      - app-logs:/app/airline-app/logs
+    networks:
+      - app-network
+
+  database:
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=airline_order_db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init.sql:docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+# 定义数据卷，Docker 会自动管理它
+volumes:
+  db-data:
+  app-logs:
+
+# 定义网络，让两个容器可以互相通信
+networks:
+  app-network:

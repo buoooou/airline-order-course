@@ -1,6 +1,9 @@
 package com.postion.airlineorderbackend.adapter.outbound;
 
 import org.springframework.stereotype.Component;
+
+import com.postion.airlineorderbackend.dto.TicketInfo;
+
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -10,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class AirlineApiClient {
 
-    public String issueTicket(Long orderId) {
+    public TicketInfo issueTicket(Long orderId) {
         log.info("开始处理出票请求，订单ID: {}", orderId);
         try {
             // 模拟网络延迟（2-5秒）
@@ -19,8 +22,12 @@ public class AirlineApiClient {
             // 模拟接口成功率（80%成功，20%失败）
             if (ThreadLocalRandom.current().nextInt(10) < 8) {
                 String ticketNumber = "TKT" + System.currentTimeMillis();
-                log.info("出票成功，订单ID: {}, 票号: {}", orderId, ticketNumber);
-                return ticketNumber;
+                String seatNumber = "SEAT" + ThreadLocalRandom.current().nextInt(1000);
+                log.info("出票成功，订单ID: {}, 票号: {}, 座位号: {}", orderId, ticketNumber, seatNumber);
+                TicketInfo ticketInfo = new TicketInfo();
+                ticketInfo.setTicketNumber(ticketNumber);
+                ticketInfo.setSeatNumber(seatNumber);
+                return ticketInfo;
             } else {
                 String errorMessage = "出票失败，航司返回错误";
                 log.error("出票失败，订单ID: {}, 原因: {}", orderId, errorMessage);

@@ -2,6 +2,9 @@ package com.postion.airlineorderbackend.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +22,11 @@ public class User {
     private String username;
     private String password;
     private String role;
-    private LocalDateTime createionDate;
+    @Column(name = "creation_date", nullable = false)
+    @CreationTimestamp
+    private LocalDateTime creationDate;
+    @Column(name = "update_date", nullable = false)
+    @CreationTimestamp
     private LocalDateTime updateDate;
+    private String email;
 }

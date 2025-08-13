@@ -3,6 +3,9 @@ package com.postion.airlineorderbackend.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,11 +29,18 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private BigDecimal amount;
-
-    private LocalDateTime createionDate;
+    @Column(name = "creation_date", nullable = false)
+    @CreationTimestamp
+    private LocalDateTime creationDate;
+    @Column(name = "update_date", nullable = false)
+    @CreationTimestamp
     private LocalDateTime updateDate;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private String paymentMethod;
+    private String paymentStatus;
+    private LocalDateTime paymentTime;
 
 }

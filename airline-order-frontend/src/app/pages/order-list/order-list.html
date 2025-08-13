@@ -1,0 +1,63 @@
+<div class="order-list-container">
+  <div class="header">
+    <h1>订单管理</h1>
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="loadOrders(1)">刷新</button>
+    </div>
+  </div>
+
+  <div class="filter-section">
+    <div class="search-input">
+      <label for="search">搜索订单</label>
+      <input id="search" type="text" placeholder="输入订单号或乘客姓名" (keyup)="applyFilter($event)">
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="native-table">
+      <thead>
+        <tr>
+          <th>订单号</th>
+          <th>乘客姓名</th>
+          <th>航班号</th>
+          <th>出发地</th>
+          <th>目的地</th>
+          <th>日期</th>
+          <th>状态</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders">
+          <td>{{ order.orderNumber }}</td>
+          <td>{{ order.passengerName }}</td>
+          <td>{{ order.flightNumber }}</td>
+          <td>{{ order.departureAirport }}</td>
+          <td>{{ order.arrivalAirport }}</td>
+          <td>{{ order.date }}</td>
+          <td>
+            <span class="status-badge">
+              <i *ngIf="order.status === 'PAID'" class="fas fa-check-circle"></i>
+              <i *ngIf="order.status === 'TICKETED'" class="fas fa-ticket-alt"></i>
+              <i *ngIf="order.status === 'TICKETING_IN_PROGRESS'" class="fas fa-hourglass-half"></i>
+              <i *ngIf="order.status === 'PENDING_PAYMENT'" class="fas fa-clock"></i>
+              <i *ngIf="order.status === 'PAYMENT_FAILED'" class="fas fa-times-circle"></i>
+              <i *ngIf="order.status === 'TICKETING_FAILED'" class="fas fa-exclamation-circle"></i>
+              <i *ngIf="order.status === 'CANCELLED'" class="fas fa-ban"></i>
+              {{ order.status }}
+            </span>
+          </td>
+          <td>
+            <button mat-icon-button (click)="viewDetails(order)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination-container">
+    <mat-paginator [length]="total" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]" (page)="onPageChange($event)">
+    </mat-paginator>
+  </div>
+</div>
