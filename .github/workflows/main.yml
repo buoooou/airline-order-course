@@ -35,6 +35,35 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # 1) 创建目录
+            mkdir -p /home/ubuntu/airline-cicd
+            cd /home/ubuntu/airline-cicd
+
+            # 2) 安装 Docker（若已装会自动跳过）
+            if ! command -v docker &> /dev/null; then
+              curl -fsSL https://get.docker.com | sudo bash
+            fi
+
+            # 3) 安装 docker-compose plugin（官方 v2）
+            sudo apt-get update -y
+            sudo apt-get install -y docker-compose-plugin
+
+            # 4) 把当前用户加入 docker 组并激活（不重启）
+            sudo usermod -aG docker ubuntu
+            newgrp docker
+
+            # 5) 启动 Docker 服务
+            sudo systemctl enable --now docker
+
+            # 6) 拉取并运行镜像（示例）
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:latest
+            docker stop airline-app 2>/dev/null || true
+            docker rm   airline-app 2>/dev/null || true
+            docker run -d \
+              --name airline-app \
+              -p 80:8080 \
+              --link airline-mysql-db:db \
+              ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:latest
             cd ~/airline-cicd
             docker-compose pull
             docker-compose up -d --remove-orphans
