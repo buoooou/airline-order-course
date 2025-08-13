@@ -1,0 +1,43 @@
+<p>login works!</p>
+<div class="login-container">
+  <form
+    nz-form
+    [formGroup]="loginForm"
+    class="login-form"
+    (ngSubmit)="submitForm()"
+  >
+    <h2 class="login-title">Airline Booking System</h2>
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Please input your username!">
+        <nz-input-group nzPrefixIcon="user">
+          <input
+            type="text"
+            nz-input
+            formControlName="username"
+            placeholder="用户名 (admin)"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Please input your password!">
+        <nz-input-group nzPrefixIcon="lock">
+          <input
+            type="password"
+            nz-input
+            formControlName="password"
+            placeholder="密码 (password)"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <button
+      nz-button
+      class="login-form-button"
+      [nzType]="'primary'"
+      [nzLoading]="isLoading"
+    >
+      login
+    </button>
+  </form>
+</div>

@@ -1,0 +1,37 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Order List</h1>
+    <button nz-button nzType="default" (click)="logout()">logout</button>
+  </div>
+
+  <nz-table
+    #basicTable
+    [nzData]="(orders$ | async)!"
+    [nzLoading]="!(orders$ | async)"
+  >
+    <thead>
+      <tr>
+        <th>Order Number</th>
+        <th>Status</th>
+        <th>Amount</th>
+        <th>Creation Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.orderNumber }}</td>
+        <td>
+          <nz-tag [nzColor]="getStatusColor(data.status)">{{
+            data.status | titlecase
+          }}</nz-tag>
+        </td>
+        <td>{{ data.amount | currency : "CNY" }}</td>
+        <td>{{ data.creationDate | date : "yyyy-MM-dd HH:mm" }}</td>
+        <td>
+          <a [routerLink]="['/orders', data.id]">Refer To Detail</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

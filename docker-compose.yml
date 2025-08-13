@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  # MySQL 数据库服务
+  database:
+    image: mysql:8.0
+    container_name: airline-mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: airlineTest1234 # Root 用户的密码
+      MYSQL_DATABASE: myappdb # 创建的数据库名
+      MYSQL_USER: myappuser # 为应用创建的用户名
+      MYSQL_PASSWORD: airlineTest1234 # 应用用户的密码
+    # ports:
+    #   - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql # 数据持久化
+    networks:
+      - app-network
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+
+  # Spring Boot + Angular 应用服务
+  app:
+    # image: krowlzhang/airline-order-manage:latest
+    image: rongwen/airline-order-course:latest
+    container_name: my-springboot-angular-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy # 确保数据库健康后才启动
+    environment:
+      # 数据库连接配置
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/myappdb?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: myappuser
+      SPRING_DATASOURCE_PASSWORD: airlineTest1234
+      # 其他Spring Boot配置
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - app-network
+
+volumes:
+  db_data: # 数据库持久化卷
+
+networks:
+  app-network: # 自定义网络
+    driver: bridge
