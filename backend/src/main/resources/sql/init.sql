@@ -75,14 +75,14 @@ CREATE TABLE `orders` (
 -- 1. 插入用户测试数据
 -- 密码原文均为 'password'，BCrypt加密后的哈希值
 INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
-(1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
-(2, 'user1', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER'),
-(3, 'user2', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER'),
-(4, 'manager', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
-(5, 'customer1', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER'),
-(6, 'customer2', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER'),
-(7, 'vip_user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER'),
-(8, 'test_user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
+(1, 'admin', '$2a$10$VCSwbfVcFUvgxvzndqJ5MutD8GoF06606MrBjQrNhs8x/VJrEB9aa', 'ADMIN'),
+(2, 'user1', '$2a$10$VCSwbfVcFUvgxvzndqJ5MutD8GoF06606MrBjQrNhs8x/VJrEB9aa', 'USER'),
+(3, 'user2', '$2a$10$VCSwbfVcFUvgxvzndqJ5MutD8GoF06606MrBjQrNhs8x/VJrEB9aa', 'USER'),
+(4, 'manager', '$2a$10$VCSwbfVcFUvgxvzndqJ5MutD8GoF06606MrBjQrNhs8x/VJrEB9aa', 'ADMIN'),
+(5, 'customer1', '$2a$10$VCSwbfVcFUvgxvzndqJ5MutD8GoF06606MrBjQrNhs8x/VJrEB9aa', 'USER'),
+(6, 'customer2', '$2a$10$VCSwbfVcFUvgxvzndqJ5MutD8GoF06606MrBjQrNhs8x/VJrEB9aa', 'USER'),
+(7, 'vip_user', '$2a$10$VCSwbfVcFUvgxvzndqJ5MutD8GoF06606MrBjQrNhs8x/VJrEB9aa', 'USER'),
+(8, 'test_user', '$2a$10$VCSwbfVcFUvgxvzndqJ5MutD8GoF06606MrBjQrNhs8x/VJrEB9aa', 'USER');
 
 -- 2. 插入航班信息测试数据
 INSERT INTO `flight_info` (`id`, `flight_number`, `departure_airport_code`, `departure_airport_name`, `arrival_airport_code`, `arrival_airport_name`, `departure_time`, `arrival_time`, `flight_duration`) VALUES
@@ -105,7 +105,191 @@ INSERT INTO `flight_info` (`id`, `flight_number`, `departure_airport_code`, `dep
 (14, 'EU2345', 'CTU', '成都双流国际机场', 'CKG', '重庆江北国际机场', '2024-02-06 19:45:00', '2024-02-06 20:50:00', 65),
 (15, 'OQ6789', 'KMG', '昆明长水国际机场', 'LJG', '丽江三义机场', '2024-02-07 13:15:00', '2024-02-07 14:05:00', 50);
 
--- 3. 插入订单测试数据（覆盖所有状态和场景）
+-- 3. 插入座位详情测试数据
+-- 为每个航班创建不同类型和价格的座位
+-- 国内航班座位 (航班1-5和11-15)
+-- 航班1: 北京-上海 (CA1234)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(1, '12A', 'ECONOMY', 'OCCUPIED', 1280.00),
+(1, '12B', 'ECONOMY', 'OCCUPIED', 1280.00),
+(1, '12C', 'ECONOMY', 'OCCUPIED', 1280.00),
+(1, '12D', 'ECONOMY', 'OCCUPIED', 1280.00),
+(1, '12E', 'ECONOMY', 'OCCUPIED', 1280.00),
+(1, '12F', 'ECONOMY', 'OCCUPIED', 1280.00),
+(1, '13A', 'ECONOMY', 'AVAILABLE', 1280.00),
+(1, '13B', 'ECONOMY', 'AVAILABLE', 1280.00),
+(1, '13C', 'ECONOMY', 'AVAILABLE', 1280.00),
+-- 商务舱
+(1, '5A', 'BUSINESS', 'AVAILABLE', 2580.00),
+(1, '5B', 'BUSINESS', 'AVAILABLE', 2580.00),
+(1, '5C', 'BUSINESS', 'AVAILABLE', 2580.00),
+-- 头等舱
+(1, '1A', 'FIRST_CLASS', 'AVAILABLE', 4800.00),
+(1, '1B', 'FIRST_CLASS', 'AVAILABLE', 4800.00);
+
+-- 航班2: 上海-广州 (MU5678)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(2, '8C', 'ECONOMY', 'OCCUPIED', 890.50),
+(2, '8D', 'ECONOMY', 'OCCUPIED', 890.50),
+(2, '8E', 'ECONOMY', 'OCCUPIED', 890.50),
+(2, '9A', 'ECONOMY', 'AVAILABLE', 890.50),
+(2, '9B', 'ECONOMY', 'AVAILABLE', 890.50),
+(2, '9C', 'ECONOMY', 'AVAILABLE', 890.50),
+-- 商务舱
+(2, '4A', 'BUSINESS', 'AVAILABLE', 1780.00),
+(2, '4B', 'BUSINESS', 'AVAILABLE', 1780.00),
+-- 头等舱
+(2, '1C', 'FIRST_CLASS', 'AVAILABLE', 3560.00);
+
+-- 航班3: 广州-深圳 (CZ9876)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(3, '20D', 'ECONOMY', 'OCCUPIED', 550.00),
+(3, '20E', 'ECONOMY', 'OCCUPIED', 550.00),
+(3, '21A', 'ECONOMY', 'AVAILABLE', 550.00),
+(3, '21B', 'ECONOMY', 'AVAILABLE', 550.00),
+-- 商务舱
+(3, '10A', 'BUSINESS', 'AVAILABLE', 1100.00),
+(3, '10B', 'BUSINESS', 'AVAILABLE', 1100.00),
+-- 头等舱
+(3, '2A', 'FIRST_CLASS', 'AVAILABLE', 1650.00);
+
+-- 航班4: 成都-北京 (HU1357)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(4, '18F', 'ECONOMY', 'OCCUPIED', 980.00),
+(4, '18G', 'ECONOMY', 'OCCUPIED', 980.00),
+(4, '19A', 'ECONOMY', 'AVAILABLE', 980.00),
+(4, '19B', 'ECONOMY', 'AVAILABLE', 980.00),
+-- 商务舱
+(4, '8A', 'BUSINESS', 'AVAILABLE', 1960.00),
+(4, '8B', 'BUSINESS', 'AVAILABLE', 1960.00),
+-- 头等舱
+(4, '2B', 'FIRST_CLASS', 'AVAILABLE', 2940.00);
+
+-- 航班5: 西安-昆明 (SC2468)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(5, '15A', 'ECONOMY', 'AVAILABLE', 720.00),
+(5, '15B', 'ECONOMY', 'AVAILABLE', 720.00),
+-- 商务舱
+(5, '6A', 'BUSINESS', 'AVAILABLE', 1440.00),
+-- 头等舱
+(5, '1D', 'FIRST_CLASS', 'AVAILABLE', 2160.00);
+
+-- 国际航班座位 (航班6-10)
+-- 航班6: 北京-洛杉矶 (CA981)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(6, '3F', 'ECONOMY', 'OCCUPIED', 2150.00),
+(6, '3G', 'ECONOMY', 'OCCUPIED', 2150.00),
+(6, '3H', 'ECONOMY', 'OCCUPIED', 2150.00),
+(6, '4D', 'ECONOMY', 'AVAILABLE', 2150.00),
+(6, '4E', 'ECONOMY', 'AVAILABLE', 2150.00),
+-- 商务舱
+(6, '2A', 'BUSINESS', 'AVAILABLE', 5800.00),
+(6, '2B', 'BUSINESS', 'AVAILABLE', 5800.00),
+-- 头等舱
+(6, '1C', 'FIRST_CLASS', 'AVAILABLE', 9200.00);
+
+-- 航班7: 上海-东京 (MU587)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(7, '5A', 'ECONOMY', 'OCCUPIED', 1600.00),
+(7, '5B', 'ECONOMY', 'OCCUPIED', 1600.00),
+(7, '6A', 'ECONOMY', 'AVAILABLE', 1600.00),
+(7, '6B', 'ECONOMY', 'AVAILABLE', 1600.00),
+-- 商务舱
+(7, '3A', 'BUSINESS', 'AVAILABLE', 3200.00),
+(7, '3B', 'BUSINESS', 'AVAILABLE', 3200.00),
+-- 头等舱
+(7, '1D', 'FIRST_CLASS', 'AVAILABLE', 6400.00);
+
+-- 航班8: 广州-曼谷 (CZ303)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(8, '7B', 'ECONOMY', 'OCCUPIED', 1400.00),
+(8, '7C', 'ECONOMY', 'OCCUPIED', 1400.00),
+(8, '8D', 'ECONOMY', 'AVAILABLE', 1400.00),
+(8, '8E', 'ECONOMY', 'AVAILABLE', 1400.00),
+-- 商务舱
+(8, '4C', 'BUSINESS', 'AVAILABLE', 2800.00),
+(8, '4D', 'BUSINESS', 'AVAILABLE', 2800.00),
+-- 头等舱
+(8, '1E', 'FIRST_CLASS', 'AVAILABLE', 5600.00);
+
+-- 航班9: 北京-巴黎 (HU7931)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(9, '1A', 'ECONOMY', 'OCCUPIED', 2900.00),
+(9, '1B', 'ECONOMY', 'OCCUPIED', 2900.00),
+(9, '2C', 'ECONOMY', 'AVAILABLE', 2900.00),
+(9, '2D', 'ECONOMY', 'AVAILABLE', 2900.00),
+-- 商务舱
+(9, '1F', 'BUSINESS', 'AVAILABLE', 5800.00),
+(9, '1G', 'BUSINESS', 'AVAILABLE', 5800.00),
+-- 头等舱
+(9, '1K', 'FIRST_CLASS', 'AVAILABLE', 11600.00);
+
+-- 航班10: 北京-法兰克福 (CA125)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(10, '2C', 'ECONOMY', 'OCCUPIED', 2100.00),
+(10, '2D', 'ECONOMY', 'OCCUPIED', 2100.00),
+(10, '3E', 'ECONOMY', 'AVAILABLE', 2100.00),
+(10, '3F', 'ECONOMY', 'AVAILABLE', 2100.00),
+-- 商务舱
+(10, '2G', 'BUSINESS', 'AVAILABLE', 4200.00),
+(10, '2H', 'BUSINESS', 'AVAILABLE', 4200.00),
+-- 头等舱
+(10, '1J', 'FIRST_CLASS', 'AVAILABLE', 8400.00);
+
+-- 短途国内航班座位 (航班11-15)
+-- 航班11: 上海-南京 (FM9201)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(11, '15B', 'ECONOMY', 'OCCUPIED', 450.00),
+(11, '16A', 'ECONOMY', 'AVAILABLE', 450.00),
+(11, '16B', 'ECONOMY', 'AVAILABLE', 450.00),
+-- 商务舱
+(11, '5C', 'BUSINESS', 'AVAILABLE', 900.00);
+
+-- 航班12: 北京-天津 (JD5432)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(12, '25A', 'ECONOMY', 'OCCUPIED', 380.00),
+(12, '25B', 'ECONOMY', 'AVAILABLE', 380.00),
+-- 商务舱
+(12, '10A', 'BUSINESS', 'AVAILABLE', 760.00);
+
+-- 航班13: 广州-海口 (GS7890)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(13, '22A', 'ECONOMY', 'OCCUPIED', 750.00),
+(13, '22B', 'ECONOMY', 'OCCUPIED', 750.00),
+(13, '23A', 'ECONOMY', 'AVAILABLE', 750.00),
+-- 商务舱
+(13, '8C', 'BUSINESS', 'AVAILABLE', 1500.00);
+
+-- 航班14: 成都-重庆 (EU2345)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(14, '18A', 'ECONOMY', 'AVAILABLE', 420.00),
+(14, '18B', 'ECONOMY', 'AVAILABLE', 420.00),
+-- 商务舱
+(14, '6D', 'BUSINESS', 'AVAILABLE', 840.00);
+
+-- 航班15: 昆明-丽江 (OQ6789)
+INSERT INTO `seat_detail` (`flight_id`, `seat_number`, `seat_type`, `seat_status`, `price`) VALUES
+-- 经济舱
+(15, '16C', 'ECONOMY', 'OCCUPIED', 520.00),
+(15, '17A', 'ECONOMY', 'AVAILABLE', 520.00),
+-- 商务舱
+(15, '7E', 'BUSINESS', 'AVAILABLE', 1040.00);
+
+-- 4. 插入订单测试数据（覆盖所有状态和场景）
 INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`, `flight_id`, `seat_number`) VALUES
 -- PENDING_PAYMENT 状态订单
 ('ORD-2024020100001', 'PENDING_PAYMENT', 1280.00, NOW() - INTERVAL 5 MINUTE, 2, 1, '12A'),
