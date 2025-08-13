@@ -33,4 +33,4 @@ WORKDIR /app
 # 使用通配符复制 JAR 包
 COPY --from=backend-builder /app/target/*.jar app.jar
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT  ["java", "-jar", "app.jar"]
