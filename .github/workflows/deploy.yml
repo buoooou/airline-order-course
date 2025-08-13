@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # 根据你的 Angular 项目需求调整版本
+          node-version: '22'  # 根据你的 Angular 项目需求调整版本
 
       # 3. 安装 Angular 依赖并构建
       - name: Build airline-order-frontend
@@ -31,7 +31,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'  # 根据你的 Spring Boot 项目需求调整版本
+          java-version: '21'  # 根据你的 Spring Boot 项目需求调整版本
           distribution: 'adopt'
 
       # 5. 安装 Maven 并构建 Spring Boot 项目
