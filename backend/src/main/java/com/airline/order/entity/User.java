@@ -7,7 +7,7 @@ import java.util.List;
  * 用户实体类
  */
 @Entity
-@Table(name = "app_users_zdq")
+@Table(name = "app_users")
 public class User {
     
     @Id

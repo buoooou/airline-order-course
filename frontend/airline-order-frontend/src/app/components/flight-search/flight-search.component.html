@@ -1,0 +1,185 @@
+<div class="flight-search-container">
+  <div class="search-panel">
+    <h2 class="panel-title">航班搜索</h2>
+    
+    <!-- 搜索模式选择 -->
+    <div class="search-mode-tabs">
+      <button 
+        class="mode-tab" 
+        [class.active]="searchMode === 'route'"
+        (click)="setSearchMode('route')"
+      >
+        按路线搜索
+      </button>
+      <button 
+        class="mode-tab" 
+        [class.active]="searchMode === 'number'"
+        (click)="setSearchMode('number')"
+      >
+        按航班号搜索
+      </button>
+      <button 
+        class="mode-tab" 
+        [class.active]="searchMode === 'date'"
+        (click)="setSearchMode('date')"
+      >
+        按日期搜索
+      </button>
+    </div>
+    
+    <!-- 错误提示 -->
+    <div class="error-message" *ngIf="error">
+      {{ error }}
+    </div>
+    
+    <!-- 路线搜索表单 -->
+    <form *ngIf="searchMode === 'route'" (ngSubmit)="onSearch()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="departureCode">出发地</label>
+          <input 
+            type="text" 
+            id="departureCode" 
+            name="departureCode" 
+            [(ngModel)]="routeSearchForm.departureCode" 
+            required
+            placeholder="输入机场代码，如: PEK"
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="arrivalCode">目的地</label>
+          <input 
+            type="text" 
+            id="arrivalCode" 
+            name="arrivalCode" 
+            [(ngModel)]="routeSearchForm.arrivalCode" 
+            required
+            placeholder="输入机场代码，如: SHA"
+          >
+        </div>
+      </div>
+      
+      <button 
+        type="submit" 
+        class="btn-search" 
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? '搜索中...' : '搜索航班' }}
+      </button>
+    </form>
+    
+    <!-- 航班号搜索表单 -->
+    <form *ngIf="searchMode === 'number'" (ngSubmit)="onSearch()">
+      <div class="form-group">
+        <label for="keyword">航班号</label>
+        <input 
+          type="text" 
+          id="keyword" 
+          name="keyword" 
+          [(ngModel)]="numberSearchForm.keyword" 
+          required
+          placeholder="输入航班号，如: CA1234"
+        >
+      </div>
+      
+      <button 
+        type="submit" 
+        class="btn-search" 
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? '搜索中...' : '搜索航班' }}
+      </button>
+    </form>
+    
+    <!-- 日期搜索表单 -->
+    <form *ngIf="searchMode === 'date'" (ngSubmit)="onSearch()">
+      <div class="form-group">
+        <label for="date">出发日期</label>
+        <input 
+          type="date" 
+          id="date" 
+          name="date" 
+          [(ngModel)]="dateSearchForm.date" 
+          required
+        >
+      </div>
+      
+      <button 
+        type="submit" 
+        class="btn-search" 
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? '搜索中...' : '搜索航班' }}
+      </button>
+    </form>
+  </div>
+  
+  <!-- 航班列表 -->
+  <div class="flight-results">
+    <h2 class="results-title">航班信息</h2>
+    
+    <div class="loading-spinner" *ngIf="isLoading">
+      加载中...
+    </div>
+    
+    <div class="no-results" *ngIf="!isLoading && flights.length === 0">
+      暂无符合条件的航班
+    </div>
+    
+    <div class="flight-list" *ngIf="!isLoading && flights.length > 0">
+      <div class="flight-card" *ngFor="let flight of flights">
+        <div class="flight-header">
+          <span class="flight-number">{{ flight.flightNumber }}</span>
+          <span class="flight-status" [class.status-normal]="flight.status === 'NORMAL'">
+            {{ flight.status === 'NORMAL' ? '正常' : '延误' }}
+          </span>
+        </div>
+        
+        <div class="flight-route">
+          <div class="departure">
+            <div class="airport-code">{{ flight.departureAirportCode }}</div>
+            <div class="airport-name">{{ flight.departureAirportName }}</div>
+            <div class="time">{{ flight.departureTime | date:'HH:mm' }}</div>
+          </div>
+          
+          <div class="flight-duration">
+            <div class="duration-line"></div>
+            <div class="duration-time">{{ flight.flightDuration }} 分钟</div>
+          </div>
+          
+          <div class="arrival">
+            <div class="airport-code">{{ flight.arrivalAirportCode }}</div>
+            <div class="airport-name">{{ flight.arrivalAirportName }}</div>
+            <div class="time">{{ flight.arrivalTime | date:'HH:mm' }}</div>
+          </div>
+        </div>
+        
+        <div class="flight-info">
+          <div class="info-item">
+            <span class="label">出发机场</span>
+            <span class="value">{{ flight.departureAirportName }} ({{ flight.departureAirportCode }})</span>
+          </div>
+          <div class="info-item">
+            <span class="label">到达机场</span>
+            <span class="value">{{ flight.arrivalAirportName }} ({{ flight.arrivalAirportCode }})</span>
+          </div>
+          <div class="info-item">
+            <span class="label">日期</span>
+            <span class="value">{{ flight.departureTime | date:'yyyy-MM-dd' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">价格</span>
+            <span class="value price" *ngIf="flight.minPrice">¥{{ flight.minPrice }} 起</span>
+            <span class="value price" *ngIf="!flight.minPrice">价格待定</span>
+          </div>
+        </div>
+        
+        <div class="flight-actions">
+          <button class="btn-details" (click)="viewFlightDetails(flight.id)">查看详情</button>
+          <button class="btn-book" (click)="bookFlight(flight.id)">预订</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

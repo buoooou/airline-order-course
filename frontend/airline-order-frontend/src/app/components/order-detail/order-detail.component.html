@@ -1,0 +1,144 @@
+<div class="order-detail-container">
+  <div class="back-button" (click)="goBack()">
+    <span class="back-icon">←</span> 返回订单列表
+  </div>
+  
+  <h2 class="page-title">订单详情</h2>
+  
+  <!-- 错误提示 -->
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+  
+  <!-- 加载中提示 -->
+  <div class="loading-spinner" *ngIf="isLoading">
+    加载中...
+  </div>
+  
+  <!-- 订单详情 -->
+  <div class="order-detail" *ngIf="!isLoading && order">
+    <!-- 订单基本信息 -->
+    <div class="order-card">
+      <div class="card-header">
+        <h3 class="card-title">订单信息</h3>
+        <div class="order-status" [ngClass]="getStatusClass(order.status)">
+          {{ getStatusText(order.status) }}
+        </div>
+      </div>
+      
+      <div class="info-row">
+        <div class="info-item">
+          <div class="label">订单号</div>
+          <div class="value">{{ order.orderNumber }}</div>
+        </div>
+        <div class="info-item">
+          <div class="label">创建时间</div>
+          <div class="value">{{ order.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</div>
+        </div>
+      </div>
+      
+      <div class="info-row">
+        <div class="info-item">
+          <div class="label">支付方式</div>
+          <div class="value">{{ order.paymentMethod || '未支付' }}</div>
+        </div>
+        <div class="info-item">
+          <div class="label">支付时间</div>
+          <div class="value">{{ order.paymentTime ? (order.paymentTime | date:'yyyy-MM-dd HH:mm:ss') : '未支付' }}</div>
+        </div>
+      </div>
+      
+      <div class="info-row">
+        <div class="info-item">
+          <div class="label">总金额</div>
+          <div class="value price">¥{{ order.amount }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 航班信息 -->
+    <div class="order-card">
+      <div class="card-header">
+        <h3 class="card-title">航班信息</h3>
+      </div>
+      
+      <div class="flight-info">
+        <div class="flight-header">
+          <div class="flight-number">{{ order.flightNumber }}</div>
+          <div class="flight-date">{{ order.departureTime | date:'yyyy-MM-dd' }}</div>
+        </div>
+        
+        <div class="flight-route">
+          <div class="departure">
+            <div class="airport-code">{{ order.departureCode }}</div>
+            <div class="airport-name">{{ order.departureName }}</div>
+            <div class="time">{{ order.departureTime | date:'HH:mm' }}</div>
+          </div>
+          
+          <div class="flight-duration">
+            <div class="duration-line"></div>
+            <div class="duration-time">{{ order.durationMinutes }} 分钟</div>
+          </div>
+          
+          <div class="arrival">
+            <div class="airport-code">{{ order.arrivalCode }}</div>
+            <div class="airport-name">{{ order.arrivalName }}</div>
+            <div class="time">{{ order.arrivalTime | date:'HH:mm' }}</div>
+          </div>
+        </div>
+        
+        <div class="flight-details">
+          <div class="detail-item">
+            <div class="label">机型</div>
+            <div class="value">{{ order.aircraft }}</div>
+          </div>
+          <div class="detail-item">
+            <div class="label">座位类型</div>
+            <div class="value">{{ order.seatClass }}</div>
+          </div>
+          <div class="detail-item">
+            <div class="label">座位号</div>
+            <div class="value">{{ order.seatNumber || '待分配' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 乘客信息 -->
+    <div class="order-card">
+      <div class="card-header">
+        <h3 class="card-title">乘客信息</h3>
+      </div>
+      
+      <div class="passenger-info">
+        <div class="info-row">
+          <div class="info-item">
+            <div class="label">姓名</div>
+            <div class="value">{{ order.passengerName }}</div>
+          </div>
+          <div class="info-item">
+            <div class="label">证件类型</div>
+            <div class="value">{{ order.idType || '身份证' }}</div>
+          </div>
+        </div>
+        
+        <div class="info-row">
+          <div class="info-item">
+            <div class="label">证件号码</div>
+            <div class="value">{{ order.idNumber }}</div>
+          </div>
+          <div class="info-item">
+            <div class="label">联系电话</div>
+            <div class="value">{{ order.contactPhone }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 操作按钮 -->
+    <div class="order-actions" *ngIf="order.status === 'PENDING' || order.status === 'PAID'">
+      <button class="btn-cancel" (click)="cancelOrder()">取消订单</button>
+      <button class="btn-pay" *ngIf="order.status === 'PENDING'">去支付</button>
+    </div>
+  </div>
+</div>

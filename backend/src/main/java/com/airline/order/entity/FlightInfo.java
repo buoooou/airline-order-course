@@ -8,7 +8,7 @@ import java.util.List;
  * 航班信息实体类
  */
 @Entity
-@Table(name = "flight_info_zdq")
+@Table(name = "flight_info")
 public class FlightInfo {
     
     @Id

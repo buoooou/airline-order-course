@@ -1,8 +1,13 @@
 package com.airline.order.controller;
 
+import com.airline.order.dto.ApiResponse;
 import com.airline.order.dto.CreateOrderRequest;
 import com.airline.order.dto.OrderDTO;
 import com.airline.order.enums.OrderStatus;
+import com.airline.order.exception.BusinessException;
+import com.airline.order.exception.GlobalExceptionHandler;
+import com.airline.order.exception.ResourceNotFoundException;
+import com.airline.order.exception.ValidationException;
 import com.airline.order.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +52,11 @@ class OrderControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(orderController).build();
+        // 添加全局异常处理器
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(orderController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
         objectMapper = new ObjectMapper();
     }
 
@@ -82,12 +91,12 @@ class OrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("订单创建成功"))
-                .andExpect(jsonPath("$.order.id").value(1))
-                .andExpect(jsonPath("$.order.orderNumber").value("ORD20240101001"))
-                .andExpect(jsonPath("$.order.flightNumber").value("CA1234"))
-                .andExpect(jsonPath("$.order.seatNumber").value("12A"))
-                .andExpect(jsonPath("$.order.amount").value(1500.00))
-                .andExpect(jsonPath("$.order.status").value("PENDING_PAYMENT"));
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.orderNumber").value("ORD20240101001"))
+                .andExpect(jsonPath("$.data.flightNumber").value("CA1234"))
+                .andExpect(jsonPath("$.data.seatNumber").value("12A"))
+                .andExpect(jsonPath("$.data.amount").value(1500.00))
+                .andExpect(jsonPath("$.data.status").value("PENDING_PAYMENT"));
 
         // 验证 service 方法被调用
         verify(orderService, times(1)).createOrder(any(CreateOrderRequest.class));
@@ -104,7 +113,7 @@ class OrderControllerTest {
 
         // Mock service 抛出异常
         when(orderService.createOrder(any(CreateOrderRequest.class)))
-                .thenThrow(new RuntimeException("座位已被占用"));
+                .thenThrow(new ValidationException("座位已被占用"));
 
         // 执行测试
         mockMvc.perform(post("/api/orders")
@@ -112,7 +121,8 @@ class OrderControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("座位已被占用"));
+                .andExpect(jsonPath("$.message").value("座位已被占用"))
+                .andExpect(jsonPath("$.data").isEmpty());
 
         verify(orderService, times(1)).createOrder(any(CreateOrderRequest.class));
     }
@@ -134,11 +144,11 @@ class OrderControllerTest {
                 .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.orders").isArray())
-                .andExpect(jsonPath("$.orders.length()").value(2))
-                .andExpect(jsonPath("$.totalElements").value(2))
-                .andExpect(jsonPath("$.currentPage").value(0))
-                .andExpect(jsonPath("$.pageSize").value(10));
+                .andExpect(jsonPath("$.data.orders").isArray())
+                .andExpect(jsonPath("$.data.orders.length()").value(2))
+                .andExpect(jsonPath("$.data.totalElements").value(2))
+                .andExpect(jsonPath("$.data.currentPage").value(0))
+                .andExpect(jsonPath("$.data.pageSize").value(10));
 
         verify(orderService, times(1)).getOrders(null, null, 0, 10);
     }
@@ -161,9 +171,9 @@ class OrderControllerTest {
                 .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.orders").isArray())
-                .andExpect(jsonPath("$.orders.length()").value(1))
-                .andExpect(jsonPath("$.orders[0].status").value("PAID"));
+                .andExpect(jsonPath("$.data.orders").isArray())
+                .andExpect(jsonPath("$.data.orders.length()").value(1))
+                .andExpect(jsonPath("$.data.orders[0].status").value("PAID"));
 
         verify(orderService, times(1)).getOrders(1L, "PAID", 0, 10);
     }
@@ -182,8 +192,8 @@ class OrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("订单已取消"))
-                .andExpect(jsonPath("$.order.id").value(1))
-                .andExpect(jsonPath("$.order.status").value("CANCELLED"));
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.status").value("CANCELLED"));
 
         verify(orderService, times(1)).cancelOrder(orderId);
     }
@@ -195,13 +205,14 @@ class OrderControllerTest {
 
         // Mock service 抛出异常
         when(orderService.cancelOrder(orderId))
-                .thenThrow(new RuntimeException("订单不存在"));
+                .thenThrow(new ResourceNotFoundException("订单", orderId));
 
         // 执行测试
         mockMvc.perform(put("/api/orders/{orderId}/cancel", orderId))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("订单不存在"));
+                .andExpect(jsonPath("$.message").value("订单不存在，ID: 999"))
+                .andExpect(jsonPath("$.data").isEmpty());
 
         verify(orderService, times(1)).cancelOrder(orderId);
     }
@@ -225,8 +236,8 @@ class OrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("订单状态已更新"))
-                .andExpect(jsonPath("$.order.id").value(1))
-                .andExpect(jsonPath("$.order.status").value("PAID"));
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.status").value("PAID"));
 
         verify(orderService, times(1)).updateOrderStatus(orderId, "PAID");
     }
@@ -240,15 +251,16 @@ class OrderControllerTest {
 
         // Mock service 抛出异常
         when(orderService.updateOrderStatus(orderId, "INVALID_STATUS"))
-                .thenThrow(new RuntimeException("无效的订单状态"));
+                .thenThrow(new BusinessException("无效的订单状态"));
 
         // 执行测试
         mockMvc.perform(put("/api/orders/{orderId}/status", orderId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(statusRequest)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("无效的订单状态"));
+                .andExpect(jsonPath("$.message").value("无效的订单状态"))
+                .andExpect(jsonPath("$.data").isEmpty());
 
         verify(orderService, times(1)).updateOrderStatus(orderId, "INVALID_STATUS");
     }
@@ -266,9 +278,9 @@ class OrderControllerTest {
         mockMvc.perform(get("/api/orders/by-number/{orderNumber}", orderNumber))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.order.id").value(1))
-                .andExpect(jsonPath("$.order.orderNumber").value(orderNumber))
-                .andExpect(jsonPath("$.order.status").value("PAID"));
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.orderNumber").value(orderNumber))
+                .andExpect(jsonPath("$.data.status").value("PAID"));
 
         verify(orderService, times(1)).getOrderByNumber(orderNumber);
     }
@@ -280,11 +292,14 @@ class OrderControllerTest {
 
         // Mock service 抛出异常
         when(orderService.getOrderByNumber(orderNumber))
-                .thenThrow(new RuntimeException("订单不存在"));
+                .thenThrow(new ResourceNotFoundException("订单号为 " + orderNumber + " 的订单"));
 
         // 执行测试
         mockMvc.perform(get("/api/orders/by-number/{orderNumber}", orderNumber))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("订单号为 NONEXISTENT 的订单不存在"))
+                .andExpect(jsonPath("$.data").isEmpty());
 
         verify(orderService, times(1)).getOrderByNumber(orderNumber);
     }

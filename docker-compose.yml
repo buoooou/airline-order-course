@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: airlineTest1234
+      MYSQL_DATABASE: airline_order_db
+      # 设置MySQL字符集
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # 初始化SQL脚本
+      - ./backend/src/main/resources/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # MySQL配置文件
+      - ./mysql-config.cnf:/etc/mysql/conf.d/mysql-config.cnf
+    networks:
+      - airline-network
+
+  # 集成前后端的服务
+  app:
+    image: zhoudeqiang/airline-order:latest
+    container_name: airline-app
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      # 数据库连接配置
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/airline_order_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: airlineTest1234
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - airline-network
+
+networks:
+  airline-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

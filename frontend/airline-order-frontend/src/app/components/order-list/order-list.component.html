@@ -1,0 +1,140 @@
+<div class="order-list-container">
+  <h2 class="page-title">我的订单</h2>
+  
+  <!-- 错误提示 -->
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+  
+  <!-- 订单状态筛选 -->
+  <div class="status-filter">
+    <button 
+      class="filter-btn" 
+      [class.active]="statusFilter === null"
+      (click)="filterByStatus(null)"
+    >
+      全部
+    </button>
+    <button 
+      class="filter-btn" 
+      [class.active]="statusFilter === 'PENDING'"
+      (click)="filterByStatus('PENDING')"
+    >
+      待支付
+    </button>
+    <button 
+      class="filter-btn" 
+      [class.active]="statusFilter === 'PAID'"
+      (click)="filterByStatus('PAID')"
+    >
+      已支付
+    </button>
+    <button 
+      class="filter-btn" 
+      [class.active]="statusFilter === 'TICKETED'"
+      (click)="filterByStatus('TICKETED')"
+    >
+      已出票
+    </button>
+    <button 
+      class="filter-btn" 
+      [class.active]="statusFilter === 'CANCELED'"
+      (click)="filterByStatus('CANCELED')"
+    >
+      已取消
+    </button>
+  </div>
+  
+  <!-- 加载中提示 -->
+  <div class="loading-spinner" *ngIf="isLoading">
+    加载中...
+  </div>
+  
+  <!-- 无订单提示 -->
+  <div class="no-orders" *ngIf="!isLoading && orders.length === 0">
+    暂无订单记录
+  </div>
+  
+  <!-- 订单列表 -->
+  <div class="order-list" *ngIf="!isLoading && orders.length > 0">
+    <div class="order-card" *ngFor="let order of orders" (click)="viewOrderDetail(order.id)">
+      <div class="order-header">
+        <div class="order-number">订单号: {{ order.orderNumber }}</div>
+        <div class="order-status" [ngClass]="getStatusClass(order.status)">
+          {{ getStatusText(order.status) }}
+        </div>
+      </div>
+      
+      <div class="order-flight">
+        <div class="flight-info">
+          <div class="flight-number">{{ order.flightNumber }}</div>
+          <div class="flight-route">{{ order.departureCode }} - {{ order.arrivalCode }}</div>
+        </div>
+        
+        <div class="flight-time">
+          <div class="departure-time">
+            <div class="time">{{ order.departureTime | date:'HH:mm' }}</div>
+            <div class="date">{{ order.departureTime | date:'yyyy-MM-dd' }}</div>
+          </div>
+          <div class="duration">
+            <div class="duration-line"></div>
+            <div class="duration-text">{{ order.durationMinutes }} 分钟</div>
+          </div>
+          <div class="arrival-time">
+            <div class="time">{{ order.arrivalTime | date:'HH:mm' }}</div>
+            <div class="date">{{ order.arrivalTime | date:'yyyy-MM-dd' }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="order-details">
+        <div class="passenger-info">
+          <div class="label">乘客</div>
+          <div class="value">{{ order.passengerName }}</div>
+        </div>
+        <div class="seat-info">
+          <div class="label">座位</div>
+          <div class="value">{{ order.seatClass }} {{ order.seatNumber || '待分配' }}</div>
+        </div>
+        <div class="price-info">
+          <div class="label">价格</div>
+          <div class="value price">¥{{ order.amount }}</div>
+        </div>
+      </div>
+      
+      <div class="order-actions">
+        <button 
+          class="btn-cancel" 
+          *ngIf="order.status === 'PENDING' || order.status === 'PAID'"
+          (click)="cancelOrder(order.id, $event)"
+        >
+          取消订单
+        </button>
+        <button class="btn-detail">查看详情</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 分页控件 -->
+  <div class="pagination" *ngIf="!isLoading && totalPages > 1">
+    <button 
+      class="page-btn" 
+      [disabled]="currentPage === 0"
+      (click)="goToPage(currentPage - 1)"
+    >
+      上一页
+    </button>
+    
+    <div class="page-info">
+      {{ currentPage + 1 }} / {{ totalPages }}
+    </div>
+    
+    <button 
+      class="page-btn" 
+      [disabled]="currentPage === totalPages - 1"
+      (click)="goToPage(currentPage + 1)"
+    >
+      下一页
+    </button>
+  </div>
+</div>
