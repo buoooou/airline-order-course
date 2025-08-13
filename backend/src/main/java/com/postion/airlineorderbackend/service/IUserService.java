@@ -14,4 +14,5 @@ public interface IUserService {
     List<UserDto> getAllUsers();
 
     UserDto getUserById(Long id);
+	UserDto validateUser(String username, String password);
 }

@@ -46,4 +46,8 @@ public interface IOrderService {
      * @return 取消后的OrderDto对象
      */
     OrderDto cancelOrder(Long id);
+    /**
+     * 批量取消超时订单
+     */
+    void cancelUnpaidOrder();
 }
