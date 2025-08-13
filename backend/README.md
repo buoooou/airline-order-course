@@ -31,6 +31,9 @@ ng serve
 ## TODO
 编写 DTO ↔ Entity 的转换方法（使用 MapStruct 自动生成）。
 
+## API DOC
+http://localhost:8080/swagger-ui/index.html
+
 ## CICD
 GitHub Secrets：
 	在EC2生成SSH Key并复制到GitHub（GitHub Actions用来免密登录EC2）：
