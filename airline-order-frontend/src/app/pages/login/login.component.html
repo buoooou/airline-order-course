@@ -1,0 +1,40 @@
+<div class="login-container">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+    <h2>航空订单管理系统</h2>
+    
+    <div class="form-group">
+      <label>用户名</label>
+      <input type="email" formControlName="username" class="form-control" 
+             [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+        <div class="invalid-feedback">
+          请输入有效密码
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>密码</label>
+      <input type="password" formControlName="password" class="form-control"
+             [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+        <div class="invalid-feedback">
+          请输入有效密码
+        </div>
+      }
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+      @if (isLoading) {
+        <span class="spinner-border spinner-border-sm mr-1"></span>
+      }
+      登录
+    </button>
+
+    @if (errorMessage) {
+      <div class="error-message">
+        {{ errorMessage }}
+      </div>
+    }
+  </form>
+</div>

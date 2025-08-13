@@ -1,0 +1,60 @@
+<div class="order-detail-container">
+  @if (isLoading) {
+    <!-- 加载状态 -->
+    <div class="loading">
+      <p>正在加载订单信息...</p>
+    </div>
+  }
+
+  @else if (errorMessage) {
+    <!-- 错误状态 -->
+    <div class="error">
+      <p>{{ errorMessage }}</p>
+    </div>
+  }
+
+  @else if (order) {
+    <!-- 订单详情 -->
+    <div class="order-details">
+      <h2>订单详情</h2>
+      
+      <div class="order-info">
+        <div class="info-item">
+          <span class="label">订单编号:</span>
+          <span class="value">{{ order.orderNumber }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="label">订单状态:</span>
+          <span class="value status" [class]="order.status.toLowerCase()">
+            {{ getOrderStatusText(order.status) }}
+          </span>
+        </div>
+        
+        <div class="info-item">
+          <span class="label">订单金额:</span>
+          <span class="value amount">{{ order.amount | currency:'CNY':'symbol':'2.2-2' }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="label">创建时间:</span>
+          <span class="value">{{ order.creationDate | date:'yyyy-MM-dd HH:mm' }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="label">用户信息:</span>
+          <span class="value">{{ order.user.username }} (ID: {{ order.user.id }})</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="label">订单ID:</span>
+          <span class="value">{{ order.id }}</span>
+        </div>
+      </div>
+      
+      <div class="actions">
+        <button (click)="goBack()">返回</button>
+      </div>
+    </div>
+  }
+</div>
