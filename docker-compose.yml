@@ -1,14 +1,13 @@
-version: "3.8"
 services:
   mysql:
     image: mysql:8.0
     container_name: airline-mysql-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: airlineTest1234
       MYSQL_DATABASE: airline_order_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 123456
+      MYSQL_USER: myappuser
+      MYSQL_PASSWORD: airlineTest1234
     ports:
       - "3306:3306"
     volumes:
@@ -28,8 +27,8 @@ services:
       - mysql
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/airline_order_db?useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATASOURCE_USERNAME: myappuser
+      SPRING_DATASOURCE_PASSWORD: airlineTest1234
     networks:
       - app-network
 volumes:
