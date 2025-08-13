@@ -44,6 +44,8 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script_stop: true
         script: |
           cd ~/airline-order-course
           docker-compose pull
