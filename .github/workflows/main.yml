@@ -103,6 +103,9 @@ jobs:
             cd /opt/airline-order-course
             git clone https://github.com/${{ github.repository }}.git . 2>/dev/null || git pull origin main
             
-            # 尝试不同的 docker-compose 命令
-            sudo docker-compose down 2>/dev/null || sudo docker compose down 2>/dev/null || true
-            sudo docker-compose up -d 2>/dev/null || sudo docker compose up -d
+            # 启动 Docker 服务（确保服务运行）
+            sudo systemctl start docker
+            
+            # 使用 docker-compose 命令
+            sudo docker-compose down 2>/dev/null || true
+            sudo docker-compose up -d
