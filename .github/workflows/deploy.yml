@@ -23,7 +23,7 @@ jobs:
       # 3. 安装 Angular 依赖并构建
       - name: Build airline-order-frontend
         run: |
-          cd airline-order-frontend
+          cd ${{ github.workspace }}/airline-order-frontend
           npm install
           npm run build -- --prod  # 使用 Angular 的生产构建命令
 
@@ -37,7 +37,7 @@ jobs:
       # 5. 安装 Maven 并构建 Spring Boot 项目
       - name: Build airline-order-backend
         run: |
-          cd airline-order-backend
+          cd ${{ github.workspace }}/airline-order-backend
           ./mvnw clean package  # 如果使用 Maven
 
       # 6. 部署到 EC2 实例
