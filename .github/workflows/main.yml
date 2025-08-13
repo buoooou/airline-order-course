@@ -61,8 +61,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-manage:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-manage:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:${{ github.sha }}
 
       # 8. 部署到 EC2
       - name: Deploy to EC2

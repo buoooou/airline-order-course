@@ -23,29 +23,29 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceImplTest {
 
-    @Mock
-    private OrderRepository orderRepository;
-
-    @InjectMocks
-    private OrderServiceImpl orderService;
-
-    private User testUser;
-    private Order testOrder;
-
-    @BeforeEach
-    void setUp() {
-        testUser = new User();
-        testUser.setId(1L);
-        testUser.setUsername("testuser");
-
-        testOrder = new Order();
-        testOrder.setId(100L);
-        testOrder.setOrderNumber("ORD12345");
-        testOrder.setStatus(OrderStatus.PENDING_PAYMENT);
-        testOrder.setAmount(new BigDecimal("25.75"));
-        testOrder.setCreationDate(LocalDateTime.now());
-        testOrder.setUser(testUser);
-    }
+//    @Mock
+//    private OrderRepository orderRepository;
+//
+//    @InjectMocks
+//    private OrderServiceImpl orderService;
+//
+//    private User testUser;
+//    private Order testOrder;
+//
+//    @BeforeEach
+//    void setUp() {
+//        testUser = new User();
+//        testUser.setId(1L);
+//        testUser.setUsername("testuser");
+//
+//        testOrder = new Order();
+//        testOrder.setId(100L);
+//        testOrder.setOrderNumber("ORD12345");
+//        testOrder.setStatus(OrderStatus.PENDING_PAYMENT);
+//        testOrder.setAmount(new BigDecimal("25.75"));
+//        testOrder.setCreationDate(LocalDateTime.now());
+//        testOrder.setUser(testUser);
+//    }
 
     // @Test
     // @DisplayName("当调用 getAllOrders 时，应返回所有订单的 DTO 列表")
