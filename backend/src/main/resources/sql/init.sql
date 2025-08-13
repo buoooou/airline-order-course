@@ -6,6 +6,10 @@
 --  3. 插入完整的测试数据
 -- =================================================================
 
+-- 设置字符集
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 -- 步骤 1: 创建数据库并切换
 CREATE DATABASE IF NOT EXISTS `airline_order_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `airline_order_db`;
