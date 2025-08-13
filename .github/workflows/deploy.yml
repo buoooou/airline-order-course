@@ -41,10 +41,10 @@ jobs:
           script: |
             cd ~/airline-cicd
             echo "SPRING_PROFILES_ACTIVE=prod" > .env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.EC2_MYSQL_ROOT_PASSWORD }}" >> .env
             echo "MYSQL_DATABASE=airline_order_db" >> .env
-            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
-            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+            echo "MYSQL_USER=${{ secrets.EC2_MYSQL_USER }}" >> .env
+            echo "MYSQL_PASSWORD=${{ secrets.EC2_MYSQL_PASSWORD }}" >> .env
             docker-compose pull
             docker-compose down
             docker-compose up -d
