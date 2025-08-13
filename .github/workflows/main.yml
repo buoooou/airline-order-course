@@ -35,16 +35,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e
-            mkdir -p ~/airline-cicd
             cd ~/airline-cicd
-
-            # 确保目录里有 docker-compose.yml
-            curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.yml -o docker-compose.yml || true
-
-            # 拉镜像并启动
             docker-compose pull
             docker-compose up -d --remove-orphans
-
-            # 打印结果
-            docker-compose ps
+            docker image prune -f
