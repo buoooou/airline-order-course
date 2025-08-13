@@ -56,24 +56,6 @@ jobs:
         debug: true
         script: |
           cd ~/airline-order-course
-          # 检查docker-compose.yml文件是否存在
-          if [ ! -f "docker-compose.yml" ]; then
-            echo "docker-compose.yml文件不存在，创建一个基本配置"
-            cat > docker-compose.yml << 'EOL'
-version: '3'
-services:
-  app:
-    image: zhoudeqiang/airline-order:latest
-    container_name: airline-order
-    restart: always
-    ports:
-      - "8080:8080"
-EOL
-          fi
-          # 显示docker-compose.yml内容以便调试
-          echo "当前docker-compose.yml内容:"
-          cat docker-compose.yml
-          # 执行docker-compose命令
           docker-compose pull
           docker-compose down
           docker-compose up -d
