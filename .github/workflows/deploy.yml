@@ -38,6 +38,13 @@ jobs:
         push: true
         tags: zhoudeqiang/airline-order:latest
         
+    - name: Debug SSH connection
+      run: |
+        echo "Testing SSH connection..."
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+        chmod 600 private_key.pem
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "echo Connection successful"
+        
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
       with:
@@ -46,6 +53,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script_stop: true
+        debug: true
         script: |
           cd ~/airline-order-course
           docker-compose pull
