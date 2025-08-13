@@ -97,6 +97,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
           script: |
-            cd /opt/airline-order-course
-            git pull origin main
-            ./manage.sh restart
+            # 直接拉取代码并重启
+            cd /opt/airline-order-course 2>/dev/null || mkdir -p /opt/airline-order-course && cd /opt/airline-order-course
+            git clone https://github.com/${{ github.repository }}.git . 2>/dev/null || git pull origin main
+            docker-compose down 2>/dev/null || true
+            docker-compose up -d
