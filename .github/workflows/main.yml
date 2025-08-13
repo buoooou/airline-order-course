@@ -17,13 +17,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+          run: echo "user=|${{ secrets.DOCKERHUB_USERNAME }}|"
+  
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
+          
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:${{ github.sha }}
