@@ -26,7 +26,7 @@ services:
   # Spring Boot + Angular 应用服务
   app:
     # image: krowlzhang/airline-order-manage:latest
-    image: rongwen2005/airline-order-course:latest
+    image: rongwen2005sh/airline-order-course:latest
     container_name: my-springboot-angular-app
     restart: always
     ports:
