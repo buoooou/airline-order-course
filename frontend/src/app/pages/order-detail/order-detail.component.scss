@@ -1,0 +1,54 @@
+.layout {
+  min-height: 100vh;
+}
+
+.header {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.header-content h2 {
+  margin: 0;
+  color: #1890ff;
+}
+
+.content {
+  margin: 24px;
+}
+
+.detail-card {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.card-header {
+  margin-bottom: 24px;
+}
+
+.order-info {
+  margin-top: 24px;
+}
+
+.action-buttons {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.action-buttons button {
+  margin: 0 8px;
+}
+
+.no-data {
+  text-align: center;
+  color: #999;
+  font-size: 16px;
+}

@@ -1,0 +1,84 @@
+<div class="register-container">
+  <nz-card nzTitle="用户注册" class="register-card">
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzRequired>用户名</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input 
+            nz-input 
+            [(ngModel)]="registerRequest.username" 
+            name="username"
+            placeholder="请输入用户名"
+            required
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzRequired>邮箱</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input 
+            nz-input 
+            type="email"
+            [(ngModel)]="registerRequest.email" 
+            name="email"
+            placeholder="请输入邮箱地址"
+            required
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzRequired>密码</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input 
+            nz-input 
+            type="password"
+            [(ngModel)]="registerRequest.password" 
+            name="password"
+            placeholder="请输入密码（至少6位）"
+            required
+            minlength="6"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzRequired>确认密码</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input 
+            nz-input 
+            type="password"
+            [(ngModel)]="confirmPassword" 
+            name="confirmPassword"
+            placeholder="请再次输入密码"
+            required
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control [nzOffset]="6" [nzSpan]="18">
+          <button 
+            nz-button 
+            nzType="primary" 
+            type="submit"
+            [nzLoading]="loading"
+            [disabled]="!registerForm.valid"
+            class="register-button"
+          >
+            注册
+          </button>
+          <button 
+            nz-button 
+            type="button"
+            (click)="goToLogin()"
+            class="login-link"
+          >
+            已有账号？点击登录
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-card>
+</div>

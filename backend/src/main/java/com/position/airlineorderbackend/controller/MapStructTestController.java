@@ -147,7 +147,7 @@ public class MapStructTestController {
         flightInfo.setFlightNumber("CA1234");
         flightInfo.setDeparture("北京");
         flightInfo.setDestination("上海");
-        flightInfo.setDepartureTime("2024-01-15 10:00:00");
+        flightInfo.setDepartureTime(LocalDateTime.of(2024, 1, 15, 10, 0, 0));
 
         // 使用MapStruct进行映射
         return flightInfoMapper.toDto(flightInfo);

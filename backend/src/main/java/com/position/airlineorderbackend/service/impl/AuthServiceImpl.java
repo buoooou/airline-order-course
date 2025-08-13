@@ -61,12 +61,12 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("邮箱已存在");
         }
 
-        // 创建新用户
+        // 创建新用户（强制普通角色）
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRole(registerRequest.getRole());
+        user.setRole("USER");
 
         userRepository.save(user);
 

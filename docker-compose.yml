@@ -1,0 +1,94 @@
+# Docker Compose 文件版本 - 开发环境
+version: '3.8'
+
+# 定义服务
+services:
+  # 1. 数据库服务 (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: airline-mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-airline_order_db}
+      MYSQL_USER: ${MYSQL_USER:-airline_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-airline_pass}
+    ports:
+      - "3306:3306"  # 开发环境允许外部访问
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backend/src/main/resources/sql:/docker-entrypoint-initdb.d
+    networks:
+      - airline-network
+    # 暂时注释掉健康检查以加快启动
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    #   timeout: 20s
+    #   retries: 10
+
+  # 2. 后端服务 (Spring Boot) - 开发模式
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: airline-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE:-airline_order_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-airline_user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-airline_pass}
+      JWT_SECRET: ${JWT_SECRET:-8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb}
+    ports:
+      - "8080:8080"  # 开发环境允许外部访问
+    volumes:
+      - ./backend:/app
+      - ~/.m2:/root/.m2
+    depends_on:
+      - db
+    networks:
+      - airline-network
+    command: mvn spring-boot:run  # 开发模式启动
+    # 暂时注释掉健康检查以加快启动
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+
+  # 3. 前端服务 (Angular) - 开发模式
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: airline-frontend
+    restart: unless-stopped
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://localhost:8080}
+    ports:
+      - "4200:4200"  # 开发端口
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    networks:
+      - airline-network
+    command: npm start  # 开发模式启动
+    # 暂时注释掉健康检查以加快启动
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:4200"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+
+
+
+# 定义数据卷
+volumes:
+  mysql-data:
+
+# 定义网络
+networks:
+  airline-network:
+    driver: bridge

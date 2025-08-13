@@ -15,11 +15,15 @@ public interface OrderMapper {
     /**
      * 将Order实体转换为OrderDto
      */
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "flightInfo.id", target = "flightInfoId")
     OrderDto toDto(Order order);
 
     /**
      * 将OrderDto转换为Order实体
      */
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "flightInfo", ignore = true)
     Order toEntity(OrderDto orderDto);
 
     /**

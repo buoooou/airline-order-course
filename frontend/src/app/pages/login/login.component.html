@@ -1,0 +1,55 @@
+<div class="login-container">
+  <nz-card nzTitle="用户登录" class="login-card">
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzRequired>用户名</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input 
+            nz-input 
+            [(ngModel)]="loginRequest.username" 
+            name="username"
+            placeholder="请输入用户名"
+            required
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzRequired>密码</nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input 
+            nz-input 
+            type="password"
+            [(ngModel)]="loginRequest.password" 
+            name="password"
+            placeholder="请输入密码"
+            required
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control [nzOffset]="6" [nzSpan]="18">
+          <button 
+            nz-button 
+            nzType="primary" 
+            type="submit"
+            [nzLoading]="loading"
+            [disabled]="!loginForm.valid"
+            class="login-button"
+          >
+            登录
+          </button>
+          <button 
+            nz-button 
+            type="button"
+            (click)="goToRegister()"
+            class="register-link"
+          >
+            还没有账号？点击注册
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-card>
+</div>

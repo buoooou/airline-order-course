@@ -1,0 +1,79 @@
+<nz-layout class="layout">
+  <nz-header class="header">
+    <div class="header-content">
+      <h2>订单详情</h2>
+      <button nz-button nzType="default" (click)="logout()">退出登录</button>
+    </div>
+  </nz-header>
+  
+  <nz-content class="content">
+    <nz-card [nzLoading]="loading" class="detail-card">
+      <div class="card-header">
+        <button nz-button nzType="default" (click)="goBack()">
+          ← 返回订单列表
+        </button>
+      </div>
+
+      <div *ngIf="order" class="order-info">
+        <nz-descriptions nzTitle="订单信息" [nzColumn]="2" nzBordered>
+          <nz-descriptions-item nzTitle="订单号">
+            {{ order.orderNumber }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="订单状态">
+            <nz-tag [nzColor]="getStatusColor(order.status)">
+              {{ getStatusText(order.status) }}
+            </nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="订单金额">
+            ¥{{ order.amount }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="创建时间">
+            {{ order.createdDate | date:'yyyy-MM-dd HH:mm:ss' }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="用户ID">
+            {{ order.userId }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="航班信息ID">
+            {{ order.flightInfoId }}
+          </nz-descriptions-item>
+        </nz-descriptions>
+
+        <div class="action-buttons">
+          <button 
+            *ngIf="canPay()"
+            nz-button 
+            nzType="primary"
+            [nzLoading]="actionLoading"
+            (click)="payOrder()"
+          >
+            支付订单
+          </button>
+          
+          <button 
+            *ngIf="canStartTicketing()"
+            nz-button 
+            nzType="primary"
+            [nzLoading]="actionLoading"
+            (click)="startTicketing()"
+          >
+            开始出票
+          </button>
+          
+          <button 
+            *ngIf="canCancel()"
+            nz-button 
+            nzType="default"
+            [nzLoading]="actionLoading"
+            (click)="cancelOrder()"
+          >
+            取消订单
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="!order && !loading" class="no-data">
+        <p>未找到订单信息</p>
+      </div>
+    </nz-card>
+  </nz-content>
+</nz-layout>

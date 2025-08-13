@@ -1,1 +1,45 @@
+# IDE 相关
 /.idea/
+/.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Maven 构建输出
+/target/
+**/target/
+
+# Lombok 配置
+lombok.config
+**/lombok.config
+
+# 编译输出
+*.class
+*.jar
+*.war
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 数据库文件
+*.db
+*.sqlite
+
+# 环境配置文件
+.env
+application-local.properties
+application-local.yml
+
+# 文档（本仓库内不纳入版本控制）
+doc/
+
+# 非生产环境文件（开发、测试等）
+.backlog/

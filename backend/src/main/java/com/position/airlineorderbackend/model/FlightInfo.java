@@ -2,6 +2,7 @@ package com.position.airlineorderbackend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "flight_info")
@@ -21,5 +22,5 @@ public class FlightInfo {
     private String destination;
 
     @Column(nullable = false)
-    private String departureTime;
+    private LocalDateTime departureTime;
 } 

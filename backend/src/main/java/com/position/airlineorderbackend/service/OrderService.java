@@ -2,6 +2,7 @@ package com.position.airlineorderbackend.service;
 
 import com.position.airlineorderbackend.model.Order;
 import com.position.airlineorderbackend.dto.OrderDto;
+import com.position.airlineorderbackend.dto.CreateOrderRequest;
 import java.util.List;
 
 public interface OrderService {
@@ -14,4 +15,6 @@ public interface OrderService {
     String retryTicketing(Long id);
     List<OrderDto> getAllOrders();
     OrderDto getOrderById(Long id);
+    OrderDto createOrder(CreateOrderRequest request, Long userId);
+    List<OrderDto> getOrdersForUser(Long userId);
 } 

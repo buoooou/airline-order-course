@@ -2,8 +2,14 @@ package com.position.airlineorderbackend.service.impl;
 
 import com.position.airlineorderbackend.model.Order;
 import com.position.airlineorderbackend.model.OrderStatus;
+import com.position.airlineorderbackend.model.User;
+import com.position.airlineorderbackend.model.FlightInfo;
 import com.position.airlineorderbackend.dto.OrderDto;
+import com.position.airlineorderbackend.dto.CreateOrderRequest;
+import com.position.airlineorderbackend.mapper.OrderMapper;
 import com.position.airlineorderbackend.repo.OrderRepository;
+import com.position.airlineorderbackend.repo.UserRepository;
+import com.position.airlineorderbackend.repo.FlightInfoRepository;
 import com.position.airlineorderbackend.service.OrderService;
 import com.position.airlineorderbackend.service.OrderStateLockService;
 import com.position.airlineorderbackend.exception.OrderException;
@@ -12,8 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -22,7 +29,16 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
     
     @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private FlightInfoRepository flightInfoRepository;
+    
+    @Autowired
     private OrderStateLockService lockService;
+
+    @Autowired
+    private OrderMapper orderMapper;
 
     @Override
     public String payOrder(Long id) {
@@ -76,17 +92,56 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-            .map(this::toDto)
-            .filter(dto -> dto != null)
-            .collect(Collectors.toList());
+        return orderMapper.toDtoList(orders);
+    }
+
+    @Override
+    public List<OrderDto> getOrdersForUser(Long userId) {
+        List<Order> orders = orderRepository.findByUser_Id(userId);
+        return orderMapper.toDtoList(orders);
     }
 
     @Override
     public OrderDto getOrderById(Long id) {
         return orderRepository.findById(id)
-                .map(this::toDto)
-                .orElse(null);
+                .map(orderMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("订单", "ID", id));
+    }
+
+    @Override
+    @Transactional
+    public OrderDto createOrder(CreateOrderRequest request, Long userId) {
+        // 验证用户是否存在
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("用户", "ID", userId));
+        
+        // 验证航班信息是否存在
+        FlightInfo flightInfo = flightInfoRepository.findById(request.getFlightInfoId())
+                .orElseThrow(() -> new ResourceNotFoundException("航班信息", "ID", request.getFlightInfoId()));
+        
+        // 创建订单
+        Order order = new Order();
+        order.setOrderNumber(generateOrderNumber());
+        order.setStatus(OrderStatus.PENDING_PAYMENT);
+        order.setAmount(request.getAmount());
+        order.setUser(user);
+        order.setFlightInfo(flightInfo);
+        
+        // 保存订单
+        Order savedOrder = orderRepository.save(order);
+        
+        return orderMapper.toDto(savedOrder);
+    }
+
+    /**
+     * 生成订单号
+     * 格式：ORD-YYYYMMDD-HHMMSS-XXXX
+     */
+    private String generateOrderNumber() {
+        LocalDateTime now = LocalDateTime.now();
+        String timestamp = now.format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+        String randomSuffix = String.format("%04d", (int)(Math.random() * 10000));
+        return "ORD-" + timestamp + "-" + randomSuffix;
     }
 
     @Transactional
@@ -143,24 +198,5 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private OrderDto toDto(Order order) {
-        if (order == null) return null;
-        
-        OrderDto dto = new OrderDto();
-        dto.setId(order.getId());
-        dto.setOrderNumber(order.getOrderNumber());
-        dto.setStatus(order.getStatus());
-        dto.setAmount(order.getAmount());
-        dto.setCreatedDate(order.getCreatedDate());
-        
-        // 设置用户ID和航班信息ID
-        if (order.getUser() != null) {
-            dto.setUserId(order.getUser().getId());
-        }
-        if (order.getFlightInfo() != null) {
-            dto.setFlightInfoId(order.getFlightInfo().getId());
-        }
-        
-        return dto;
-    }
+    // 使用 MapStruct 统一 DTO 映射
 } 

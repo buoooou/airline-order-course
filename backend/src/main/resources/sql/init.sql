@@ -35,7 +35,7 @@ CREATE TABLE `flight_info` (
   `flight_number` VARCHAR(50) NOT NULL,
   `departure` VARCHAR(100) NOT NULL,
   `destination` VARCHAR(100) NOT NULL,
-  `departure_time` VARCHAR(50) NOT NULL,
+  `departure_time` DATETIME(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -100,8 +100,40 @@ INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user
 -- 订单 7 (user): 出票中 -> 模拟中间状态，测试UI展示
 ('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, 2, 1);
 
+-- 步骤 7: 插入固定的测试用户和订单
+-- 每次启动时都创建相同的测试用户，便于开发和测试
+
+-- 插入固定的测试用户 (密码: test123)
+-- 使用正确的BCrypt哈希值，确保密码验证正常工作
+INSERT INTO `app_users` (`username`, `email`, `password`, `role`) VALUES
+('testuser', 'testuser@example.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi', 'USER');
+
+-- 获取新插入用户的ID
+SET @new_user_id = LAST_INSERT_ID();
+
+-- 为新用户插入多样化的订单数据
+INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`, `flight_info_id`) VALUES
+-- 新用户的订单1: 待支付 (最近创建)
+('PEN-TEST001', 'PENDING_PAYMENT', 750.00, NOW() - INTERVAL 2 MINUTE, @new_user_id, 1),
+
+-- 新用户的订单2: 已支付 (1小时前)
+('PAI-TEST002', 'PAID', 1200.50, NOW() - INTERVAL 1 HOUR, @new_user_id, 2),
+
+-- 新用户的订单3: 出票中 (30分钟前)
+('TIC-TEST003', 'TICKETING_IN_PROGRESS', 890.00, NOW() - INTERVAL 30 MINUTE, @new_user_id, 3),
+
+-- 新用户的订单4: 已出票 (2小时前)
+('TIC-TEST004', 'TICKETED', 2100.75, NOW() - INTERVAL 2 HOUR, @new_user_id, 1),
+
+-- 新用户的订单5: 已取消 (1天前)
+('CAN-TEST005', 'CANCELLED', 650.25, NOW() - INTERVAL 1 DAY, @new_user_id, 2);
 
 -- 打印成功信息
 SELECT '数据库和测试数据初始化成功！' AS '状态';
 SELECT COUNT(*) AS '用户总数' FROM `app_users`;
 SELECT status, COUNT(*) AS '订单数量' FROM `orders` GROUP BY status;
+
+-- 显示新创建的测试用户信息
+SELECT '新创建的测试用户: testuser (testuser@example.com)' AS '测试用户信息';
+SELECT CONCAT('测试用户ID: ', @new_user_id) AS '测试用户ID';
+SELECT CONCAT('测试用户订单数量: ', (SELECT COUNT(*) FROM `orders` WHERE `user_id` = @new_user_id)) AS '测试用户订单数量';

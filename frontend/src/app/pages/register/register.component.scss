@@ -1,0 +1,25 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.register-card {
+  width: 450px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.register-button {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.login-link {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #1890ff;
+  text-decoration: underline;
+}

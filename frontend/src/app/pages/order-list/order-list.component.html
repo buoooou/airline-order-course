@@ -1,0 +1,67 @@
+<nz-layout class="layout">
+  <nz-header class="header">
+    <div class="header-content">
+      <h2>航空订单管理系统</h2>
+      <button nz-button nzType="default" (click)="logout()">退出登录</button>
+    </div>
+  </nz-header>
+  
+  <nz-content class="content">
+    <nz-card nzTitle="订单列表" class="order-card">
+      <div class="table-operations">
+        <button 
+          nz-button 
+          nzType="primary" 
+          (click)="loadOrders()"
+          [nzLoading]="loading"
+        >
+          刷新
+        </button>
+      </div>
+      
+      <nz-table 
+        #basicTable 
+        [nzData]="orders" 
+        [nzLoading]="loading"
+        nzShowSizeChanger
+        [nzPageSize]="10"
+      >
+        <thead>
+          <tr>
+            <th>订单号</th>
+            <th>状态</th>
+            <th>金额</th>
+            <th>创建时间</th>
+            <th>用户ID</th>
+            <th>航班ID</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of basicTable.data">
+            <td>{{ order.orderNumber }}</td>
+            <td>
+              <nz-tag [nzColor]="getStatusColor(order.status)">
+                {{ getStatusText(order.status) }}
+              </nz-tag>
+            </td>
+            <td>¥{{ order.amount }}</td>
+            <td>{{ order.createdDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td>{{ order.userId }}</td>
+            <td>{{ order.flightInfoId }}</td>
+            <td>
+              <button 
+                nz-button 
+                nzType="primary" 
+                nzSize="small"
+                (click)="viewOrderDetail(order)"
+              >
+                查看详情
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-card>
+  </nz-content>
+</nz-layout>
