@@ -1,14 +1,41 @@
-name: debug
-on: [workflow_dispatch]
+name: Build, Push Docker Image, and Deploy
+
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  check:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump secret length
-        run: |
-          echo "Length=${#DOCKERHUB_USERNAME}"
-          echo "Hex dump:"
-          echo -n "$DOCKERHUB_USERNAME" | hexdump -C
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:${{ github.sha }}
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/airline-cicd
+            docker-compose pull
+            docker-compose up -d --remove-orphans
+            docker image prune -f
