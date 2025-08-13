@@ -34,16 +34,17 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
+            mkdir -p ~/airline-cicd
             cd ~/airline-cicd
+
+            # 确保目录里有 docker-compose.yml
+            curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.yml -o docker-compose.yml || true
+
+            # 拉镜像并启动
             docker-compose pull
             docker-compose up -d --remove-orphans
-            docker image prune -f
-        
+
+            # 打印结果
+            docker-compose ps
