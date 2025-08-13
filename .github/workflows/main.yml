@@ -55,15 +55,23 @@ jobs:
             # 5) 启动 Docker 服务
             sudo systemctl enable --now docker
 
-            # 6) 拉取并运行镜像（示例）
+            sudo -E bash <<'EOF'
+
+            # 1. 安装 / 升级 Docker & compose 插件
+            if ! command -v docker >/dev/null 2>&1; then
+              curl -fsSL https://get.docker.com | bash
+            fi
+            apt-get update -qq && apt-get install -y docker-compose-plugin
+
+            # 2. 拉镜像并运行（示例）
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:latest
             docker stop airline-app 2>/dev/null || true
             docker rm   airline-app 2>/dev/null || true
-            docker run -d \
-              --name airline-app \
-              -p 80:8080 \
+            docker run -d --name airline-app -p 80:8080 \
               --link airline-mysql-db:db \
               ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:latest
+            EOF
+            
             cd ~/airline-cicd
             docker-compose pull
             docker-compose up -d --remove-orphans
