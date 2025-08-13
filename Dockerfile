@@ -8,7 +8,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 # 3) 复制其余前端源码并构建
 COPY frontend/ ./
-RUN pnpm build --prod
+RUN pnpm build
 
 # =============== 阶段 2：构建 Spring Boot 后端 ===============
 FROM maven:3.9-eclipse-temurin-8 AS backend-builder
