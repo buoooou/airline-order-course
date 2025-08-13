@@ -1,6 +1,6 @@
 package com.postion.airlineorderbackend.dto;
 
-import com.postion.airlineorderbackend.model.OrderStatus;
+import com.postion.airlineorderbackend.entity.OrderStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,11 +15,5 @@ public class OrderDto {
     private BigDecimal amount;
     private LocalDateTime creationDate;
     private UserDto user;
-    private Map<String, Object> flightInfo; // 用于聚合模拟航班信息
-
-    @Data
-    public static class UserDto {
-        private Long id;
-        private String username;
-    }
+    private Map<String, Object> flightInfo;
 }
