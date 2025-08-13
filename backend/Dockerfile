@@ -7,8 +7,8 @@ WORKDIR /app
 # 复制pom.xml
 COPY pom.xml .
 
-# 下载依赖
-RUN mvn dependency:go-offline -B
+# 下载依赖（跳过插件）
+RUN mvn dependency:go-offline -B -Dmaven.plugin.validation=VERBOSE
 
 # 复制源代码
 COPY . .
