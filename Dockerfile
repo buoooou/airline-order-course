@@ -1,32 +1,35 @@
-# =============== 阶段 1：构建 Angular 前端 ===============
+# --- 阶段 1: 构建 Angular 前端 ---
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app
-# 1) 安装 pnpm（截图里的关键修复）
+
+# (关键修复) 先安装 pnpm 工具
 RUN npm install -g pnpm
-# 2) 复制前端锁文件并安装依赖
+
+# 复制依赖描述文件以利用缓存
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-# 3) 复制其余前端源码并构建
+RUN pnpm install
+# 复制所有剩余源代码
 COPY frontend/ ./
+RUN pnpm run build
 
-RUN pnpm build
-
-# =============== 阶段 2：构建 Spring Boot 后端 ===============
-FROM maven:3.9-eclipse-temurin-8 AS backend-builder
+# --- 阶段 2: 构建 Spring Boot 后端 ---
+FROM maven:3.8.5-openjdk-8 AS backend-builder
 WORKDIR /app
-# 1) 利用缓存层：先复制 pom.xml
-COPY backend/pom.xml ./
-RUN mvn dependency:go-offline -B
-# 2) 复制源码并打包
+# 缓存 Maven 依赖
+COPY backend/pom.xml .
+RUN mvn dependency:go-offline
+# 复制后端源代码
 COPY backend/src ./src
-RUN mvn clean package -DskipTests
+# (关键修复) 从前端构建产物的 browser 子目录中复制内容
+COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 
-# =============== 阶段 3：生成最终运行镜像 ===============
+# 打包后端应用，此时前端文件已在 static 目录中
+RUN mvn package -DskipTests
+
+# --- 阶段 3: 创建最终的运行镜像 ---
 FROM eclipse-temurin:8-jre-alpine
 WORKDIR /app
-# 1) 复制 jar
+# 使用通配符复制 JAR 包
 COPY --from=backend-builder /app/target/*.jar app.jar
-# 2) 复制前端 dist 目录到 Spring Boot 的静态资源（可选）
-COPY --from=frontend-builder /app/dist /app/static
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
