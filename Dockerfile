@@ -27,6 +27,6 @@ WORKDIR /app
 # 1) 复制 jar
 COPY --from=backend-builder /app/target/*.jar app.jar
 # 2) 复制前端 dist 目录到 Spring Boot 的静态资源（可选）
-COPY --from=frontend-builder /app/dist/airline-frontend   /app/static
+COPY --from=frontend-builder /app/dist /app/static
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar"]
