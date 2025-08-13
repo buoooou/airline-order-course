@@ -27,8 +27,9 @@ public class OrderController {
     @Autowired
     private  OrderMapper mapper;
 
-    @PostMapping
-    public Page<OrderListDto> list(@RequestBody PageParam param) {
+    @GetMapping
+    public Page<OrderListDto> list() {
+        PageParam param = new PageParam();
         PageRequest pagable = PageRequest.of(param.getPageNum(), param.getPageSize());
         return orderService.list(pagable).map(mapper::toListDto);
     }
