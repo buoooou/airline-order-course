@@ -87,7 +87,6 @@ export class RegisterComponent {
 
   // 提交表单
   submitForm(): void {
-    console.log('test1111111111' + this.registerForm.value);
     // 标记所有字段为 touched 以显示验证错误
     Object.values(this.registerForm.controls).forEach((control) => {
       control.markAsDirty();
@@ -96,7 +95,6 @@ export class RegisterComponent {
 
     if (this.registerForm.valid) {
       this.loading = true;
-      console.log('test' + this.registerForm.value);
       this.authService.register(this.registerForm.value).subscribe({
         next: () => {
           // 注册成功

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {  Order } from '../../shared/models/order.model';
+import { Order } from '../../shared/models/order.model';
 import { ApiResponse } from '../../shared/models/api-response.model';
 
 @Injectable({
@@ -25,6 +25,7 @@ export class OrderService {
           throw new Error(`API Error: ${response.message}`);
         }
         // 返回data数组
+        console.log('response.data:', JSON.stringify(response.data, null, 2));
         return response.data || [];
       })
     );
