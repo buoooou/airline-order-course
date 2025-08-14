@@ -3,8 +3,7 @@ package com.postion.airlineorderbackend.dto;
 import lombok.Data;
 
 @Data
-public class UserDto {
-    private Long id;
+public class AuthRequest {
     private String username;
-	private String token;
+    private String password;
 }
