@@ -1,4 +1,4 @@
-name: 开发环境构建和测试
+name: 构建和自动部署到EC2
 
 on:
   push:
@@ -71,3 +71,62 @@ jobs:
           tags: airline-frontend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # 自动部署到EC2阶段
+  deploy:
+    name: 部署到EC2
+    runs-on: ubuntu-latest
+    needs: [docker]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    environment: production
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        
+      - name: 配置 AWS 凭据
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name: 部署到 EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+          script: |
+            # 创建项目目录
+            sudo mkdir -p /opt/airline-order-course
+            sudo chown $USER:$USER /opt/airline-order-course
+            cd /opt/airline-order-course
+            
+            # 拉取最新代码
+            if [ -d ".git" ]; then
+              git pull origin main
+            else
+              git clone https://github.com/${{ github.repository }}.git .
+            fi
+            
+            # 确保Docker服务运行
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            
+            # 停止现有服务
+            sudo docker-compose down 2>/dev/null || true
+            
+            # 重新构建并启动服务
+            sudo docker-compose build --no-cache
+            sudo docker-compose up -d
+            
+            # 等待服务启动
+            sleep 30
+            
+            # 健康检查
+            echo "检查服务状态..."
+            sudo docker-compose ps
+            
+            echo "部署完成！"
+            echo "前端地址: http://${{ secrets.EC2_HOST }}:4200"
+            echo "后端地址: http://${{ secrets.EC2_HOST }}:8080"
