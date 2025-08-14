@@ -35,7 +35,6 @@ jobs:
       - name: Build airline-order-frontend
         run: |
           cd airline-order-frontend
-          npx ng version
           npm ci
           npx ng build --configuration=production
       
