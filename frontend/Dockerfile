@@ -18,8 +18,8 @@ RUN chmod +x node_modules/.bin/ng
 
 # 创建启动脚本，动态设置API地址
 RUN echo '#!/bin/sh' > /app/start.sh && \
-    echo 'if [ -n "$EC2_HOST" ]; then' >> /app/start.sh && \
-    echo '  sed -i "s|\"apiUrl\": \"\"|\"apiUrl\": \"http://$EC2_HOST:8080\"|g" /app/src/environments/environment.ts' >> /app/start.sh && \
+    echo 'if [ -n "$API_BASE_URL" ]; then' >> /app/start.sh && \
+    echo '  sed -i "s|\"apiUrl\": \"\"|\"apiUrl\": \"$API_BASE_URL\"|g" /app/src/assets/config.json' >> /app/start.sh && \
     echo 'fi' >> /app/start.sh && \
     echo 'npm start' >> /app/start.sh && \
     chmod +x /app/start.sh
