@@ -28,33 +28,33 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # 根据你的 Angular 项目需求调整版本
+          node-version: '22'
 
       # 3. 安装 Angular 依赖并构建
       - name: Build airline-order-frontend
         run: |
-          cd ${{ github.workspace }}/airline-order-frontend
-          npm ci  # 使用 npm ci 保证依赖一致性
+          cd airline-order-frontend
+          npm ci
           npx ng build --configuration=production
+        # 输出路径：dist/airline-order-frontend
 
       # 4. 设置 Java 环境（用于 Spring Boot 构建）
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: '21'  # 根据 Spring Boot 项目需求调整版本
-          distribution: 'temurin'  # 推荐使用 Temurin 发行版
+          java-version: '21'
+          distribution: 'temurin'
 
-      # 5. 安装 Maven 并构建 Spring Boot 项目
+      # 5. 构建 Spring Boot 项目
       - name: Build airline-order-backend
         run: |
-          cd /home/runner/work/jinjin-airline-order-course/jinjin-airline-order-course/airline-order-backend
-          chmod +x ./mvnw  # 添加可执行权限
+          cd airline-order-backend
+          chmod +x ./mvnw
           ./mvnw clean install
 
-      # 6. 在EC2实例上安装Node.js和npm
+      # 6. 在 EC2 上安装 Node.js 和 npm
       - name: Install Node.js and npm on EC2
         run: |
-          # 设置SSH密钥
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
@@ -62,15 +62,18 @@ jobs:
           ssh-add ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
       
-          # 安装Node.js和npm
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "sudo apt-get update && sudo apt-get install -y nodejs npm"
-          
-      # 7. 设置PATH环境变量
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "
+            sudo apt-get update && sudo apt-get install -y nodejs npm
+          "
+
+      # 7. 设置 PATH（可选，通常不需要）
       - name: Set PATH for Node.js and npm
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "echo 'export PATH=$PATH:/usr/bin' >> ~/.bashrc && source ~/.bashrc"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "
+            echo 'export PATH=$PATH:/usr/bin' >> ~/.bashrc && source ~/.bashrc
+          "
 
-      # 8. 部署到 EC2 实例
+      # 8. 部署到 EC2：使用 rsync 同步构建产物
       - name: Deploy to EC2 via rsync
         run: |
           mkdir -p ~/.ssh
@@ -80,15 +83,17 @@ jobs:
           ssh-add ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
       
-          # 创建目录
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p /home/ubuntu/app/frontend /home/ubuntu/app/backend"
+          # 创建远程目录
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "
+            mkdir -p /home/ubuntu/app/frontend /home/ubuntu/app/backend
+          "
       
-          # 同步前端
-          rsync -avz --delete ./airline-order-frontend/dist/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
+          # ✅ 修复：同步 dist/airline-order-frontend/ 的内容
+          rsync -avz --delete ./airline-order-frontend/dist/airline-order-frontend/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
       
-          # 同步后端 JAR（使用通配符）
+          # 同步后端 JAR
           rsync -avz --delete ./airline-order-backend/target/*.jar ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/
-          
+
       # 9. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
         uses: appleboy/ssh-action@master
@@ -97,19 +102,19 @@ jobs:
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            # 确保 http-server 已安装（首次运行）
+            # 确保 http-server 已安装
             if ! command -v http-server &> /dev/null; then
               sudo npm install -g http-server
             fi
-      
-            # 停止已有的前端服务
+
+            # 停止旧前端服务
             pkill -f "http-server" || true
-      
-            # 启动前端服务，并将日志输出到 frontend.log
+
+            # ✅ 启动前端服务，带日志
             nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
-      
-            # 停止已有的后端服务
+
+            # 停止旧后端服务
             pkill -f "java -jar" || true
-      
-            # 启动后端 Spring Boot 服务，并将日志输出到 backend.log
+
+            # ✅ 启动后端服务，带日志
             nohup java -jar /home/ubuntu/app/backend/*.jar > /home/ubuntu/app/backend.log 2>&1 &
