@@ -66,3 +66,13 @@ export JWT_EXPIRATION_MS=jwt_expiration_ms
 5. 使用 `MapperStruct` 实现 Mapper。
 
 6. 对于不为空且后期无需赋值的依赖项，将注入方式从 `@Autowired` 修改为 `@RequiredArgsConstructor` 以提高可测试性和线程安全性。
+
+- Day3 作业
+
+1. 使用 Angular 完成 frontend
+
+2. 使用 GitHubs Actions 实现 CI/CD, 自动部署到 AWS EC2
+
+   URL: http://3.22.168.207:8080
+
+   实验用用户名: admin  密码: password
