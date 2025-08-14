@@ -27,32 +27,19 @@ jobs:
 
       # 2. 设置 Node.js 环境（用于 Angular 构建）
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '22'
-
+          node-version: '20'
+          cache: 'npm'
+            
       # 3. 安装 Angular 依赖并构建       
       - name: Build airline-order-frontend
         run: |
           cd airline-order-frontend
-      
-          # 🔍 打印 angular.json 中的 index 配置
-          echo "📄 Checking angular.json 'index' field:"
-          grep -A2 -B2 "index" angular.json
-      
-          # ✅ 检查 src/index.html 是否存在
-          if [ ! -f "src/index.html" ]; then
-            echo "❌ ERROR: src/index.html does NOT exist!"
-            ls -la src/
-            exit 1
-          else
-            echo "✅ src/index.html exists"
-          fi
-      
           npm ci
           npx ng build --configuration=production
       
-          # ✅ 验证输出
+          # ✅ 验证 index.html 是否生成
           if [ ! -f "dist/airline-order-frontend/index.html" ]; then
             echo "❌ ERROR: index.html was NOT generated!"
             ls -la dist/airline-order-frontend/ || echo "dist/ not found"
