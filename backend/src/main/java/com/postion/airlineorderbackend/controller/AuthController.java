@@ -1,5 +1,7 @@
 package com.postion.airlineorderbackend.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,8 +35,8 @@ public class AuthController {
 	        @ApiResponse(responseCode = "403", description = "密码错误"),
 	        @ApiResponse(responseCode = "404", description = "用户不存在")
 	})
-	public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+	public ResponseEntity<com.postion.airlineorderbackend.dto.ApiResponse<String>> login(@RequestBody LoginDto loginDto) {
 		String token = authService.login(loginDto);
-		return ResponseEntity.badRequest().body(token);
+		return ResponseEntity.ok(com.postion.airlineorderbackend.dto.ApiResponse.success(token));
 	}
 }

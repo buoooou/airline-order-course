@@ -42,7 +42,7 @@ public class SecurityConfig {
 						// 明确放行所有公共路径
 						.antMatchers("/", "/index.html", "/**.js", "/**.css", "/**.ico", "/**.png", "/asset",
 								"/api/auth/**", // 所有认证相关的API
-								"/api/orders/**", // 所有订单相关的API
+//								"/api/orders/**", // 所有订单相关的API
 								"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**" // Swagger相关
 						).permitAll()
 						// 其他任何请求都需要身份验证

@@ -18,7 +18,7 @@ public enum OrderStatus {
     		case TICKETING_IN_PROGRESS:
     			return nextStatus == TICKETED || nextStatus == TICKETING_FAILED;
     		case TICKETING_FAILED:
-    			return nextStatus == CANCELLED;
+    			return nextStatus == CANCELLED || nextStatus == TICKETING_IN_PROGRESS;
     		default:
     			return false; // 默认不允许转换
     	}

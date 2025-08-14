@@ -52,8 +52,8 @@ CREATE TABLE shedlock (
 -- 插入用户 (密码原文均为 'password')
 -- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
 INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
-(1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
-(2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
+(1, 'admin', '$2a$10$mdZio2Z4/7UVvkjwCJhiFuNMnAs5VUycMBIXW3YiULEsp6Gsg87Sm', 'ADMIN'),
+(2, 'user', '$2a$10$mdZio2Z4/7UVvkjwCJhiFuNMnAs5VUycMBIXW3YiULEsp6Gsg87Sm', 'USER');
 
 -- 插入覆盖所有场景的订单数据
 INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
