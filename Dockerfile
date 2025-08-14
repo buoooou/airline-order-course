@@ -24,6 +24,11 @@ COPY backend/src ./src
 # (关键修复) 从前端构建产物的 browser 子目录中复制内容
 # COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 # 修正为前端实际输出路径：/app/dist/frontend/
+# 关键：查看 dist/frontend 下是否有 browser 目录及内容
+RUN echo "===== 前端构建产物目录结构 ====="
+RUN ls -la /app/dist/frontend
+RUN echo "===== browser 目录内容 ====="
+RUN ls -la /app/dist/frontend/browser
 COPY --from=frontend-builder /app/dist/frontend/browser/* ./src/main/resources/static/
 
 # 打包后端应用，此时前端文件已在 static 目录中
