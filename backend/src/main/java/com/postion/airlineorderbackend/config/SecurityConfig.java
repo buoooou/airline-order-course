@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .antMatchers("/api/orders/**","/api/auth/login","/api/users/**").permitAll()
+                .antMatchers("/api/orders/**","/api/auth/login", "/api/api/auth/login","/api/users/**").permitAll()
                 .antMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
             )

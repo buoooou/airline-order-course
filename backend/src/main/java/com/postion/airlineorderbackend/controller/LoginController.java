@@ -55,7 +55,7 @@ public class LoginController {
         
         if (userDto != null) {
             String token = tokenService.createToken(userDto);
-            return Result.success(token);
+            return Result.success("登录成功！",token);
         } else {
             return Result.error(401, "用户名或密码错误");
         }

@@ -56,9 +56,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto getOrderById(Long id) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Order not found"));
-        if(order.getStatus() != OrderStatus.PENDING_PAYMENT) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "Order already paid yet.");
-        }
+//        if(order.getStatus() != OrderStatus.PENDING_PAYMENT) {
+//            throw new BusinessException(HttpStatus.BAD_REQUEST, "Order already paid yet.");
+//        }
         return Converter.INSTANCE.toResOrderDto(order);
     }
 
