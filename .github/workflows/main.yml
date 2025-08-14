@@ -1,10 +1,8 @@
 name: 构建和自动部署到EC2
 
 on:
-  push:
-    branches: [ main, develop ,duuhao ]
   pull_request:
-    branches: [ main, develop ,duuhao ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
