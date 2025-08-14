@@ -36,13 +36,25 @@ jobs:
         run: |
           cd airline-order-frontend
       
+          # 🔍 打印 angular.json 中的 index 配置
+          echo "📄 Checking angular.json 'index' field:"
+          grep -A2 -B2 "index" angular.json
+      
+          # ✅ 检查 src/index.html 是否存在
+          if [ ! -f "src/index.html" ]; then
+            echo "❌ ERROR: src/index.html does NOT exist!"
+            ls -la src/
+            exit 1
+          else
+            echo "✅ src/index.html exists"
+          fi
+      
           npm ci
           npx ng build --configuration=production
       
-          # ✅ 验证 index.html 是否生成
+          # ✅ 验证输出
           if [ ! -f "dist/airline-order-frontend/index.html" ]; then
             echo "❌ ERROR: index.html was NOT generated!"
-            echo "🔍 Checking dist/ directory:"
             ls -la dist/airline-order-frontend/ || echo "dist/ not found"
             exit 1
           else
