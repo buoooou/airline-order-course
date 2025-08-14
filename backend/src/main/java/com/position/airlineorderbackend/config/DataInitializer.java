@@ -33,9 +33,29 @@ public class DataInitializer implements CommandLineRunner {
     
     @Override
     public void run(String... args) throws Exception {
+        // 每次启动时完全重置数据库
+        resetDatabase();
         initTestUser();
         initTestFlights();
         initTestOrders();
+    }
+    
+    private void resetDatabase() {
+        System.out.println("开始重置数据库...");
+        
+        // 删除所有订单
+        orderRepository.deleteAll();
+        System.out.println("所有订单已删除");
+        
+        // 删除所有航班
+        flightInfoRepository.deleteAll();
+        System.out.println("所有航班已删除");
+        
+        // 删除所有用户
+        userRepository.deleteAll();
+        System.out.println("所有用户已删除");
+        
+        System.out.println("数据库重置完成");
     }
     
     private void initTestUser() {
