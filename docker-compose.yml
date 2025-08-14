@@ -64,7 +64,7 @@ services:
     container_name: airline-frontend
     restart: unless-stopped
     environment:
-      API_BASE_URL: ${API_BASE_URL:-http://localhost:8080}
+      API_BASE_URL: ${API_BASE_URL:-http://backend:8080}
     ports:
       - "4200:4200"  # 开发端口
     volumes:
