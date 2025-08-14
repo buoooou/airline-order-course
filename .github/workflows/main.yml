@@ -36,6 +36,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/airline-cicd
+            docker-compose down
+            docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-manage:latest || true
             docker-compose pull
             docker-compose up -d --force-recreate --remove-orphans
             docker image prune -f
