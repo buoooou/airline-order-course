@@ -30,7 +30,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'
             
       # 3. 安装 Angular 依赖并构建       
       - name: Build airline-order-frontend
