@@ -33,19 +33,19 @@ public class OrderMapper {
     }
 
     public  OrderDetailDto toDetailDto(Order order) {
-        FlightInfo flight = flightInfoRepository.findByOrderId(order.getId());
+       /* FlightInfo flight = flightInfoRepository.findByOrderId(order.getId());
         FlightInfoDto flightDto = new FlightInfoDto(
                 flight.getFlightNumber(),
                 flight.getDepartureCity(),
                 flight.getArrivalCity(),
                 flight.getDepartureTime()
-        );
+        );*/
         OrderDetailDto orderDetailDto = new OrderDetailDto(
                 order.getId(),
                 order.getOrderNumber(),
                 order.getStatus(),
                 order.getCreatedAt(),
-                flightDto,
+                new FlightInfoDto(),
                 new User(),
                 order.getTotalAmount()
 
