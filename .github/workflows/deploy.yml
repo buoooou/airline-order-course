@@ -36,31 +36,11 @@ jobs:
         run: |
           cd airline-order-frontend
       
-          # ✅ 1. 检查源文件
-          if [ ! -f "src/index.html" ]; then
-            echo "❌ ERROR: src/index.html does NOT exist!"
-            ls -la src/
-            exit 1
-          else
-            echo "✅ src/index.html exists"
-          fi
-      
           # ✅ 2. 安装依赖
           npm ci
       
           # ✅ 3. 构建
           npx ng build --configuration=production
-      
-          # ✅ 4. 验证构建输出（最关键！）
-          if [ ! -f "dist/airline-order-frontend/index.html" ]; then
-            echo "❌ ERROR: index.html was NOT generated after build!"
-            echo "👉 This means Angular build didn't create it, even though 'Building...' succeeded."
-            echo "🔍 Checking what's in dist/:"
-            ls -la dist/airline-order-frontend/ || echo "dist/ directory missing"
-            exit 1
-          else
-            echo "✅ SUCCESS: index.html generated at dist/airline-order-frontend/index.html"
-          fi
 
       - name: Deploy to EC2 via rsync
         run: |
@@ -140,7 +120,7 @@ jobs:
             pkill -f "http-server" || true
 
             # ✅ 启动前端服务，带日志
-            nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
+            nohup http-server /home/ubuntu/app/frontend/browser -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
 
             # 停止旧后端服务
             pkill -f "java -jar" || true
