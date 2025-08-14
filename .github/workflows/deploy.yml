@@ -83,9 +83,14 @@ jobs:
               sudo npm install -g http-server
             fi
       
-            # 重启前端服务
-            sudo systemctl restart frontend
+            # 停止已有的前端服务
+            pkill -f "http-server"
       
-            # 重启后端 Spring Boot 服务
-            sudo systemctl restart airline-order-backend
-              
+            # 启动前端服务
+            nohup http-server /home/ubuntu/app/frontend -p 8080 &
+      
+            # 停止已有的后端服务
+            pkill -f "java -jar"
+      
+            # 启动后端 Spring Boot 服务
+            nohup java -jar /home/ubuntu/app/backend/*.jar
