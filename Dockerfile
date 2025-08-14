@@ -2,7 +2,7 @@ FROM node:20-alpine AS frontend-build
 WORKDIR /app
 
 RUN npm install -g pnpm
-COPY frontend/package.json frontend/npm-lock.yaml ./
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install
 COPY frontend/ ./
 RUN pnpm run build
