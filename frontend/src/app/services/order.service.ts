@@ -26,56 +26,65 @@ export class OrderService {
   }
 
   createOrder(request: CreateOrderRequest): Observable<OrderDto> {
-    return this.http.post<OrderDto>(`/api/orders`, request, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders` : `/orders`;
+    return this.http.post<OrderDto>(url, request, {
       headers: this.getHeaders()
     });
   }
 
   getAllOrders(): Observable<OrderDto[]> {
-    return this.http.get<OrderDto[]>(`/api/orders/my`, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders/my` : `/orders/my`;
+    return this.http.get<OrderDto[]>(url, {
       headers: this.getHeaders()
     });
   }
 
   getOrderById(id: number): Observable<OrderDto> {
-    return this.http.get<OrderDto>(`/api/orders/${id}`, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders/${id}` : `/orders/${id}`;
+    return this.http.get<OrderDto>(url, {
       headers: this.getHeaders()
     });
   }
 
   // 订单操作方法
   payOrder(id: number): Observable<string> {
-    return this.http.post<string>(`/api/orders/${id}/actions/pay`, {}, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders/${id}/actions/pay` : `/orders/${id}/actions/pay`;
+    return this.http.post<string>(url, {}, {
       headers: this.getHeaders()
     });
   }
 
   startTicketing(id: number): Observable<string> {
-    return this.http.post<string>(`/api/orders/${id}/actions/start-ticketing`, {}, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders/${id}/actions/start-ticketing` : `/orders/${id}/actions/start-ticketing`;
+    return this.http.post<string>(url, {}, {
       headers: this.getHeaders()
     });
   }
 
   completeTicketing(id: number): Observable<string> {
-    return this.http.post<string>(`/api/orders/${id}/actions/complete-ticketing`, {}, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders/${id}/actions/complete-ticketing` : `/orders/${id}/actions/complete-ticketing`;
+    return this.http.post<string>(url, {}, {
       headers: this.getHeaders()
     });
   }
 
   cancelOrder(id: number): Observable<string> {
-    return this.http.post<string>(`/api/orders/${id}/actions/cancel`, {}, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders/${id}/actions/cancel` : `/orders/${id}/actions/cancel`;
+    return this.http.post<string>(url, {}, {
       headers: this.getHeaders()
     });
   }
 
   retryPayment(id: number): Observable<string> {
-    return this.http.post<string>(`/api/orders/${id}/actions/retry-payment`, {}, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders/${id}/actions/retry-payment` : `/orders/${id}/actions/retry-payment`;
+    return this.http.post<string>(url, {}, {
       headers: this.getHeaders()
     });
   }
 
   retryTicketing(id: number): Observable<string> {
-    return this.http.post<string>(`/api/orders/${id}/actions/retry-ticketing`, {}, {
+    const url = this.apiUrl ? `${this.apiUrl}/orders/${id}/actions/retry-ticketing` : `/orders/${id}/actions/retry-ticketing`;
+    return this.http.post<string>(url, {}, {
       headers: this.getHeaders()
     });
   }
