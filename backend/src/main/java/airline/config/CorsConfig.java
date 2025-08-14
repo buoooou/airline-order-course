@@ -28,7 +28,11 @@ public class CorsConfig implements WebMvcConfigurer {
                         "/static/**",
                         "/assets/**",
                         "/images/**",
-                        "/favicon.ico");
+                        "/favicon.ico",
+                        // Swagger-UI
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",   // 如果也用了 springdoc-openapi
+                        "/swagger-resources/**");
     }
 
 
