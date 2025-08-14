@@ -32,7 +32,8 @@ public class CorsConfig implements WebMvcConfigurer {
                         // Swagger-UI
                         "/swagger-ui/**",
                         "/v3/api-docs/**",   // 如果也用了 springdoc-openapi
-                        "/swagger-resources/**");
+                        "/swagger-resources/**",
+                        "/api-docs/swagger-config");
     }
 
 
