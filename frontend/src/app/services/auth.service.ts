@@ -16,7 +16,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(loginRequest: LoginRequest): Observable<AuthResponse> {
-    const url = this.apiUrl ? `${this.apiUrl}/api/auth/login` : `/api/auth/login`;
+    const url = this.apiUrl ? `${this.apiUrl}/auth/login` : `/auth/login`;
     console.log('Login URL:', url, 'API Base URL:', this.apiUrl);
     return this.http.post<AuthResponse>(url, loginRequest)
       .pipe(
@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   register(registerRequest: RegisterRequest): Observable<AuthResponse> {
-    const url = this.apiUrl ? `${this.apiUrl}/api/auth/register` : `/api/auth/register`;
+    const url = this.apiUrl ? `${this.apiUrl}/auth/register` : `/auth/register`;
     console.log('Register URL:', url, 'API Base URL:', this.apiUrl);
     return this.http.post<AuthResponse>(url, registerRequest)
       .pipe(
