@@ -17,6 +17,7 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 import com.postion.airlineorderbackend.adapter.outbound.AirlineApiClient;
 import com.postion.airlineorderbackend.dto.OrderDto;
+import com.postion.airlineorderbackend.dto.UserDto;
 import com.postion.airlineorderbackend.exception.BussinessException;
 import com.postion.airlineorderbackend.mapper.OrderMapper;
 import com.postion.airlineorderbackend.model.OrderStatus;
@@ -44,7 +45,8 @@ public class OrderServiceImpl implements OrderService{
    log.info("订单列表取得");
    List<OrderDto> orderDtoList  = new ArrayList<>();
     for (int i = 0; i < orderRepository.findAll().size(); i++) {
-        orderDtoList.add(orderMapper.toOrderDto(orderRepository.findAll().get(i)));
+//        orderDtoList.add(orderMapper.toOrderDto(orderRepository.findAll().get(i)));
+    	orderDtoList.add(mappOrderDto(orderRepository.findAll().get(i)));
     }
     return orderDtoList;
   }
@@ -54,7 +56,8 @@ public class OrderServiceImpl implements OrderService{
     if(order== null) {
          throw new BussinessException(HttpStatus.BAD_REQUEST,"订单不存在");
     }
-    return orderMapper.toOrderDto(order);
+//    return orderMapper.toOrderDto(order);
+    return mappOrderDto(order);
    }
    
    public OrderDto payOrder(Long id) {
@@ -74,7 +77,8 @@ public class OrderServiceImpl implements OrderService{
 	    
 	    //出票
 	    requestTicketIssuance(order.getId(),saveOrder);
-	    return orderMapper.toOrderDto(saveOrder);
+//	    return orderMapper.toOrderDto(saveOrder);
+	    return mappOrderDto(saveOrder);
    }
 
   @Override
@@ -124,7 +128,21 @@ public class OrderServiceImpl implements OrderService{
      }
      order.setStatus(OrderStatus.CANCELLED);
      orderRepository.save(order);
-     return orderMapper.toOrderDto(order);
+//     return orderMapper.toOrderDto(order);
+     return mappOrderDto(order);
+   }
+   
+   public OrderDto mappOrderDto(Order order){
+	   OrderDto orderDto = new OrderDto();
+		  orderDto.setId(order.getId());
+		  orderDto.setOrderNumber(order.getOrderNumber());
+		  orderDto.setStatus(order.getStatus());
+		  orderDto.setAmount(order.getAmount());
+		  orderDto.setCreationDate(order.getCreationDate());
+		  orderDto.setUser(new UserDto());
+		  orderDto.getUser().setUsername(order.getUser().getUsername());
+		  orderDto.getUser().setId(order.getUser().getId());
+		  return orderDto;
    }
   
   @Scheduled(fixedRate = 60000)
