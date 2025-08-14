@@ -27,7 +27,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     //目标资源方法执行前执行。 返回true：放行    返回false：不放行
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-      /*  //1,先获取请求头
+        //1,先获取请求头
         String token = request.getHeader("Authorization");
         response.setContentType("application/json;charset = UTF-8");
         ObjectMapper mapper = new ObjectMapper();
@@ -50,7 +50,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             String result = mapper.writeValueAsString(new JwtResponse("Invalid token"));
             response.getWriter().write(result);
             throw new ServiceException("token 无效");
-        }*/
+        }
         return true;
     }
 

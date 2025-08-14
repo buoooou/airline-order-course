@@ -18,7 +18,8 @@ public class CorsConfig implements WebMvcConfigurer {
         //定义拦截对象
         registry.addInterceptor(loginCheckInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/auth/login");
+                .excludePathPatterns("/api/auth/login")
+                .excludePathPatterns("/login");
     }
 
 
