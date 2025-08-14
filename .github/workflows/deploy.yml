@@ -109,17 +109,28 @@ jobs:
           host: ${{ secrets.EC2_PUBLIC_IP }}
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          timeout: 600s  # ✅ 正确：带单位 "s"
+          timeout: 600s
+          command_timeout: 600s
+          debug: true
           script: |
+            # 安装 http-server（如果未安装）
             if ! command -v http-server &> /dev/null; then
               sudo npm install -g http-server --unsafe-perm
             fi
       
+            # 停止旧的前端服务
             pkill -f "http-server" || true
-            nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
       
+            # 使用 setsid 完全脱离终端运行前端
+            setsid nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 < /dev/null &
+      
+            # 停止旧的后端服务
             pkill -f "java -jar" || true
-            cd /home/ubuntu/app/backend && nohup java -jar *.jar > /home/ubuntu/app/backend.log 2>&1 &
       
-            sleep 10
+            # 使用 setsid 完全脱离终端运行 Spring Boot
+            cd /home/ubuntu/app/backend
+            setsid nohup java -jar *.jar > /home/ubuntu/app/backend.log 2>&1 < /dev/null &
+      
+            # 给应用足够时间启动
+            sleep 30
 
