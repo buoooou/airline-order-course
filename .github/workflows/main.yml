@@ -1,6 +1,8 @@
 name: 构建和自动部署到EC2
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
