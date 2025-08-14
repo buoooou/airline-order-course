@@ -106,13 +106,15 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i "aws-key.pem" ubuntu@18.221.248.92 << 'EOF'
-            # 前端（使用 nohup）
+            # 前端
             cd /home/ubuntu/app/frontend
-            nohup http-server -p 8080 --host 0.0.0.0 > frontend.log 2>&1 &
-      
-            # 后端（使用 nohup）
+            pkill -f "http-server" || true
+            npx http-server -p 8080 --host 0.0.0.0 > frontend.log 2>&1 &
+            
+            # 后端
             cd /home/ubuntu/app/backend
-            JAR_FILE=$(ls *.jar | head -n1)
+            pkill -f "java -jar .*\.jar" || true
+            JAR_FILE=$(ls -t *.jar | head -n1)
             if [ -f "$JAR_FILE" ]; then
               nohup java -jar "$JAR_FILE" --server.port=8081 > backend.log 2>&1 &
               echo "Backend started: $JAR_FILE"
@@ -120,5 +122,8 @@ jobs:
               echo "No JAR file found!"
               exit 1
             fi
+      
+            # 可选：等待后端启动
+            sleep 5
           EOF
 
