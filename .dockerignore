@@ -1,0 +1,9 @@
+# .dockerignore
+**/node_modules
+**/target
+frontend/dist
+.idea
+.vscode
+*.iml
+.trae
+.logs
