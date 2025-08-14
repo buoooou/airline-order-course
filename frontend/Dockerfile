@@ -16,7 +16,13 @@ COPY . .
 # 确保Angular CLI有执行权限
 RUN chmod +x node_modules/.bin/ng
 
-
+# 创建启动脚本，动态设置API地址
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'if [ -n "$EC2_HOST" ]; then' >> /app/start.sh && \
+    echo '  sed -i "s|\"apiUrl\": \"\"|\"apiUrl\": \"http://$EC2_HOST:8080\"|g" /app/src/environments/environment.ts' >> /app/start.sh && \
+    echo 'fi' >> /app/start.sh && \
+    echo 'npm start' >> /app/start.sh && \
+    chmod +x /app/start.sh
 
 # 安装curl用于健康检查
 RUN apk add --no-cache curl
@@ -29,4 +35,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:4200 || exit 1
 
 # 启动开发服务器
-CMD ["npm", "start"]
+CMD ["/app/start.sh"]
