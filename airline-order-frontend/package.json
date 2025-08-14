@@ -43,9 +43,6 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "less": "^4.4.0",
-    "typescript": "~5.8.2",
-    "@angular-devkit/build-angular": "^16.2.0",
-    "@angular/cli": "^16.2.0",
-    "@angular/compiler-cli": "^16.2.0"
+    "typescript": "~5.8.2"
   }
 }
