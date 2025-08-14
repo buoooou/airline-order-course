@@ -104,12 +104,12 @@ jobs:
             
             # 停止已有的前端服务
             pkill -f "http-server" || true
-
+      
             # 启动前端服务
-            nohup http-server /home/ubuntu/app/frontend -p 8080 &
-
+            nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend/server.log 2>&1 &
+      
             # 停止已有的后端服务
             pkill -f "java -jar" || true
-
+      
             # 启动后端 Spring Boot 服务
-            nohup java -jar /home/ubuntu/app/backend/*.jar &
+            nohup java -jar /home/ubuntu/app/backend/*.jar > /home/ubuntu/app/backend/app.log 2>&1 &
