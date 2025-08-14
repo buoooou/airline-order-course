@@ -51,7 +51,17 @@ jobs:
           chmod +x ./mvnw  # 添加可执行权限
           ./mvnw clean install
 
-      # 6. 部署到 EC2 实例
+      # 6. 在EC2实例上安装Node.js和npm
+      - name: Install Node.js and npm on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "sudo apt-get update && sudo apt-get install -y nodejs npm"
+
+      # 7. 设置PATH环境变量
+      - name: Set PATH for Node.js and npm
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "echo 'export PATH=$PATH:/usr/bin' >> ~/.bashrc && source ~/.bashrc"
+
+      # 8. 部署到 EC2 实例
       - name: Deploy to EC2 via rsync
         run: |
           mkdir -p ~/.ssh
@@ -70,7 +80,7 @@ jobs:
           # 同步后端 JAR（使用通配符）
           rsync -avz --delete ./airline-order-backend/target/*.jar ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/
           
-      # 7. 在 EC2 上执行部署脚本
+      # 9. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
         uses: appleboy/ssh-action@master
         with:
@@ -82,15 +92,15 @@ jobs:
             if ! command -v http-server &> /dev/null; then
               sudo npm install -g http-server
             fi
-      
+            
             # 停止已有的前端服务
-            pkill -f "http-server"
-      
+            pkill -f "http-server" || true
+
             # 启动前端服务
             nohup http-server /home/ubuntu/app/frontend -p 8080 &
-      
+
             # 停止已有的后端服务
-            pkill -f "java -jar"
-      
+            pkill -f "java -jar" || true
+
             # 启动后端 Spring Boot 服务
-            nohup java -jar /home/ubuntu/app/backend/*.jar
+            nohup java -jar /home/ubuntu/app/backend/*.jar &
