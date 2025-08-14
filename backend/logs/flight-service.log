@@ -69442,3 +69442,381 @@ java.lang.Exception: Apparent connection leak detected
         flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
     values
         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:04 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:05 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:06 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:07 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:09 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:10 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:11 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:12 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:14 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:15 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:16 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:17 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:18 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:19 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:20 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:21 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:23 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:23 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:24 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:25 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:27 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:28 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:29 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:30 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:32 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:33 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:34 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:35 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:36 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:37 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:38 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:39 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:40 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:43 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:44 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:45 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:46 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:47 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:48 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:49 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:51 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:52 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:53 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:55 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:56 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:57 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:58 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:45:59 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:46:00 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:46:01 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:46:02 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:46:03 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:46:05 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-08-14 21:46:06 [main] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.airline.entity.Flight */insert 
+    into
+        flights_yb (aircraft_type, airline_id, arrival_airport_id, arrival_time, available_seats, business_price, created_at, departure_airport_id, departure_time, economy_price, first_price, flight_number, status, total_seats, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
