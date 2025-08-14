@@ -19,7 +19,15 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginCheckInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/api/auth/login")
-                .excludePathPatterns("/login");
+                .excludePathPatterns("/login", // 前端静态资源
+                        "/",
+                        "/*.html",
+                        "/*.js",
+                        "/*.css",
+                        "/static/**",
+                        "/assets/**",
+                        "/images/**",
+                        "/favicon.ico");
     }
 
 
