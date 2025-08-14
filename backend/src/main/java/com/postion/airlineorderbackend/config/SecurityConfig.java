@@ -69,6 +69,8 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable()) // 禁用表单登录
                 .httpBasic(basic -> basic.disable()) // 禁用 HTTP Basic
                 .authorizeHttpRequests(requests -> requests
+                        // 1. 放行静态资源（关键！）
+                        .antMatchers("/", "/index.html", "/css/**", "/js/**", "/img/**").permitAll()
                         // 允许认证相关接口无需认证即可访问
                         .antMatchers(Constants.ApiPath.AUTH_PREFIX + "/**").permitAll()
                         // 允许Swagger相关接口无需认证即可访问

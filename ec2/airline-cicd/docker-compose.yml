@@ -1,0 +1,75 @@
+# Docker Compose 配置文件
+# 用于在EC2服务器上部署航空订单管理系统（Spring Boot + Angular + MySQL）
+
+# version: 字段已过时，可以删除
+
+# 定义服务（容器）
+services:
+  # MySQL数据库服务
+  database:
+    # 使用MySQL 8.0官方镜像
+    image: mysql:8.0
+    # 容器名称，便于管理
+    container_name: airline-mysql-db
+    # 自动重启策略：总是重启，确保服务高可用
+    restart: always
+    # 环境变量配置
+    environment:
+      # 最佳实践：使用 .env 文件管理这些敏感信息
+      # MySQL root用户密码（最高权限）
+      MYSQL_ROOT_PASSWORD: Root1234
+      # 初始化时创建的数据库名称
+      MYSQL_DATABASE: myappdb
+      # 创建的应用用户
+      MYSQL_USER: myappuser123
+      # 应用用户的密码
+      MYSQL_PASSWORD: YourPassword123
+    # 数据卷挂载配置
+    volumes:
+      # 将MySQL数据目录挂载到命名卷，实现数据持久化
+      - db_data:/var/lib/mysql
+    # 网络配置
+    networks:
+      # 连接到自定义网络，实现容器间通信
+      - app-network
+
+  # Spring Boot应用服务
+  app:
+    # 核心：使用CI/CD构建的镜像（已推送到Docker Hub）
+    image: kroulzhang/airline-order-manage:latest
+    # 容器名称
+    container_name: my-springboot-angular-app
+    # 自动重启策略
+    restart: always
+    # 端口映射配置
+    ports:
+      # 将容器8080端口映射到主机8080端口
+      - "8080:8080"
+    # 依赖关系：确保数据库先启动
+    depends_on:
+      - database
+    # 环境变量：Spring Boot连接数据库配置
+    environment:
+      # JDBC连接字符串，使用服务名'database'作为主机名
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/myappdb?useSSL=false&allowPublicKeyRetrieval=true
+      # 数据库用户名
+      - SPRING_DATASOURCE_USERNAME=myappuser123
+      # 数据库密码
+      - SPRING_DATASOURCE_PASSWORD=YourPassword123
+    # 网络配置
+    networks:
+      # 连接到同一网络，与数据库通信
+      - app-network
+
+# 定义命名卷（数据持久化）
+volumes:
+  # MySQL数据卷，即使容器删除数据也不会丢失
+  db_data:
+    # 使用默认的本地存储驱动
+
+# 定义自定义网络
+networks:
+  # 应用网络，实现容器间通信和隔离
+  app-network:
+    # 使用bridge驱动（默认）
+    driver: bridge
