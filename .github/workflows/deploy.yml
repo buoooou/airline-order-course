@@ -109,22 +109,18 @@ jobs:
           host: ${{ secrets.EC2_PUBLIC_IP }}
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          timeout: 60 # 设置超时时间为 60 秒
+          timeout: 300s  # ✅ 正确：带单位 "s"
           script: |
-            # 确保 http-server 已安装
+            # 你的脚本
             if ! command -v http-server &> /dev/null; then
-              sudo npm install -g http-server
+              sudo npm install -g http-server --unsafe-perm
             fi
       
-            # 停止旧前端服务
             pkill -f "http-server" || true
-      
-            # ✅ 启动前端服务，带日志
             nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
       
-            # 停止旧后端服务
             pkill -f "java -jar" || true
+            cd /home/ubuntu/app/backend && nohup java -jar *.jar > /home/ubuntu/app/backend.log 2>&1 &
       
-            # ✅ 启动后端服务，带日志
-            nohup java -jar /home/ubuntu/app/backend/*.jar > /home/ubuntu/app/backend.log 2>&1 &
+            sleep 10
 
