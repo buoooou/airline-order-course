@@ -49,7 +49,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: 
+          tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/airline-order-course:${{ github.sha }}
 
