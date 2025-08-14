@@ -37,7 +37,8 @@ jobs:
       # 5. 安装 Maven 并构建 Spring Boot 项目
       - name: Build airline-order-backend
         run: |
-          cd ${{ github.workspace }}/airline-order-backend
+          cd /home/runner/work/jinjin-airline-order-course/jinjin-airline-order-course/airline-order-backend
+          chmod +x ./mvnw  # 添加可执行权限
           ./mvnw clean install
 
       # 6. 部署到 EC2 实例
