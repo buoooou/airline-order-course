@@ -13,18 +13,19 @@ jobs:
         uses: actions/checkout@v4
 
       # ----------------------------
-      # 构建 Angular 前端
+      # 构建 Angular 前端（带缓存）
       # ----------------------------
       - name: Setup Node.js (Angular)
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
+          cache-location: airline-order-frontend  # ✅ 指定子目录
 
       - name: Install frontend dependencies
         run: |
           cd airline-order-frontend
-          npm ci
+          npm ci  # 使用 lock 文件安装，保证一致性
 
       - name: Build Angular (Production)
         run: |
