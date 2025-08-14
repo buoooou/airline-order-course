@@ -54,22 +54,22 @@ jobs:
       # 6. 部署到 EC2 实例
       - name: Deploy to EC2 via rsync
         run: |
-          # 配置 SSH
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
-      
-          # 跳过 host key 检查（CI 环境常用）
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+      
+          # 创建目录
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p /home/ubuntu/app/frontend /home/ubuntu/app/backend"
       
           # 同步前端
           rsync -avz --delete ./airline-order-frontend/dist/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
       
-          # 同步后端 JAR（假设 JAR 文件名为 app.jar）
-          rsync -avz --delete ./airline-order-backend/target/app.jar ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/   
-            
+          # 同步后端 JAR（使用通配符）
+          rsync -avz --delete ./airline-order-backend/target/*.jar ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/
+          
       # 7. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
         uses: appleboy/ssh-action@master
@@ -78,11 +78,14 @@ jobs:
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            # 替换前端文件（假设 Nginx 挂载到 /var/www/html）
-            cp -r /home/ubuntu/app/dist/* /var/www/html/
-            
-            # 替换后端 JAR 文件
-            cp /home/ubuntu/app/*.jar /home/ubuntu/app/backend/app.jar
-            
-            # 重启后端服务（确保服务生效）
+            # 同步前端到 Nginx 目录
+            sudo cp -r /home/ubuntu/app/frontend/* /var/www/html/
+            sudo chown -R www-data:www-data /var/www/html/
+            sudo systemctl reload nginx
+      
+            # 确保后端 JAR 可执行
+            chmod +x /home/ubuntu/app/backend/*.jar
+      
+            # 重启 Spring Boot 服务
             sudo systemctl restart airline-order-backend
+              
