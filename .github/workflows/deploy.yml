@@ -104,7 +104,7 @@ jobs:
 
       # 9. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.EC2_PUBLIC_IP }}
           username: ${{ secrets.AWS_EC2_USER }}
