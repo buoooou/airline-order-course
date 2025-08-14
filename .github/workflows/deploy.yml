@@ -38,7 +38,7 @@ jobs:
       - name: Build airline-order-backend
         run: |
           cd ${{ github.workspace }}/airline-order-backend
-          ./mvnw -B package -DskipTests  # 批处理构建并跳过测试
+          ./mvnw clean install
 
       # 6. 部署到 EC2 实例
       - name: Deploy to EC2
