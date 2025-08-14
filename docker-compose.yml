@@ -74,7 +74,7 @@ services:
       - db
     networks:
       - airline-network
-    command: npm start  # 开发模式启动
+    # 使用Dockerfile中的启动脚本，不覆盖command
     # 暂时注释掉健康检查以加快启动
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:4200"]
