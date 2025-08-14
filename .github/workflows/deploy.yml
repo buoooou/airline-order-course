@@ -54,8 +54,17 @@ jobs:
       # 6. 在EC2实例上安装Node.js和npm
       - name: Install Node.js and npm on EC2
         run: |
+          # 设置SSH密钥
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+      
+          # 安装Node.js和npm
           ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "sudo apt-get update && sudo apt-get install -y nodejs npm"
-
+          
       # 7. 设置PATH环境变量
       - name: Set PATH for Node.js and npm
         run: |
