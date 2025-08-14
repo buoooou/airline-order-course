@@ -54,15 +54,23 @@ jobs:
       # 6. 部署到 EC2 实例
       - name: Deploy to EC2
         uses: easingthemes/ssh-deploy@v2.0.7
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.EC2_PUBLIC_IP }}
-          REMOTE_USER: ${{ secrets.AWS_EC2_USER }}
-          TARGET: /home/ubuntu/app
-          ARGS: "-avz --delete"  # 同步文件并删除多余文件
-          SOURCE: |
-            ${{ github.workspace }}/airline-order-frontend/dist/  # Angular 构建输出目录
-            ${{ github.workspace }}/airline-order-backend/target/*.jar  # Spring Boot 构建输出 JAR 文件
+        with:
+          localDir: ${{ github.workspace }}/airline-order-frontend/dist
+          remoteDir: /home/ubuntu/app/frontend
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ${{ secrets.AWS_EC2_USER }}
+          privateKey: ${{ secrets.EC2_PRIVATE_KEY }}
+          args: "-avz --delete"
+
+      - name: Deploy Backend JAR to EC2
+        uses: easingthemes/ssh-deploy@v2.0.7
+        with:
+          localDir: ${{ github.workspace }}/airline-order-backend/target
+          remoteDir: /home/ubuntu/app/backend
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ${{ secrets.AWS_EC2_USER }}
+          privateKey: ${{ secrets.EC2_PRIVATE_KEY }}
+          args: "-avz --delete"
 
       # 7. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
