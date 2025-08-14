@@ -60,7 +60,6 @@ jobs:
           REMOTE_USER: ${{ secrets.AWS_EC2_USER }}
           SOURCE: ${{ github.workspace }}/airline-order-frontend/dist
           TARGET: /home/ubuntu/app/frontend/
-          ARGS: "-avz --delete"
       
       - name: Deploy Backend JAR to EC2
         uses: easingthemes/ssh-deploy@v2.0.7
@@ -70,7 +69,6 @@ jobs:
           REMOTE_USER: ${{ secrets.AWS_EC2_USER }}
           SOURCE: ${{ github.workspace }}/airline-order-backend/target/*.jar
           TARGET: /home/ubuntu/app/backend/
-          ARGS: "-avz --delete"
     
       # 7. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
