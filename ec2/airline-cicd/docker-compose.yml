@@ -36,7 +36,7 @@ services:
   # Spring Boot应用服务
   app:
     # 核心：使用CI/CD构建的镜像（已推送到Docker Hub）
-    image: kroulzhang/airline-order-manage:latest
+    image: zhiqunz039/airline-order-manage:latest
     # 容器名称
     container_name: my-springboot-angular-app
     # 自动重启策略
