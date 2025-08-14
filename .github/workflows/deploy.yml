@@ -33,7 +33,7 @@ jobs:
             
       # 3. 安装 Angular 依赖并构建       
       - name: Build airline-order-frontend
-      - run: |
+        run: |
           cd airline-order-frontend
           npx ng version
           npm ci
