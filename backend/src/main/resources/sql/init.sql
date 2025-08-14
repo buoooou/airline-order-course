@@ -8,13 +8,14 @@
 -- =================================================================
 
 -- 步骤 1: 创建数据库并切换
-CREATE DATABASE IF NOT EXISTS `airline_order_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `airline_order_db`;
+--CREATE DATABASE IF NOT EXISTS `airline_order_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+--USE `airline_order_db`;
 
 -- 步骤 2: 创建 app_users 表
 -- 用于存储用户信息，对应 User.java 实体
 DROP TABLE IF EXISTS `orders`;
 DROP TABLE IF EXISTS `app_users`;
+DROP TABLE IF EXISTS `shedlock`;
 
 CREATE TABLE `app_users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -37,14 +38,22 @@ CREATE TABLE `orders` (
   CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 用于定时启动
+CREATE TABLE shedlock (
+    name VARCHAR(64) NOT NULL,
+    lock_until TIMESTAMP(3) NOT NULL,
+    locked_at TIMESTAMP(3) NOT NULL,
+    locked_by VARCHAR(255) NOT NULL,
+    PRIMARY KEY (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 步骤 4: 插入测试数据
 
 -- 插入用户 (密码原文均为 'password')
 -- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
 INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
-(1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
-(2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
+(1, 'admin', '$2a$10$mdZio2Z4/7UVvkjwCJhiFuNMnAs5VUycMBIXW3YiULEsp6Gsg87Sm', 'ADMIN'),
+(2, 'user', '$2a$10$mdZio2Z4/7UVvkjwCJhiFuNMnAs5VUycMBIXW3YiULEsp6Gsg87Sm', 'USER');
 
 -- 插入覆盖所有场景的订单数据
 INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
