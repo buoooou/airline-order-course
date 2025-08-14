@@ -17,7 +17,7 @@ FROM maven:3.8.5-openjdk-17 AS backend-builder
 WORKDIR /app
 # 缓存 Maven 依赖
 COPY backend/pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -U
 # 复制后端源代码
 COPY backend/src ./src
 
@@ -25,7 +25,7 @@ COPY backend/src ./src
 COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 
 # 打包后端应用，此时前端文件已在 static 目录中
-RUN mvn package -DskipTests
+RUN mvn clean package -DskipTests -U
 
 # --- 阶段 3: 创建最终的运行镜像 ---
 FROM eclipse-temurin:17-jre-alpine
