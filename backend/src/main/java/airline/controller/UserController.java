@@ -36,7 +36,7 @@ public class UserController {
             return  new JwtResponse(jwt);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException();
+            throw new ServiceException("login failed");
         }
     }
 }
