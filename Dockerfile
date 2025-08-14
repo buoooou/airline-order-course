@@ -31,7 +31,9 @@ COPY backend/src ./src
 # COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 # 修正为前端实际输出路径：/app/dist/frontend/
 # 关键：查看 dist/frontend 下是否有 browser 目录及内容
-COPY --from=frontend-builder /app/dist/frontend/browser/* ./src/main/resources/static/
+COPY --from=frontend-builder /app/dist/frontend/browser/. ./src/main/resources/static/
+RUN echo "===== 详细目录结构 ====="
+RUN ls -la ./src/main/resources/static
 
 # 打包后端应用，此时前端文件已在 static 目录中
 RUN mvn package -DskipTests
