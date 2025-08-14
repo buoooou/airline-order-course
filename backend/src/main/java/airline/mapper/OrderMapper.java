@@ -5,6 +5,7 @@ import airline.dto.OrderDetailDto;
 import airline.dto.OrderListDto;
 import airline.entity.FlightInfo;
 import airline.entity.Order;
+import airline.entity.User;
 import airline.repository.FlightInfoRepository;
 import airline.repository.OrderRepository;
 import lombok.Data;
@@ -39,13 +40,20 @@ public class OrderMapper {
                 flight.getArrivalCity(),
                 flight.getDepartureTime()
         );
-        return new OrderDetailDto(
+        OrderDetailDto orderDetailDto = new OrderDetailDto(
                 order.getId(),
                 order.getOrderNumber(),
                 order.getStatus(),
                 order.getCreatedAt(),
-                flightDto
+                flightDto,
+                new User(),
+                order.getTotalAmount()
+
         );
+        User user = orderDetailDto.getUser();
+        user.setId(1L);
+        user.setUsername("admin");
+        return orderDetailDto;
     }
 
 

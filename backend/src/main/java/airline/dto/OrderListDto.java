@@ -14,6 +14,6 @@ public class OrderListDto {
     private Long id;
     private String orderNumber;
     private OrderStatus status;
-    private BigDecimal totalAmount;
-    private LocalDateTime createdAt;
+    private BigDecimal amount;
+    private LocalDateTime creationDate;
 }

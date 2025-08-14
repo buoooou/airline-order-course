@@ -28,10 +28,11 @@ public class OrderController {
     private  OrderMapper mapper;
 
     @GetMapping
-    public Page<OrderListDto> list() {
+    public List<OrderListDto> list() {
         PageParam param = new PageParam();
         PageRequest pagable = PageRequest.of(param.getPageNum(), param.getPageSize());
-        return orderService.list(pagable).map(mapper::toListDto);
+        Page<OrderListDto> dtoPage = orderService.list(pagable).map(mapper::toListDto);
+        return dtoPage.getContent();
     }
 
     @GetMapping("/{id}")
