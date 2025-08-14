@@ -16,9 +16,8 @@ COPY . .
 # 确保Angular CLI有执行权限
 RUN chmod +x node_modules/.bin/ng
 
-# 复制启动脚本并设置权限
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+# 确保启动脚本有执行权限
+RUN chmod +x start.sh
 
 # 安装curl用于健康检查
 RUN apk add --no-cache curl
@@ -31,4 +30,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:4200 || exit 1
 
 # 启动开发服务器
-CMD ["/app/start.sh"]
+CMD ["./start.sh"]
