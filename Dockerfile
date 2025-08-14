@@ -13,10 +13,10 @@ COPY frontend/ ./
 RUN pnpm run build
 # 关键：在 frontend-builder 阶段查看构建产物路径（这一步才是正确的）
 RUN echo "===== 前端构建产物目录结构（frontend-builder 阶段） ====="
-RUN ls -la /app/frontend/dist  # 查看 dist 目录下的内容（根据实际工作目录调整）
+RUN ls -la /app/dist/frontend  # 查看 dist 目录下的内容（根据实际工作目录调整）
 RUN echo "===== 详细目录结构 ====="
-RUN ls -la /app/frontend/dist/frontend  # 查看是否有 frontend 子目录
-RUN ls -la /app/frontend/dist/frontend/browser  # 查看是否有 browser 子目录
+RUN ls -la /app/dist/frontend  # 查看是否有 frontend 子目录
+RUN ls -la /app/dist/frontend/browser  # 查看是否有 browser 子目录
 
 # --- 阶段 2: 构建 Spring Boot 后端 ---
 FROM maven:3.8.5-openjdk-17 AS backend-builder
