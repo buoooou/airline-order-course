@@ -113,24 +113,26 @@ jobs:
           command_timeout: 600s
           debug: true
           script: |
-            # 安装 http-server（如果未安装）
+            # 安装必要工具
+            if ! command -v screen &> /dev/null; then
+              sudo apt-get update && sudo apt-get install -y screen
+            fi
+          
             if ! command -v http-server &> /dev/null; then
               sudo npm install -g http-server --unsafe-perm
             fi
-      
+          
             # 停止旧的前端服务
-            pkill -f "http-server" || true
-      
-            # 使用 setsid 完全脱离终端运行前端
-            setsid nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 < /dev/null &
-      
-            # 停止旧的后端服务
-            pkill -f "java -jar" || true
-      
-            # 使用 setsid 完全脱离终端运行 Spring Boot
+            screen -S frontend -X quit || true
+            screen -S backend -X quit || true
+          
+            # 启动前端（在 detached screen 中）
+            screen -dmS frontend http-server /home/ubuntu/app/frontend -p 8080
+          
+            # 启动后端
             cd /home/ubuntu/app/backend
-            setsid nohup java -jar *.jar > /home/ubuntu/app/backend.log 2>&1 < /dev/null &
-      
-            # 给应用足够时间启动
+            screen -dmS backend java -jar *.jar
+          
+            # 等待应用启动
             sleep 30
 
