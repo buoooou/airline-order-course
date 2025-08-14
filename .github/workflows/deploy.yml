@@ -1,3 +1,4 @@
+
 name: CI/CD for Angular and Spring Boot
 
 on:
@@ -30,13 +31,30 @@ jobs:
         with:
           node-version: '22'
 
-      # 3. 安装 Angular 依赖并构建
+      # 3. 安装 Angular 依赖并构建       
       - name: Build airline-order-frontend
         run: |
           cd airline-order-frontend
           npm ci
           npx ng build --configuration=production
-        # 输出路径：dist/airline-order-frontend
+
+          # ✅ 验证构建是否成功生成 index.html
+          if [ ! -f "dist/airline-order-frontend/index.html" ]; then
+            echo "❌ ERROR: index.html not generated!"
+            echo "👉 Please check:"
+            echo "   - Is angular.json configured correctly?"
+            echo "   - Does src/index.html exist?"
+            echo "   - Any build errors above?"
+            ls -la dist/airline-order-frontend/ || echo "dist/ directory missing"
+            exit 1
+          else
+            echo "✅ SUCCESS: index.html generated at dist/airline-order-frontend/index.html"
+          fi
+    
+      - name: Deploy to EC2 via rsync
+        run: |
+          # ...
+          rsync -avz --delete ./airline-order-frontend/dist/airline-order-frontend/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
 
       # 4. 设置 Java 环境（用于 Spring Boot 构建）
       - name: Setup Java
@@ -102,40 +120,20 @@ jobs:
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            # 调试：输出关键环境信息，辅助排查
-            echo "=== Debug Info ==="
-            echo "Current user: $(whoami)"
-            echo "PATH: $PATH"
-            echo "=== End Debug Info ==="
-            
-            # 确保 http-server 已安装（首次运行），增加安装失败时的错误捕获
+            # 确保 http-server 已安装
             if ! command -v http-server &> /dev/null; then
-              echo "Installing http-server..."
-              sudo npm install -g http-server || { echo "Failed to install http-server"; exit 1; }
+              sudo npm install -g http-server
             fi
-            
-            # 停止已有的前端服务，优化 pkill 匹配（明确路径等，减少误杀）
-            echo "Stopping frontend service..."
-            pkill -f "/home/ubuntu/app/frontend" || true
-            
-            # 启动前端服务，增加启动检查
-            echo "Starting frontend service..."
-            nohup http-server /home/ubuntu/app/frontend -p 8080 &
-            sleep 2
-            if ! pgrep -f "http-server /home/ubuntu/app/frontend -p 8080" &> /dev/null; then
-              echo "Failed to start frontend service"
-              exit 1
-            fi
-            
-            # 停止已有的后端服务，优化 pkill 匹配
-            echo "Stopping backend service..."
-            pkill -f "java -jar /home/ubuntu/app/backend/" || true
-            
-            # 启动后端 Spring Boot 服务，增加启动检查
-            echo "Starting backend service..."
-            nohup java -jar /home/ubuntu/app/backend/*.jar &
-            sleep 3
-            if ! pgrep -f "java -jar /home/ubuntu/app/backend/" &> /dev/null; then
-              echo "Failed to start backend service"
-              exit 1
-            fi
+
+            # 停止旧前端服务
+            pkill -f "http-server" || true
+
+            # ✅ 启动前端服务，带日志
+            nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
+
+            # 停止旧后端服务
+            pkill -f "java -jar" || true
+
+            # ✅ 启动后端服务，带日志
+            nohup java -jar /home/ubuntu/app/backend/*.jar > /home/ubuntu/app/backend.log 2>&1 &
+
