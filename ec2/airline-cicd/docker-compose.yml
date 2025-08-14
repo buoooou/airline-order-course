@@ -71,5 +71,3 @@ volumes:
 networks:
   # 应用网络，实现容器间通信和隔离
   app-network:
-    # 使用bridge驱动（默认）
-    driver: bridge
