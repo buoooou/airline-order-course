@@ -23,11 +23,11 @@ jobs:
     steps:
       # 1. 检出代码
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       # 2. 设置 Node.js 环境（用于 Angular 构建）
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
           cache: 'npm'
