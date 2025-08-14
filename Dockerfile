@@ -1,36 +1,68 @@
-# --- 阶段 1: 构建 Angular 前端 ---
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app
+# 多阶段构建 - 后端构建阶段
+FROM eclipse-temurin:17-jdk-alpine AS backend-build
 
-# (关键修复) 先安装 pnpm 工具 
-RUN npm install -g pnpm
+# 设置工作目录
+WORKDIR /app/backend
 
-# 复制依赖描述文件以利用缓存
-COPY frontend/package*.json frontend/pnpm-lock.yaml ./ 
-RUN pnpm install
-# 复制所有剩余源代码
-COPY frontend/ ./
-RUN pnpm run build
-
-# --- 阶段 2: 构建 Spring Boot 后端 ---
-FROM maven:3.8.5-openjdk-17 AS backend-builder
-WORKDIR /app
-# 缓存 Maven 依赖
+# 复制Maven配置文件
 COPY backend/pom.xml .
-RUN mvn dependency:go-offline
+
+# 安装Maven
+RUN apk add --no-cache maven
+
+# 下载依赖（利用Docker缓存机制）
+RUN mvn dependency:go-offline -B || echo "依赖下载可能不完整，继续构建"
+
 # 复制后端源代码
-COPY backend/src ./src
+COPY backend/src src
 
-# (关键修复) 从前端构建产物的 browser 子目录中复制内容
-COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
-
-# 打包后端应用，此时前端文件已在 static 目录中
+# 构建后端应用
 RUN mvn package -DskipTests
 
-# --- 阶段 3: 创建最终的运行镜像 ---
+# 多阶段构建 - 前端构建阶段
+FROM node:22-alpine AS frontend-build
+
+# 设置工作目录
+WORKDIR /app/frontend
+
+# 复制package.json和package-lock.json
+COPY frontend/package*.json ./
+
+# 安装依赖
+RUN npm install
+
+# 复制前端源代码
+COPY frontend/ .
+
+# 构建前端应用
+RUN npm run build
+
+# 最终阶段 - 运行时镜像
 FROM eclipse-temurin:17-jre-alpine
+
+# 安装Nginx
+RUN apk add --no-cache nginx
+
+# 设置工作目录
 WORKDIR /app
-# 使用通配符复制 JAR 包
-COPY --from=backend-builder /app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT  ["java", "-jar", "app.jar"]
+
+# 复制后端构建产物
+COPY --from=backend-build /app/backend/target/*.jar app.jar
+
+# 复制前端构建产物到Nginx服务目录
+COPY --from=frontend-build /app/frontend/dist/airline-order-frontend/browser /usr/share/nginx/html
+
+# 复制Nginx配置文件
+COPY nginx.conf /etc/nginx/http.d/default.conf
+
+# 创建启动脚本
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'nginx' >> /app/start.sh && \
+    echo 'java -jar /app/app.jar' >> /app/start.sh && \
+    chmod +x /app/start.sh
+
+# 暴露端口
+EXPOSE 80 8080
+
+# 设置启动命令
+CMD ["sh", "/app/start.sh"]
