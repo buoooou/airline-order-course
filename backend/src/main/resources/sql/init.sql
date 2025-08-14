@@ -5,7 +5,7 @@
 --  2. 创建 app_users 表 (用户信息)
 --  3. 创建 flight_info 表 (航班信息)
 --  4. 创建 orders 表 (订单信息)
---  5. 插入测试用户和覆盖所有状态的测试订单
+--  5. 创建 shedlock 表 (分布式锁)
 -- =================================================================
 
 -- 步骤 1: 创建数据库并切换
@@ -63,77 +63,5 @@ CREATE TABLE `shedlock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
--- 步骤 6: 插入测试数据
-
--- 插入用户 (密码原文均为 'password')
--- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
-INSERT INTO `app_users` (`id`, `username`, `email`, `password`, `role`) VALUES
-(1, 'admin', 'admin@example.com', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
-(2, 'user', 'user@example.com', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
-
--- 插入航班信息
-INSERT INTO `flight_info` (`id`, `flight_number`, `departure`, `destination`, `departure_time`) VALUES
-(1, 'CA1234', '北京', '上海', '2024-01-15 10:30:00'),
-(2, 'MU5678', '上海', '广州', '2024-01-16 14:20:00'),
-(3, 'CZ9012', '广州', '深圳', '2024-01-17 09:15:00');
-
--- 插入覆盖所有场景的订单数据
-INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`, `flight_info_id`) VALUES
--- 订单 1 (admin): 已支付 -> 用于测试异步出票
-('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, 1, 1),
-
--- 订单 2 (admin): 已出票 (最终成功状态)
-('TIC-2B3C4D5E', 'TICKETED', 3400.00, NOW() - INTERVAL 5 DAY, 1, 2),
-
--- 订单 3 (admin): 出票失败 -> 用于测试"重试出票"
-('TIC-3C4D5E6F', 'TICKETING_FAILED', 980.50, NOW() - INTERVAL 2 HOUR, 1, 3),
-
--- 订单 4 (admin): 支付超时 -> 用于测试定时任务自动取消 (30分钟前创建)
-('PEN-4D5E6F7G', 'PENDING_PAYMENT', 550.00, NOW() - INTERVAL 30 MINUTE, 1, 1),
-
--- 订单 5 (user): 待支付 (正常) -> 用于测试"立即支付" (5分钟前创建)
-('PEN-5E6F7G8H', 'PENDING_PAYMENT', 888.00, NOW() - INTERVAL 5 MINUTE, 2, 2),
-
--- 订单 6 (user): 已取消 (最终失败状态)
-('CAN-6F7G8H9I', 'CANCELLED', 1100.20, NOW() - INTERVAL 2 DAY, 2, 3),
-
--- 订单 7 (user): 出票中 -> 模拟中间状态，测试UI展示
-('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, 2, 1);
-
--- 步骤 7: 插入固定的测试用户和订单
--- 每次启动时都创建相同的测试用户，便于开发和测试
-
--- 插入固定的测试用户 (密码: test123)
--- 使用正确的BCrypt哈希值，确保密码验证正常工作
-INSERT INTO `app_users` (`username`, `email`, `password`, `role`) VALUES
-('testuser', 'testuser@example.com', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi', 'USER');
-
--- 获取新插入用户的ID
-SET @new_user_id = LAST_INSERT_ID();
-
--- 为新用户插入多样化的订单数据
-INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`, `flight_info_id`) VALUES
--- 新用户的订单1: 待支付 (最近创建)
-('PEN-TEST001', 'PENDING_PAYMENT', 750.00, NOW() - INTERVAL 2 MINUTE, @new_user_id, 1),
-
--- 新用户的订单2: 已支付 (1小时前)
-('PAI-TEST002', 'PAID', 1200.50, NOW() - INTERVAL 1 HOUR, @new_user_id, 2),
-
--- 新用户的订单3: 出票中 (30分钟前)
-('TIC-TEST003', 'TICKETING_IN_PROGRESS', 890.00, NOW() - INTERVAL 30 MINUTE, @new_user_id, 3),
-
--- 新用户的订单4: 已出票 (2小时前)
-('TIC-TEST004', 'TICKETED', 2100.75, NOW() - INTERVAL 2 HOUR, @new_user_id, 1),
-
--- 新用户的订单5: 已取消 (1天前)
-('CAN-TEST005', 'CANCELLED', 650.25, NOW() - INTERVAL 1 DAY, @new_user_id, 2);
-
--- 打印成功信息
-SELECT '数据库和测试数据初始化成功！' AS '状态';
-SELECT COUNT(*) AS '用户总数' FROM `app_users`;
-SELECT status, COUNT(*) AS '订单数量' FROM `orders` GROUP BY status;
-
--- 显示新创建的测试用户信息
-SELECT '新创建的测试用户: testuser (testuser@example.com)' AS '测试用户信息';
-SELECT CONCAT('测试用户ID: ', @new_user_id) AS '测试用户ID';
-SELECT CONCAT('测试用户订单数量: ', (SELECT COUNT(*) FROM `orders` WHERE `user_id` = @new_user_id)) AS '测试用户订单数量';
+-- 注意: 用户和订单数据现在由 Spring Boot 的 DataInitializer 自动创建
+-- 不再需要手动插入测试数据
