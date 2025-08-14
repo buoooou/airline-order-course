@@ -13,7 +13,7 @@ COPY frontend/ ./
 RUN pnpm run build
 
 # --- 阶段 2: 构建 Spring Boot 后端 ---
-FROM maven:3.8.5-openjdk-8 AS backend-builder
+FROM maven:3.8.5-openjdk-17 AS backend-builder
 WORKDIR /app
 # 缓存 Maven 依赖
 COPY backend/pom.xml .
@@ -28,7 +28,7 @@ COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 RUN mvn package -DskipTests
 
 # --- 阶段 3: 创建最终的运行镜像 ---
-FROM eclipse-temurin:8-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 # 使用通配符复制 JAR 包
 COPY --from=backend-builder /app/target/*.jar app.jar
