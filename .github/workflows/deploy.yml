@@ -36,11 +36,18 @@ jobs:
         run: |
           cd airline-order-frontend
       
-          # ✅ 2. 安装依赖
           npm ci
-      
-          # ✅ 3. 构建
           npx ng build --configuration=production
+      
+          # ✅ 验证 index.html 是否生成
+          if [ ! -f "dist/airline-order-frontend/index.html" ]; then
+            echo "❌ ERROR: index.html was NOT generated!"
+            echo "🔍 Checking dist/ directory:"
+            ls -la dist/airline-order-frontend/ || echo "dist/ not found"
+            exit 1
+          else
+            echo "✅ SUCCESS: index.html generated!"
+          fi
 
       # 4. 设置 Java 环境（用于 Spring Boot 构建）
       - name: Setup Java
@@ -115,7 +122,7 @@ jobs:
             pkill -f "http-server" || true
 
             # ✅ 启动前端服务，带日志
-            nohup http-server /home/ubuntu/app/frontend/browser -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
+            nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
 
             # 停止旧后端服务
             pkill -f "java -jar" || true
