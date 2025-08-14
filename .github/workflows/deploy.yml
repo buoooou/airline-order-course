@@ -52,23 +52,23 @@ jobs:
           ./mvnw clean install
 
       # 6. 部署到 EC2 实例
-      - name: Deploy Frontend and Backend via rsync
+      - name: Deploy to EC2 via rsync
         run: |
-          # 设置 SSH 密钥
+          # 配置 SSH
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
       
-          # 跳过主机密钥验证
+          # 跳过 host key 检查（CI 环境常用）
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
       
           # 同步前端
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete ${{ github.workspace }}/airline-order-frontend/dist/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
+          rsync -avz --delete ./airline-order-frontend/dist/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
       
-          # 同步后端 JAR
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete ${{ github.workspace }}/airline-order-backend/target/*.jar ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/
+          # 同步后端 JAR（假设 JAR 文件名为 app.jar）
+          rsync -avz --delete ./airline-order-backend/target/app.jar ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/   
             
       # 7. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
