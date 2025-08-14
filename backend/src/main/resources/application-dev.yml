@@ -3,16 +3,22 @@ spring:
     name: flight-service
   
   datasource:
-    url: jdbc:mysql://${DB_HOST:18.207.201.92}:${DB_PORT:3306}/${DB_NAME:airline_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:mysql://${DB_HOST:51.21.243.217}:${DB_PORT:3306}/${DB_NAME:airline_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: ${DB_USER:root}
     password: ${DB_PASS:FUser32AirlineDB}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 60000
+      idle-timeout: 300000
+      max-lifetime: 900000
+      validation-timeout: 5000
+      connection-test-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: true
+      test-on-return: false
+      leak-detection-threshold: 60000
 
   jpa:
     hibernate:
@@ -46,8 +52,6 @@ spring:
 
 server:
   port: 8080
-  servlet:
-    context-path: /api
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
@@ -75,7 +79,7 @@ logging:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
+    secret: ${JWT_SECRET:PkpDrzdV7IN0ehzqC6fxwh7yOJccs6I/LqSWIiCZWGEYb8IcBeb/Dl7OWE52ZldC}
     expiration: ${JWT_EXPIRATION:86400000}
     refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
   

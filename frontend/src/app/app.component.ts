@@ -42,5 +42,5 @@ import { HeaderComponent } from './shared/components/header/header.component';
   `]
 })
 export class AppComponent {
-  title = '天空机票预订系统';
+  title = '航寻预订系统';
 }

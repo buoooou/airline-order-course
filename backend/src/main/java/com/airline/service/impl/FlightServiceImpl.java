@@ -96,12 +96,14 @@ public class FlightServiceImpl implements FlightService {
         Airport arrivalAirport = airportRepository.findByCode(searchDto.getArrivalAirportCode())
                 .orElseThrow(() -> new ResourceNotFoundException("到达机场不存在"));
         
-        LocalDateTime departureDate = searchDto.getDepartureDate().atStartOfDay();
+        LocalDateTime startOfDay = searchDto.getDepartureDate().atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
         
         return flightRepository.searchFlights(
                 departureAirport.getId(),
                 arrivalAirport.getId(),
-                departureDate,
+                startOfDay,
+                endOfDay,
                 pageable
         ).map(flightMapper::toDto);
     }

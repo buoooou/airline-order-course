@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/airports")
+@RequestMapping("/api/airports")
 @Tag(name = "机场管理", description = "机场管理相关API")
 public class AirportController {
 

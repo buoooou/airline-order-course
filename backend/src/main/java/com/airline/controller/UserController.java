@@ -17,12 +17,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import com.airline.security.UserPrincipal;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @Tag(name = "用户管理", description = "用户管理相关API")
 public class UserController {
 
@@ -39,6 +41,19 @@ public class UserController {
         UserDto user = userService.registerUser(registrationDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("注册成功", user));
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "获取当前用户信息", description = "获取当前登录用户的信息")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<UserDto>> getCurrentUser(Authentication authentication) {
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        Optional<UserDto> user = userService.getUserById(userPrincipal.getId());
+        if (user.isPresent()) {
+            return ResponseEntity.ok(ApiResponse.success(user.get()));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/{id}")

@@ -19,12 +19,14 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
 
     @Query("SELECT f FROM Flight f WHERE f.departureAirport.id = :departureAirportId " +
            "AND f.arrivalAirport.id = :arrivalAirportId " +
-           "AND DATE(f.departureTime) = DATE(:departureDate) " +
+           "AND f.departureTime >= :startOfDay " +
+           "AND f.departureTime < :endOfDay " +
            "AND f.status IN ('SCHEDULED', 'BOARDING', 'DELAYED') " +
            "AND f.availableSeats > 0")
     Page<Flight> searchFlights(@Param("departureAirportId") Long departureAirportId,
                               @Param("arrivalAirportId") Long arrivalAirportId,
-                              @Param("departureDate") LocalDateTime departureDate,
+                              @Param("startOfDay") LocalDateTime startOfDay,
+                              @Param("endOfDay") LocalDateTime endOfDay,
                               Pageable pageable);
 
     @Query("SELECT f FROM Flight f WHERE f.airline.id = :airlineId")

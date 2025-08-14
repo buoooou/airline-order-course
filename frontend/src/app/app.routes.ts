@@ -13,7 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'flights',
-    loadChildren: () => import('./features/flights/flights.routes').then(m => m.flightRoutes)
+    loadChildren: () => import('./features/flights/flights.routes').then(m => m.flightsRoutes)
   },
   {
     path: 'auth',

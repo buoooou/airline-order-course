@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 @Tag(name = "订单管理", description = "订单管理相关API")
 public class OrderController {
 

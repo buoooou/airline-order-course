@@ -91,8 +91,20 @@ export class AuthService {
     localStorage.setItem('refreshToken', authResult.refreshToken);
     localStorage.setItem('expiresAt', (Date.now() + authResult.expiresIn * 1000).toString());
     
-    // Get user info
-    this.getCurrentUser().subscribe();
+    // Get user info and update currentUserSubject
+    this.getCurrentUser().subscribe({
+      next: (response) => {
+        console.log('setSession中获取用户信息成功:', response);
+        if (response.success && response.data) {
+          console.log('更新用户状态:', response.data);
+          localStorage.setItem('currentUser', JSON.stringify(response.data));
+          this.currentUserSubject.next(response.data);
+        }
+      },
+      error: (error) => {
+        console.error('setSession中获取用户信息失败:', error);
+      }
+    });
   }
 
   private clearSession(): void {
@@ -105,21 +117,22 @@ export class AuthService {
 
   private loadUserFromStorage(): void {
     const userData = localStorage.getItem('currentUser');
-    if (userData && this.isLoggedIn()) {
-      this.currentUserSubject.next(JSON.parse(userData));
+    const isLoggedIn = this.isLoggedIn();
+    console.log('loadUserFromStorage - userData:', userData);
+    console.log('loadUserFromStorage - isLoggedIn:', isLoggedIn);
+    
+    if (userData && isLoggedIn) {
+      const user = JSON.parse(userData);
+      console.log('从存储加载用户:', user);
+      this.currentUserSubject.next(user);
+    } else {
+      console.log('未找到有效用户数据或登录已过期');
+      this.currentUserSubject.next(null);
     }
   }
 
   getCurrentUser(): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/users/me`)
-      .pipe(
-        tap(response => {
-          if (response.success && response.data) {
-            localStorage.setItem('currentUser', JSON.stringify(response.data));
-            this.currentUserSubject.next(response.data);
-          }
-        })
-      );
+    return this.http.get<any>(`${this.API_URL}/users/me`);
   }
 
   getToken(): string | null {

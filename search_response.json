@@ -1,0 +1,1 @@
+{"success":false,"message":"输入数据验证失败","error":"{arrivalAirportCode=到达机场代码不能为空, departureAirportCode=出发机场代码不能为空}"}

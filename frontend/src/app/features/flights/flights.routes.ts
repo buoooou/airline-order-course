@@ -1,28 +1,33 @@
 import { Routes } from '@angular/router';
-import { Component } from '@angular/core';
+import { SearchResultsComponent } from './search-results/search-results.component';
+import { FlightDetailsComponent } from './flight-details/flight-details.component';
+import { BookingComponent } from './booking/booking.component';
+// import { PlaceholderComponent } from '../../shared/components/placeholder/placeholder.component';
 
-@Component({
-  selector: 'app-placeholder',
-  template: '<div class="p-8 text-center"><h2>功能开发中...</h2></div>',
-  standalone: true
-})
-export class PlaceholderComponent {}
-
-export const flightRoutes: Routes = [
-  {
-    path: '',
-    component: PlaceholderComponent
-  },
+export const flightsRoutes: Routes = [
+  // {
+  //   path: '',
+  //   component: PlaceholderComponent,
+  //   data: { title: 'Flights' }
+  // },
   {
     path: 'search',
-    component: PlaceholderComponent
+    component: SearchResultsComponent,
+    data: { title: 'Search Results' }
   },
   {
     path: 'results',
-    component: PlaceholderComponent
+    component: SearchResultsComponent,
+    data: { title: 'Flight Results' }
   },
   {
-    path: 'booking/:flightId',
-    component: PlaceholderComponent
+    path: 'details/:id',
+    component: FlightDetailsComponent,
+    data: { title: 'Flight Details' }
+  },
+  {
+    path: 'booking/:id',
+    component: BookingComponent,
+    data: { title: 'Book Flight' }
   }
 ];

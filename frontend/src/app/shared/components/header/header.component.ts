@@ -30,7 +30,7 @@ import { Observable } from 'rxjs';
             <mat-icon>flight</mat-icon>
           </button>
           <span class="text-xl font-bold cursor-pointer" routerLink="/home">
-            天空机票
+            航寻
           </span>
         </div>
 
@@ -39,10 +39,6 @@ import { Observable } from 'rxjs';
           <button mat-button routerLink="/home" routerLinkActive="active">
             <mat-icon>home</mat-icon>
             首页
-          </button>
-          <button mat-button routerLink="/flights" routerLinkActive="active">
-            <mat-icon>search</mat-icon>
-            搜索航班
           </button>
         </div>
 
@@ -108,7 +104,12 @@ export class HeaderComponent implements OnInit {
     this.currentUser$ = this.authService.currentUser$;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // 添加调试日志跟踪用户状态变化
+    this.currentUser$.subscribe(user => {
+      console.log('HeaderComponent - 用户状态变化:', user);
+    });
+  }
 
   logout(): void {
     this.authService.logout();

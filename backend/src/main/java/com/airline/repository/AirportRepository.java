@@ -31,7 +31,8 @@ public interface AirportRepository extends JpaRepository<Airport, Long> {
            "(LOWER(a.code) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(a.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(a.city) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(a.country) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+           "LOWER(a.country) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+           "AND a.status = 'ACTIVE'")
     Page<Airport> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT DISTINCT a.country FROM Airport a WHERE a.status = :status ORDER BY a.country")

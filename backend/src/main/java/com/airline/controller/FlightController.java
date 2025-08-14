@@ -4,7 +4,12 @@ import com.airline.dto.ApiResponse;
 import com.airline.dto.FlightDto;
 import com.airline.dto.FlightSearchDto;
 import com.airline.entity.Flight;
+import com.airline.entity.Airline;
+import com.airline.entity.Airport;
 import com.airline.service.FlightService;
+import com.airline.repository.AirlineRepository;
+import com.airline.repository.AirportRepository;
+import com.airline.repository.FlightRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,15 +30,22 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/flights")
+@RequestMapping("/api/flights")
 @Tag(name = "航班管理", description = "航班管理相关API")
 public class FlightController {
 
     private final FlightService flightService;
+    private final FlightRepository flightRepository;
+    private final AirlineRepository airlineRepository;
+    private final AirportRepository airportRepository;
 
     @Autowired
-    public FlightController(FlightService flightService) {
+    public FlightController(FlightService flightService, FlightRepository flightRepository,
+                          AirlineRepository airlineRepository, AirportRepository airportRepository) {
         this.flightService = flightService;
+        this.flightRepository = flightRepository;
+        this.airlineRepository = airlineRepository;
+        this.airportRepository = airportRepository;
     }
 
     @PostMapping
@@ -184,4 +196,6 @@ public class FlightController {
         flightService.updateSeatAvailability(id, seatChange);
         return ResponseEntity.ok(ApiResponse.success("座位更新成功"));
     }
+
+
 }

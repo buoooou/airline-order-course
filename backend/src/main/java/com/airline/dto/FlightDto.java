@@ -58,6 +58,8 @@ public class FlightDto {
 
     private BigDecimal firstPrice;
 
+    private Integer duration; // 飞行时长（分钟）
+
     private Flight.Status status;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -192,6 +194,14 @@ public class FlightDto {
 
     public void setFirstPrice(BigDecimal firstPrice) {
         this.firstPrice = firstPrice;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 
     public Flight.Status getStatus() {
