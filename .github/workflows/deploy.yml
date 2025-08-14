@@ -113,7 +113,7 @@ jobs:
       
             # 启动后端 Spring Boot 服务
             nohup java -jar /home/ubuntu/app/backend/*.jar > /home/ubuntu/app/backend/app.log 2>&1 &
-          timeout: 3600  # 设置超时时间为 1 小时
+          timeout: 3600s  # 设置超时时间为 1 小时
 
       - name: Debug - Check Logs on EC2
         uses: appleboy/ssh-action@master
