@@ -3,210 +3,113 @@ name: CI/CD for Angular and Spring Boot
 on:
   push:
     branches:
-      - main
+      - main  # 触发部署的分支
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: airlineorder
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
+      # 1. 检出代码
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      # ----------------------------
-      # 构建 Angular 前端（带缓存）
-      # ----------------------------
-      - name: Setup Node.js (Angular)
-        uses: actions/setup-node@v4
+      # 2. 设置 Node.js 环境（用于 Angular 构建）
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '22'
-          cache: 'npm'
-          cache-location: airline-order-frontend  # ✅ 指定子目录
+          node-version: '22'  # 根据你的 Angular 项目需求调整版本
 
-      - name: Install frontend dependencies
+      # 3. 安装 Angular 依赖并构建
+      - name: Build airline-order-frontend
         run: |
-          cd airline-order-frontend
-          npm ci  # 使用 lock 文件安装，保证一致性
-
-      - name: Build Angular (Production)
-        run: |
-          cd airline-order-frontend
+          cd ${{ github.workspace }}/airline-order-frontend
+          npm ci  # 使用 npm ci 保证依赖一致性
           npx ng build --configuration=production
 
-      # ----------------------------
-      # 构建 Spring Boot 后端
-      # ----------------------------
-      - name: Setup Java (Spring Boot)
-        uses: actions/setup-java@v4
+      # 4. 设置 Java 环境（用于 Spring Boot 构建）
+      - name: Setup Java
+        uses: actions/setup-java@v3
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
+          java-version: '21'  # 根据 Spring Boot 项目需求调整版本
+          distribution: 'temurin'  # 推荐使用 Temurin 发行版
 
-      - name: Build Spring Boot JAR
+      # 5. 安装 Maven 并构建 Spring Boot 项目
+      - name: Build airline-order-backend
         run: |
-          cd airline-order-backend
-          chmod +x ./mvnw
-          ./mvnw clean package -DskipTests
+          cd /home/runner/work/jinjin-airline-order-course/jinjin-airline-order-course/airline-order-backend
+          chmod +x ./mvnw  # 添加可执行权限
+          ./mvnw clean install
 
-      # ----------------------------
-      # 保存构建产物供部署使用
-      # ----------------------------
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: |
-            airline-order-frontend/dist/
-            airline-order-backend/target/*.jar
-
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: .
-
-      # ----------------------------
-      # SSH 设置（集中一次完成）
-      # ----------------------------
-      - name: Setup SSH
+      # 6. 在EC2实例上安装Node.js和npm
+      - name: Install Node.js and npm on EC2
         run: |
+          # 设置SSH密钥
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+      
+          # 安装Node.js和npm
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "sudo apt-get update && sudo apt-get install -y nodejs npm"
+          
+      # 7. 设置PATH环境变量
+      - name: Set PATH for Node.js and npm
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "echo 'export PATH=$PATH:/usr/bin' >> ~/.bashrc && source ~/.bashrc"
 
-      # ----------------------------
-      # 使用 rsync 部署前后端
-      # ----------------------------
+      # 8. 部署到 EC2 实例
       - name: Deploy to EC2 via rsync
         run: |
-          # 创建远程目录
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} \
-            "mkdir -p /home/ubuntu/app/frontend /home/ubuntu/app/backend"
-
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+      
+          # 创建目录
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p /home/ubuntu/app/frontend /home/ubuntu/app/backend"
+      
           # 同步前端
-          rsync -avz --delete ./dist/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
-
-          # 同步后端 JAR（确保只有一个 JAR）
-          JAR_FILE=$(ls *.jar | head -n1)
-          rsync -avz --delete "$JAR_FILE" ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/app.jar
-
-      # ----------------------------
-      # 远程执行部署脚本
-      # ----------------------------
+          rsync -avz --delete ./airline-order-frontend/dist/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
+      
+          # 同步后端 JAR（使用通配符）
+          rsync -avz --delete ./airline-order-backend/target/*.jar ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/
+          
+      # 9. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_PUBLIC_IP }}
           username: ${{ secrets.AWS_EC2_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            set -e
-      
-            # ================================
-            # 1. 安装 MySQL（如果未安装）
-            # ================================
-            if ! command -v mysql &> /dev/null; then
-              echo "Installing MySQL Server..."
-      
-              # 预配置 root 密码为 'root'
-              sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'
-              sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'
-      
-              sudo apt update
-              sudo apt install -y mysql-server
-              echo "✅ MySQL installed with root password = 'root'"
-            fi
-      
-            # ================================
-            # 2. 启动并启用 MySQL
-            # ================================
-            sudo systemctl start mysql
-            sudo systemctl enable mysql
-      
-            # ================================
-            # 3. 创建数据库 airlineorder（如果不存在）
-            # ================================
-            sudo mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS airlineorder CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-      
-            # ================================
-            # 4. 确保 root 用户可以从 localhost 登录
-            # ================================
-            # 默认情况下 root 已经可以本地登录，但如果你遇到身份验证问题，可以重置：
-            sudo mysql -u root -proot -e "
-              ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
-              FLUSH PRIVILEGES;
-            "
-      
-            # ================================
-            # 5. （可选）允许 root 从任意主机连接（仅用于测试！不安全）
-            # ================================
-            # 如果你将来想从外部访问数据库，取消下述注释
-            # sudo mysql -u root -proot -e "
-            #   CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'root';
-            #   GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
-            #   FLUSH PRIVILEGES;
-            # "
-            # sudo sed -i 's/bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
-            # sudo systemctl restart mysql
-      
-            # ================================
-            # 6. 安装前端服务工具 http-server
-            # ================================
+            # 确保 http-server 已安装（首次运行）
             if ! command -v http-server &> /dev/null; then
-              echo "Installing http-server..."
               sudo npm install -g http-server
             fi
-      
-            # ================================
-            # 7. 停止旧服务
-            # ================================
-            echo "Stopping old frontend..."
+            
+            # 停止已有的前端服务
             pkill -f "http-server" || true
-      
-            echo "Stopping old backend..."
+
+            # 启动前端服务
+            nohup http-server /home/ubuntu/app/frontend -p 8080 &
+
+            # 停止已有的后端服务
             pkill -f "java -jar" || true
-      
-            # ================================
-            # 8. 启动前端服务
-            # ================================
-            nohup http-server /home/ubuntu/app/frontend -p 8080 \
-              > /home/ubuntu/app/frontend/server.log 2>&1 &
-      
-            # ================================
-            # 9. 启动 Spring Boot 后端
-            # ================================
-            nohup java -jar /home/ubuntu/app/backend/app.jar \
-              --spring.profiles.active=prod \
-              > /home/ubuntu/app/backend/app.log 2>&1 &
-      
-            # ================================
-            # 10. 验证服务是否启动
-            # ================================
-            sleep 8
-            if pgrep -f "http-server" > /dev/null; then
-              echo "🟢 Frontend is running on port 8080"
-            else
-              echo "❌ Frontend failed to start!"
-              exit 1
-            fi
-      
-            if pgrep -f "java -jar" > /dev/null; then
-              echo "🟢 Backend is running"
-            else
-              echo "❌ Backend failed to start!"
-              exit 1
-            fi
-      
-            echo "✅ Deployment completed successfully! Database 'airlineorder' ready with root/root."
+
+            # 启动后端 Spring Boot 服务
+            nohup java -jar /home/ubuntu/app/backend/*.jar &
