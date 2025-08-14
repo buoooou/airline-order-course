@@ -27,8 +27,9 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponseDTO<AuthResponseDTO> login(@RequestBody AuthRequestDTO request) {
         try {
-            String token = authService.authenticate(request.getUsername(), request.getPassword());
-            return ApiResponseDTO.success(HttpStatus.OK.value(), Constants.LOGIN_SUCCESS, new AuthResponseDTO(token));
+            AuthResponseDTO authResponseDto = authService.authenticate(request.getUsername(), request.getPassword());
+            
+            return ApiResponseDTO.success(HttpStatus.OK.value(), Constants.LOGIN_SUCCESS, authResponseDto);
         } catch (AuthenticationException e) {
             return ApiResponseDTO.error(HttpStatus.UNAUTHORIZED.value(), Constants.LOGIN_FAIL);
         }

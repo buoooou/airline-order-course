@@ -20,6 +20,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.postion.airlineorderbackend.service.impl.UserDetailsServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtFilter;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,7 +58,8 @@ public class SecurityConfig {
                             "{\"success\":false,\"message\":\"未认证或令牌无效\",\"error\":\"UNAUTHORIZED\"}"
                         );
                     })
-                );
+                )
+                .userDetailsService(userDetailsService);
         return http.build();
     }
 

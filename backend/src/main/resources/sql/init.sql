@@ -21,6 +21,8 @@ CREATE TABLE `app_users` (
   `username` VARCHAR(255) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
   `role` VARCHAR(50) NOT NULL,
+  `create_time` DATETIME(6) NOT NULL,
+  `update_time` DATETIME(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -29,9 +31,10 @@ CREATE TABLE `app_users` (
 CREATE TABLE `orders` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `order_number` VARCHAR(255) NOT NULL,
-  `status` ENUM('PENDING_PAYMENT', 'PAID', 'TICKETING_IN_PROGRESS', 'TICKETING_FAILED', 'TICKETED', 'CANCELLED') NOT NULL,
+  `status` ENUM('NONE', 'PENDING_PAYMENT', 'PAID', 'TICKETING_IN_PROGRESS', 'TICKETING_FAILED', 'TICKETED', 'CANCELLED') NOT NULL,
   `amount` DECIMAL(19, 2) NOT NULL,
-  `creation_date` DATETIME(6) NOT NULL,
+  `create_time` DATETIME(6) NOT NULL,
+  `update_time` DATETIME(6) NOT NULL,
   `user_id` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES `app_users` (`id`)
@@ -43,31 +46,31 @@ CREATE TABLE `orders` (
 -- 插入用户 (密码原文均为 'password')
 -- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
 INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
-(1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN'),
-(2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER');
+(1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN', NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 1 DAY),
+(2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER', NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 1 DAY);
 
 -- 插入覆盖所有场景的订单数据
-INSERT INTO `orders` (`order_number`, `status`, `amount`, `creation_date`, `user_id`) VALUES
+INSERT INTO `orders` (`order_number`, `status`, `amount`, `create_time`, `update_time`, `user_id`) VALUES
 -- 订单 1 (admin): 已支付 -> 用于测试异步出票
-('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, 1),
+('PAI-1A2B3C4D', 'PAID', 1250.75, NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 1 DAY, 1),
 
 -- 订单 2 (admin): 已出票 (最终成功状态)
-('TIC-2B3C4D5E', 'TICKETED', 3400.00, NOW() - INTERVAL 5 DAY, 1),
+('TIC-2B3C4D5E', 'TICKETED', 3400.00, NOW() - INTERVAL 5 DAY, NOW() - INTERVAL 1 DAY, 1),
 
 -- 订单 3 (admin): 出票失败 -> 用于测试“重试出票”
-('TIC-3C4D5E6F', 'TICKETING_FAILED', 980.50, NOW() - INTERVAL 2 HOUR, 1),
+('TIC-3C4D5E6F', 'TICKETING_FAILED', 980.50, NOW() - INTERVAL 2 HOUR, NOW() - INTERVAL 1 DAY, 1),
 
 -- 订单 4 (admin): 支付超时 -> 用于测试定时任务自动取消 (30分钟前创建)
-('PEN-4D5E6F7G', 'PENDING_PAYMENT', 550.00, NOW() - INTERVAL 30 MINUTE, 1),
+('PEN-4D5E6F7G', 'PENDING_PAYMENT', 550.00, NOW() - INTERVAL 30 MINUTE, NOW() - INTERVAL 1 DAY, 1),
 
 -- 订单 5 (user): 待支付 (正常) -> 用于测试“立即支付” (5分钟前创建)
-('PEN-5E6F7G8H', 'PENDING_PAYMENT', 888.00, NOW() - INTERVAL 5 MINUTE, 2),
+('PEN-5E6F7G8H', 'PENDING_PAYMENT', 888.00, NOW() - INTERVAL 5 MINUTE, NOW() - INTERVAL 1 DAY, 2),
 
 -- 订单 6 (user): 已取消 (最终失败状态)
-('CAN-6F7G8H9I', 'CANCELLED', 1100.20, NOW() - INTERVAL 2 DAY, 2),
+('CAN-6F7G8H9I', 'CANCELLED', 1100.20, NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 1 DAY, 2),
 
 -- 订单 7 (user): 出票中 -> 模拟中间状态，测试UI展示
-('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, 2);
+('TIC-7G8H9I0J', 'TICKETING_IN_PROGRESS', 4321.00, NOW() - INTERVAL 10 MINUTE, NOW() - INTERVAL 1 DAY, 2);
 
 
 -- 打印成功信息

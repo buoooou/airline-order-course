@@ -1,0 +1,61 @@
+<div class="login-container">
+  <nz-card class="login-card">
+    <h2 class="system-name">航空订单管理系统</h2>
+
+    <form nz-form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- 用户名输入 -->
+      <nz-form-item>
+        <nz-form-control [nzErrorTip]="usernameErrorTpl">
+          <input
+            nz-input
+            formControlName="username"
+            placeholder="用户名"
+            class="login-input"
+          />
+          <ng-template #usernameErrorTpl let-control>
+            <ng-container *ngIf="control.errors?.['required']">
+              请输入用户名
+            </ng-container>
+            <ng-container *ngIf="control.errors?.['minlength']">
+              用户名至少4个字符
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- 密码输入 -->
+      <nz-form-item>
+        <nz-form-control [nzErrorTip]="passwordErrorTpl">
+          <input
+            nz-input
+            type="password"
+            formControlName="password"
+            placeholder="密码"
+            class="login-input"
+          />
+          <ng-template #passwordErrorTpl let-control>
+            <ng-container *ngIf="control.errors?.['required']">
+              请输入密码
+            </ng-container>
+            <ng-container *ngIf="control.errors?.['minlength']">
+              密码至少6个字符
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- 登录按钮 -->
+      <button
+        nz-button
+        nzType="primary"
+        nzBlock
+        nzSize="large"
+        [disabled]="loginForm.invalid"
+        [nzLoading]="isLoading"
+        class="login-button"
+      >
+        登录
+      </button>
+    </form>
+  </nz-card>
+</div>

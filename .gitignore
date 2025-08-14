@@ -30,17 +30,3 @@ backend/target/*
 hs_err_pid*
 replay_pid*
 
-backend/target/classes/application.properties
-backend/target/classes/com/postion/airlineorderbackend/configuration/SecurityConfig.class
-backend/target/classes/com/postion/airlineorderbackend/controller/OrderController.class
-backend/target/classes/com/postion/airlineorderbackend/dto/OrderDTO.class
-backend/target/classes/com/postion/airlineorderbackend/dto/OrderDTO$UserDto.class
-backend/target/classes/com/postion/airlineorderbackend/model/Order.class
-backend/target/classes/com/postion/airlineorderbackend/model/OrderStatus.class
-backend/target/classes/com/postion/airlineorderbackend/model/User.class
-backend/target/classes/com/postion/airlineorderbackend/repository/OrderRepository.class
-backend/target/classes/com/postion/airlineorderbackend/repository/UserRepository.class
-backend/target/classes/com/postion/airlineorderbackend/service/OrderService.class
-backend/target/classes/com/postion/airlineorderbackend/service/impl/OrderServiceImpl.class
-backend/target/classes/com/postion/airlineorderbackend/service/impl/UserServiceImpl.class
-backend/target/test-classes/com/position/airlineorderbackend/service/OrderServiceImplTest.class
