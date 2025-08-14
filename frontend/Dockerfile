@@ -16,12 +16,16 @@ COPY . .
 # 确保Angular CLI有执行权限
 RUN chmod +x node_modules/.bin/ng
 
-# 创建启动脚本，动态设置API地址
+# 创建启动脚本，动态设置API地址并禁用代理
 RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'if [ -n "$API_BASE_URL" ]; then' >> /app/start.sh && \
     echo '  sed -i "s|\"apiUrl\": \"\"|\"apiUrl\": \"$API_BASE_URL\"|g" /app/src/assets/config.json' >> /app/start.sh && \
-    echo 'fi' >> /app/start.sh && \
-    echo 'npm start' >> /app/start.sh && \
+    echo '  # 在Docker环境中禁用代理，直接使用环境变量中的API地址' >> /app/start.sh && \
+    echo '  npm start -- --proxy-config false' >> /app/start.sh && \
+    echo 'else' >> /app/start.sh && \
+    echo '  # 本地开发时使用代理' >> /app/start.sh && \
+    echo '  npm start' >> /app/start.sh && \
+    echo 'fi' && \
     chmod +x /app/start.sh
 
 # 安装curl用于健康检查
