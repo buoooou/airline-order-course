@@ -25,7 +25,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/airline-order-frontend
           npm ci  # 使用 npm ci 保证依赖一致性
-          ng build --configuration=production
+          npx ng build --configuration=production
 
       # 4. 设置 Java 环境（用于 Spring Boot 构建）
       - name: Setup Java
