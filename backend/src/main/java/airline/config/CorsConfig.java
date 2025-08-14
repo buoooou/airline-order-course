@@ -22,6 +22,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/login", // 前端静态资源
                         "/",
                         "/*.html",
+                        "/*/*.html",
                         "/*.js",
                         "/*.css",
                         "/static/**",
