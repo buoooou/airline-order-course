@@ -35,20 +35,9 @@ jobs:
       - name: Build airline-order-frontend
         run: |
           cd airline-order-frontend
-      
-          # 使用 --legacy-peer-deps 避免 peer dependency 冲突
           npm ci --legacy-peer-deps
-      
-          # 验证是否安装成功
-          npm list @angular-devkit/build-angular || {
-            echo "❌ ERROR: @angular-devkit/build-angular is NOT installed!"
-            exit 1
-          }
-      
-          # 构建项目
           npx ng build --configuration=production
       
-          # 验证输出
           if [ ! -f "dist/airline-order-frontend/index.html" ]; then
             echo "❌ ERROR: index.html was NOT generated!"
             ls -la dist/airline-order-frontend/ || echo "dist/ not found"
