@@ -78,14 +78,14 @@ jobs:
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            # 同步前端到 Nginx 目录
-            sudo cp -r /home/ubuntu/app/frontend/* /var/www/html/
-            sudo chown -R www-data:www-data /var/www/html/
-            sudo systemctl reload nginx
+            # 确保 http-server 已安装（首次运行）
+            if ! command -v http-server &> /dev/null; then
+              sudo npm install -g http-server
+            fi
       
-            # 确保后端 JAR 可执行
-            chmod +x /home/ubuntu/app/backend/*.jar
+            # 重启前端服务
+            sudo systemctl restart frontend
       
-            # 重启 Spring Boot 服务
+            # 重启后端 Spring Boot 服务
             sudo systemctl restart airline-order-backend
               
