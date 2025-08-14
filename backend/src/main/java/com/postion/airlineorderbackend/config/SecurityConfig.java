@@ -45,7 +45,7 @@ public class SecurityConfig {
         }))
         .authorizeHttpRequests(auth -> auth
             .antMatchers(HttpMethod.GET, "/**").permitAll()
-            .antMatchers("/api/login/**").permitAll()
+            .antMatchers("/api/login").permitAll()
             .antMatchers("/api/dummy/**").permitAll()
             .antMatchers("/error").permitAll()
             .anyRequest().authenticated())

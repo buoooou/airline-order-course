@@ -19,8 +19,9 @@ public class ScheduledTask {
   /**
    * Scheduled task: Payment Expiring.
    */
-  @Scheduled(initialDelay = 5000, fixedDelay = 5000)
-  @SchedulerLock(name = "paymentExpiring", lockAtMostFor = "60s", lockAtLeastFor = "5s")
+  // @Scheduled(initialDelay = 5000, fixedDelay = 5000)
+  // @SchedulerLock(name = "paymentExpiring", lockAtMostFor = "60s",
+  // lockAtLeastFor = "5s")
   public void paymentExpiring() {
     try {
       orderService.cancelPaymentExpiredTickets();
@@ -34,8 +35,9 @@ public class ScheduledTask {
   /**
    * Scheduled task: Request ticket.
    */
-  @Scheduled(initialDelay = 5000, fixedDelay = 5000)
-  @SchedulerLock(name = "requestTicket", lockAtMostFor = "60s", lockAtLeastFor = "5s")
+  // @Scheduled(initialDelay = 5000, fixedDelay = 5000)
+  // @SchedulerLock(name = "requestTicket", lockAtMostFor = "60s", lockAtLeastFor
+  // = "5s")
   public void requestTicket() {
     try {
       orderService.requestTicketIssuance();
@@ -49,8 +51,9 @@ public class ScheduledTask {
   /**
    * Scheduled task: Verify ticket, check ticketing is done or failed.
    */
-  @Scheduled(initialDelay = 5000, fixedDelay = 5000)
-  @SchedulerLock(name = "verifyTicket", lockAtMostFor = "60s", lockAtLeastFor = "5s")
+  // @Scheduled(initialDelay = 5000, fixedDelay = 5000)
+  // @SchedulerLock(name = "verifyTicket", lockAtMostFor = "60s", lockAtLeastFor =
+  // "5s")
   public void verityTicket() {
     try {
       orderService.verifyTicketIssuance();

@@ -1,5 +1,6 @@
 package com.postion.airlineorderbackend.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,20 +35,20 @@ public class LoginController {
    */
   @CrossOrigin(origins = "*")
   @PostMapping
-  public CommonResponseDto<LoginResponseDto> postLogin(@RequestBody LoginRequestDto requestData) {
+  public ResponseEntity<CommonResponseDto<LoginResponseDto>> postLogin(@RequestBody LoginRequestDto requestData) {
     CommonResponseDto<LoginResponseDto> response = new CommonResponseDto<LoginResponseDto>(false,
         200,
         "账户或密码错误，登陆失败。",
         null);
     if (!StringUtils.hasText(requestData.getUsername()) || !StringUtils.hasText(requestData.getPassword())) {
-      return response;
+      return response.ok();
     }
 
     UserDto userDto = null;
     try {
       userDto = userService.findByUsernameAndPassword(requestData.getUsername(), requestData.getPassword());
     } catch (DataNotFoundException e) {
-      return response;
+      return response.ok();
     }
     String token = jwtUtil.genToken(userDto);
     LoginResponseDto responseDto = LoginResponseDto.builder().id(userDto.getUserid()).username(userDto.getUsername())
@@ -55,7 +56,7 @@ public class LoginController {
     return new CommonResponseDto<LoginResponseDto>(true,
         200,
         "",
-        responseDto);
+        responseDto).ok();
   }
 
 }
