@@ -101,15 +101,15 @@ jobs:
             if ! command -v http-server &> /dev/null; then
               sudo npm install -g http-server
             fi
-            
+      
             # 停止已有的前端服务
             pkill -f "http-server" || true
-
-            # 启动前端服务
-            nohup http-server /home/ubuntu/app/frontend -p 8080 &
-
+      
+            # 启动前端服务，并将日志输出到 frontend.log
+            nohup http-server /home/ubuntu/app/frontend -p 8080 > /home/ubuntu/app/frontend.log 2>&1 &
+      
             # 停止已有的后端服务
             pkill -f "java -jar" || true
-
-            # 启动后端 Spring Boot 服务
-            nohup java -jar /home/ubuntu/app/backend/*.jar &
+      
+            # 启动后端 Spring Boot 服务，并将日志输出到 backend.log
+            nohup java -jar /home/ubuntu/app/backend/*.jar > /home/ubuntu/app/backend.log 2>&1 &
