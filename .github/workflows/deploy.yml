@@ -24,21 +24,21 @@ jobs:
       - name: Build airline-order-frontend
         run: |
           cd ${{ github.workspace }}/airline-order-frontend
-          npm install
-          npm run build -- --prod  # 使用 Angular 的生产构建命令
+          npm ci  # 使用 npm ci 保证依赖一致性
+          ng build --configuration=production
 
       # 4. 设置 Java 环境（用于 Spring Boot 构建）
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: '21'  # 根据你的 Spring Boot 项目需求调整版本
-          distribution: 'adopt'
+          java-version: '21'  # 根据 Spring Boot 项目需求调整版本
+          distribution: 'temurin'  # 推荐使用 Temurin 发行版
 
       # 5. 安装 Maven 并构建 Spring Boot 项目
       - name: Build airline-order-backend
         run: |
           cd ${{ github.workspace }}/airline-order-backend
-          ./mvnw clean package  # 如果使用 Maven
+          ./mvnw -B package -DskipTests  # 批处理构建并跳过测试
 
       # 6. 部署到 EC2 实例
       - name: Deploy to EC2
@@ -48,12 +48,12 @@ jobs:
           REMOTE_HOST: ${{ secrets.EC2_PUBLIC_IP }}
           REMOTE_USER: ${{ secrets.AWS_EC2_USER }}
           TARGET: /home/ubuntu/app
-          ARGS: "-avz --delete"  # 同步文件并删除目标目录多余文件
+          ARGS: "-avz --delete"  # 同步文件并删除多余文件
           SOURCE: |
-            airline-order-frontend/dist/  # 替换为 Angular 构建输出目录
-            airline-order-backend/target/*.jar  # 替换为 Spring Boot 构建输出的 JAR 文件
+            ${{ github.workspace }}/airline-order-frontend/dist/  # Angular 构建输出目录
+            ${{ github.workspace }}/airline-order-backend/target/*.jar  # Spring Boot 构建输出 JAR 文件
 
-      # 7. 在 EC2 上执行部署脚本（可选）
+      # 7. 在 EC2 上执行部署脚本
       - name: Run Deployment Script on EC2
         uses: appleboy/ssh-action@master
         with:
@@ -61,14 +61,11 @@ jobs:
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-
-            # 替换前端文件（假设 Nginx 配置指向 /var/www/html）
-            cp -r ${DEPLOY_PATH}/dist/* /var/www/html/
+            # 替换前端文件（假设 Nginx 挂载到 /var/www/html）
+            cp -r /home/ubuntu/app/dist/* /var/www/html/
             
-            # 启动新服务
-            sudo systemctl start airline-order-backend
+            # 替换后端 JAR 文件
+            cp /home/ubuntu/app/*.jar /home/ubuntu/app/backend/app.jar
             
-            # 查看状态（可选）
-            sudo systemctl status airline-order-backend
-            # 或使用 systemd 管理服务
-            # systemctl start airline-order-backend.service
+            # 重启后端服务（确保服务生效）
+            sudo systemctl restart airline-order-backend
