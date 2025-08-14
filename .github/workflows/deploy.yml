@@ -131,7 +131,7 @@ jobs:
           
             # 启动后端
             cd /home/ubuntu/app/backend
-            screen -dmS backend java -jar *.jar
+            screen -dmS backend java -jar *.jar --server.port=8081
           
             # 等待应用启动
             sleep 30
