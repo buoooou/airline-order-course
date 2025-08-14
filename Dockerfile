@@ -21,8 +21,8 @@ RUN mvn dependency:go-offline -U
 # 复制后端源代码
 COPY backend/src ./src
 
-# (关键修复) 从前端构建产物的 browser 子目录中复制内容
-COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
+# (关键修复) 从前端构建产物中复制内容
+COPY --from=frontend-builder /app/dist/frontend/* ./src/main/resources/static/
 
 # 打包后端应用，此时前端文件已在 static 目录中
 RUN mvn clean package -DskipTests -U
