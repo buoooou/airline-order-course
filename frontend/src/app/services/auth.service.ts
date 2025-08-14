@@ -16,7 +16,8 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(loginRequest: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`/api/auth/login`, loginRequest)
+    const url = this.apiUrl ? `${this.apiUrl}/api/auth/login` : `/api/auth/login`;
+    return this.http.post<AuthResponse>(url, loginRequest)
       .pipe(
         tap(response => {
           this.setToken(response.token);
@@ -25,7 +26,8 @@ export class AuthService {
   }
 
   register(registerRequest: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`/api/auth/register`, registerRequest)
+    const url = this.apiUrl ? `${this.apiUrl}/api/auth/login` : `/api/auth/login`;
+    return this.http.post<AuthResponse>(url, registerRequest)
       .pipe(
         tap(response => {
           this.setToken(response.token);

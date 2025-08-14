@@ -16,6 +16,8 @@ COPY . .
 # 确保Angular CLI有执行权限
 RUN chmod +x node_modules/.bin/ng
 
+
+
 # 安装curl用于健康检查
 RUN apk add --no-cache curl
 
