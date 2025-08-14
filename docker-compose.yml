@@ -65,6 +65,7 @@ services:
     restart: unless-stopped
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://18.222.146.45:8080}
+      NODE_ENV: development
     ports:
       - "4200:4200"  # 开发端口
     volumes:
