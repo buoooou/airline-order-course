@@ -31,7 +31,7 @@ public interface Constants {
     String UPDATE_ORDER_STATUS_FAIL = "订单状态更新失败";
 
     String ORDER_STATUS_INCORRECT = "订单状态不匹配，可能已被变更。请重新确认订单状态。";
-
+    
     String LOGIN_SUCCESS = "用户认证成功";
     String LOGIN_FAIL = "用户名或密码错误";
 }
