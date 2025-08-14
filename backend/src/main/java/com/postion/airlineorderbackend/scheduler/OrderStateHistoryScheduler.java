@@ -30,7 +30,7 @@ public class OrderStateHistoryScheduler {
      * 每小时的5分、10分、15分...55分查询失败的订单状态转换记录
      * 使用ShedLock分布式锁确保任务在集群环境中只执行一次
      */
-    @Scheduled(cron = "0 5/5 * * * *") // 每小时的5分、10分、15分...55分执行
+    // @Scheduled(cron = "0 5/5 * * * *") // 每小时的5分、10分、15分...55分执行
     @SchedulerLock(name = "queryFailedStateTransitions", lockAtLeastFor = "30s", lockAtMostFor = "50s")
     public void queryFailedStateTransitions() {
         try {
