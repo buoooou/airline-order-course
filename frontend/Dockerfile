@@ -30,4 +30,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:4200 || exit 1
 
 # 启动开发服务器
-CMD ["sh", "./start.sh"]
+CMD ["npm", "start", "--", "--host", "0.0.0.0", "--port", "4200"]

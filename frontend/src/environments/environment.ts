@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  // 从配置文件读取API地址，如果没有则使用相对路径
-  apiUrl: '' 
+  // 直接使用EC2的8080端口
+  apiUrl: 'http://18.222.146.45:8080'
 };
