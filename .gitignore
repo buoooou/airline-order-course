@@ -1,3 +1,4 @@
 /.idea/
 backend/target
-backend/logs/*
+backend/logs
+backend/src/main/resources/static

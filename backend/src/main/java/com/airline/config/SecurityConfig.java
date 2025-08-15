@@ -82,6 +82,12 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
+                // 静态资源放行
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
+                .requestMatchers("/*.html", "/favicon.ico").permitAll()
+                .requestMatchers("/*.js", "/*.css", "/*.map", "/*.txt").permitAll()
+                // API接口放行
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/users/register").permitAll()
                 .requestMatchers("/api/users/check/**").permitAll()
@@ -90,6 +96,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/flights/init-pek-pvg").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/airports/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/airlines/**").permitAll()
+                // SPA静态资源访问权限
+                .requestMatchers("/", "/index.html").permitAll()
+                .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
+                .requestMatchers("/*.js", "/*.css", "/*.map", "/*.txt", "/*.ico", "/*.png", "/*.jpg", "/*.svg").permitAll()
+                .requestMatchers("/**/*.js", "/**/*.css", "/**/*.map", "/**/*.txt", "/**/*.ico", "/**/*.png", "/**/*.jpg", "/**/*.svg").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 .anyRequest().authenticated()
