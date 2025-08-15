@@ -2,8 +2,8 @@ package com.postion.airlineorderbackend.converter;
 
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.dto.UserDto;
-import com.postion.airlineorderbackend.entity.Order;
-import com.postion.airlineorderbackend.entity.User;
+import com.postion.airlineorderbackend.model.Order;
+import com.postion.airlineorderbackend.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

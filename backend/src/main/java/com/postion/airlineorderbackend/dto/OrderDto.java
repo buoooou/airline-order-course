@@ -1,11 +1,11 @@
 package com.postion.airlineorderbackend.dto;
 
-import com.postion.airlineorderbackend.entity.OrderStatus;
 import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
+
+import com.postion.airlineorderbackend.model.OrderStatus;
 
 @Data
 public class OrderDto {

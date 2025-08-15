@@ -19,8 +19,8 @@
 
 ### 1. 克隆项目
 ```bash
-git clone https://github.com/yourusername/airline-order-course.git
-cd airline-order-course/backend
+git clone https://github.com/yourusername/airline-order-course_liugang.git
+cd airline-order-course_liugang/backend
 ```
 
 ### 2. 配置环境

@@ -1,7 +1,7 @@
 package com.postion.airlineorderbackend.controller;
 
-import com.postion.airlineorderbackend.entity.Result;
-import com.postion.airlineorderbackend.service.IUserService;
+import com.postion.airlineorderbackend.model.Result;
+import com.postion.airlineorderbackend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final IUserService userService;
+    private final UserService userService;
 
     // 查询所有用户
     @Operation(summary = "获取所有用户", description = "返回系统中所有的用户信息")
