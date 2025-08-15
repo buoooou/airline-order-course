@@ -27,11 +27,11 @@ export class OrderDetailComponent implements OnInit {
   }
 
   private loadOrderDetails(): void {
-    const orderNumber = this.route.snapshot.paramMap.get('id');
-    console.log("参数id==="+orderNumber)
+    const id = this.route.snapshot.paramMap.get('id');
+    console.log("参数id==="+id)
     
-    if (orderNumber) {
-      this.orderService.getOrderById(orderNumber).subscribe({
+    if (id) {
+      this.orderService.getOrderById(Number(id)).subscribe({
         next: (data) => {
           this.order = data;
           this.isLoading = false;
