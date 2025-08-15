@@ -105,26 +105,10 @@ jobs:
       # 9. 在 EC2 上重启服务
       - name: Restart Services on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
-            echo "Restarting Frontend..."
+          ssh -i "aws-key.pem" ubuntu@18.191.37.120 << 'EOF'
             cd /home/ubuntu/app/frontend
             pkill -f "http-server" || true
             nohup npx http-server ./ -p 8080 --host 0.0.0.0 > frontend.log 2>&1 &
-            
-            echo "Restarting Backend..."
-            cd /home/ubuntu/app/backend
-            pkill -f "java -jar .*\.jar" || true
-            JAR_FILE=$(ls -t *.jar | head -n1)
-            if [ -f "$JAR_FILE" ]; then
-              nohup java -jar "$JAR_FILE" --server.port=8081 > backend.log 2>&1 &
-              echo "Backend started: $JAR_FILE"
-            else
-              echo "No JAR file found in /home/ubuntu/app/backend!"
-              exit 1
-            fi
-            
-            echo "Deployment completed! Frontend: 8080, Backend: 8081"
-          EOF
             
             # 后端
             cd /home/ubuntu/app/backend
