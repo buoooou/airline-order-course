@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.position.airline_order_course.dto.OrderDto;
 import com.position.airline_order_course.service.OrderService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 /*
  * 航空订单Controller
