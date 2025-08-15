@@ -16,6 +16,7 @@ import jakarta.validation.constraints.NotBlank;
 /*
  * 出票服务Controller
  */
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/ticket")
 public class TicketController {
