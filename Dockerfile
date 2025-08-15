@@ -27,7 +27,7 @@ RUN mvn package -DskipTests
 # 最终运行时镜像
 FROM eclipse-temurin:17-jre-alpine
 
-# 安装 Nginx (从 2.txt 新增)
+# 安装 Nginx 
 RUN apk add --no-cache nginx
 
 WORKDIR /app
@@ -35,11 +35,11 @@ WORKDIR /app
 # 从构建阶段复制制品
 COPY --from=backend-build /app/target/*.jar app.jar
 
-# 复制前端资源到 Nginx 目录 (从 2.txt 新增)
+# 复制前端资源到 Nginx 目录
 COPY --from=frontend-build /app/dist/frontend/browser/ /usr/share/nginx/html/
 COPY nginx.conf /etc/nginx/http.d/default.conf
 
-# 改进的启动脚本 (从 2.txt 优化)
+# 改进的启动脚本
 RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'nginx &' >> /app/start.sh && \
     echo 'exec java -jar app.jar' >> /app/start.sh && \
