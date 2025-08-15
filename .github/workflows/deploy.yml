@@ -108,6 +108,7 @@ jobs:
           ssh -i "aws-key.pem" ubuntu@18.191.37.120 << 'EOF'
             # 前端
             cd /home/ubuntu/app/frontend
+            git pull origin main || git pull origin master
             npm install
             npm run build
             pkill -f "http-server" || true
