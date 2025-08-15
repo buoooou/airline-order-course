@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators,ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/service/auth.service';
@@ -22,7 +22,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -40,13 +41,15 @@ onSubmit() {
           this.router.navigate(['/orders']);
         } else {
           this.errorMessage = '登录失败：用户名或密码错误';
+          this.cdr.detectChanges(); // 手动刷新
         }
       },
       error: (error) => {
         this.isLoading = false;
         console.error('登录请求失败:', error);
         this.errorMessage = '网络错误，请稍后重试';
-      }
+        this.cdr.detectChanges(); // 手动刷新
+      },   
     });
   }
 }
