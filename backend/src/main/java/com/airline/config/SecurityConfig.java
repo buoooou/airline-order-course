@@ -1,6 +1,6 @@
 package com.airline.config;
 
-import com.airline.security.CustomUserDetailsService;
+import com.airline.security.AuthenticationUserDetailsService;
 import com.airline.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,14 +31,14 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
+    private final AuthenticationUserDetailsService customUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+    public SecurityConfig(AuthenticationUserDetailsService customUserDetailsService,
                          JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
