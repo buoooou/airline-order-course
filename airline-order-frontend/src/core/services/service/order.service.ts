@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Order } from '../../model/order.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,8 @@ export class OrderService {
   constructor(private http: HttpClient) {}
 
   getAllOrders(): Observable<Order[]> {
-    return this.http.get<any[]>('/api/order/getAllOrders').pipe(
+    const url = `${environment.apiUrl}/api/order/getAllOrders`;
+    return this.http.get<any[]>(url).pipe(
       map(orders =>
         orders.map(order => ({
           id: order.id,
