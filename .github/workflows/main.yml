@@ -58,7 +58,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }} 
+          key: ${{ secrets.SSH_PRIVATE_KEY }} 
           script: |
             cd /airline-cicd
             docker-compose pull
