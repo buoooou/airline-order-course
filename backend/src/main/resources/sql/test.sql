@@ -60,3 +60,5 @@ WHERE id = 7;
 SELECT * FROM orders WHERE id = 7
 
 
+-- 示例：删除 ID 为 6 的订单
+DELETE FROM orders WHERE id = 6;

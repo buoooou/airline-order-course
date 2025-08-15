@@ -1,7 +1,6 @@
 package com.postion.airlineorderbackend.model;
 
 import lombok.Data;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,7 +13,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String orderNumber;
-
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private BigDecimal amount;

@@ -2,9 +2,9 @@ package com.postion.airlineorderbackend.controller;
 
 import com.postion.airlineorderbackend.dto.UserDto;
 import com.postion.airlineorderbackend.exception.BusinessException;
-import com.postion.airlineorderbackend.entity.Result;
-import com.postion.airlineorderbackend.service.IUserService;
-import com.postion.airlineorderbackend.service.impl.ITokenService;
+import com.postion.airlineorderbackend.model.Result;
+import com.postion.airlineorderbackend.service.UserService;
+import com.postion.airlineorderbackend.service.impl.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class LoginController {
 
-    private final IUserService userService;
+    private final UserService userService;
 
-    private final ITokenService tokenService;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "根据用户名和密码进行登录验证")
@@ -54,7 +55,7 @@ public class LoginController {
         
         if (userDto != null) {
             String token = tokenService.createToken(userDto);
-            return Result.success(token);
+            return Result.success("登录成功！",token);
         } else {
             return Result.error(401, "用户名或密码错误");
         }
