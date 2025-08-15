@@ -108,8 +108,10 @@ jobs:
           ssh -i "aws-key.pem" ubuntu@18.191.37.120 << 'EOF'
             # 前端
             cd /home/ubuntu/app/frontend
+            npm install
+            npm run build
             pkill -f "http-server" || true
-            npx http-server -p 8080 --host 0.0.0.0 > frontend.log 2>&1 &
+            nohup npx http-server ./dist -p 8080 --host 0.0.0.0 > frontend.log 2>&1 &
             
             # 后端
             cd /home/ubuntu/app/backend
