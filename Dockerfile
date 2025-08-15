@@ -50,7 +50,7 @@ WORKDIR /app
 COPY --from=backend-build /app/backend/target/*.jar app.jar
 
 # 复制前端构建产物到Nginx服务目录
-COPY --from=frontend-build /app/dist/frontend/browser/* /usr/share/nginx/html/
+COPY --from=frontend-build /app/frontend/dist/frontend/browser/* /usr/share/nginx/html/
 
 # 复制Nginx配置文件
 COPY nginx.conf /etc/nginx/http.d/default.conf
