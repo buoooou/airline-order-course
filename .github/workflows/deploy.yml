@@ -39,11 +39,11 @@ jobs:
           npx ng build --configuration=production
       
           if [ ! -f "dist/airline-order-frontend/index.html" ]; then
-            echo "❌ ERROR: index.html was NOT generated!"
+            echo "ERROR: index.html was NOT generated!"
             ls -la dist/airline-order-frontend/ || echo "dist/ not found"
             exit 1
           else
-            echo "✅ SUCCESS: index.html generated!"
+            echo "SUCCESS: index.html generated!"
           fi
 
       # 4. 设置 Java 环境（用于 Spring Boot 构建）
@@ -96,7 +96,7 @@ jobs:
             mkdir -p /home/ubuntu/app/frontend /home/ubuntu/app/backend
           "
       
-          # ✅ 修复：同步 dist/airline-order-frontend/ 的内容
+          # 同步 dist/airline-order-frontend/ 的内容
           rsync -avz --delete ./airline-order-frontend/dist/airline-order-frontend/ ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/frontend/
       
           # 同步后端 JAR
@@ -105,7 +105,7 @@ jobs:
       # 9. 在 EC2 上执行部署脚本
       - name: Deploy to EC2
         run: |
-          ssh -i "aws-key.pem" ubuntu@18.221.248.92 << 'EOF'
+          ssh -i "aws-key.pem" ubuntu@18.191.37.120 << 'EOF'
             # 前端
             cd /home/ubuntu/app/frontend
             pkill -f "http-server" || true
