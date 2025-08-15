@@ -1,68 +1,49 @@
-# 多阶段构建 - 后端构建阶段
-FROM eclipse-temurin:17-jdk-alpine AS backend-build
-
-# 设置工作目录
-WORKDIR /app/backend
-
-# 复制Maven配置文件
-COPY backend/pom.xml .
-
-# 安装Maven
-RUN apk add --no-cache maven
-
-# 下载依赖（利用Docker缓存机制）
-RUN mvn dependency:go-offline -B || echo "依赖下载可能不完整，继续构建"
-
-# 复制后端源代码
-COPY backend/src src
-
-# 构建后端应用
-RUN mvn package -DskipTests
-
-# 多阶段构建 - 前端构建阶段
-FROM node:22-alpine AS frontend-build
-
-# 设置工作目录
-WORKDIR /app/frontend
-
-# 复制package.json和package-lock.json
-COPY frontend/package*.json ./
-
-# 安装依赖
-RUN npm install
-
-# 复制前端源代码
-COPY frontend/ .
-
-# 构建前端应用
-RUN npm run build
-
-# 最终阶段 - 运行时镜像
-FROM eclipse-temurin:17-jre-alpine
-
-# 安装Nginx
-RUN apk add --no-cache nginx
-
-# 设置工作目录
+# 前端构建阶段
+FROM node:20-alpine AS frontend-build
 WORKDIR /app
 
-# 复制后端构建产物
-COPY --from=backend-build /app/backend/target/*.jar app.jar
+# 使用 pnpm 并安装依赖
+RUN npm install -g pnpm
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install
 
-# 复制前端构建产物到Nginx服务目录
-COPY --from=frontend-build /app/frontend/dist/frontend/browser/* /usr/share/nginx/html/
+# 复制前端源码并构建
+COPY frontend/ ./
+RUN pnpm run build
 
-# 复制Nginx配置文件
+# 后端构建阶段
+FROM maven:3.8.1-openjdk-17 AS backend-build
+WORKDIR /app
+COPY backend/pom.xml .
+RUN mvn dependency:go-offline -B
+COPY backend/src ./src
+
+# 从前端构建阶段复制静态资源
+COPY --from=frontend-build /app/dist/frontend/browser/ ./src/main/resources/static/
+
+# 打包应用
+RUN mvn package -DskipTests
+
+# 最终运行时镜像
+FROM eclipse-temurin:17-jre-alpine
+
+# 安装 Nginx (从 2.txt 新增)
+RUN apk add --no-cache nginx
+
+WORKDIR /app
+
+# 从构建阶段复制制品
+COPY --from=backend-build /app/target/*.jar app.jar
+
+# 复制前端资源到 Nginx 目录 (从 2.txt 新增)
+COPY --from=frontend-build /app/dist/frontend/browser/ /usr/share/nginx/html/
 COPY nginx.conf /etc/nginx/http.d/default.conf
 
-# 创建启动脚本
+# 改进的启动脚本 (从 2.txt 优化)
 RUN echo '#!/bin/sh' > /app/start.sh && \
-    echo 'nginx' >> /app/start.sh && \
-    echo 'java -jar /app/app.jar' >> /app/start.sh && \
+    echo 'nginx &' >> /app/start.sh && \
+    echo 'exec java -jar app.jar' >> /app/start.sh && \
     chmod +x /app/start.sh
 
-# 暴露端口
 EXPOSE 80 8080
-
-# 设置启动命令
 CMD ["sh", "/app/start.sh"]
