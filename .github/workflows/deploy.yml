@@ -103,16 +103,24 @@ jobs:
           rsync -avz --delete ./airline-order-backend/target/*.jar ${{ secrets.AWS_EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/app/backend/
 
       # 9. 在 EC2 上执行部署脚本
-      - name: Deploy to EC2
+      - name: Build Frontend
         run: |
+          cd frontend
+          npm install
+          npm run build  # 生成 dist/ 目录
+          
+      - name: Deploy Frontend
+        run: |
+          # 上传 dist 目录到服务器
+          scp -i "aws-key.pem" -r frontend/dist ubuntu@18.191.37.120:/home/ubuntu/app/frontend
+      
+          # 重启前端服务
           ssh -i "aws-key.pem" ubuntu@18.191.37.120 << 'EOF'
-            # 前端
             cd /home/ubuntu/app/frontend
-            git pull origin main || git pull origin master
-            npm install
-            npm run build
             pkill -f "http-server" || true
-            nohup npx http-server ./dist -p 8080 --host 0.0.0.0 > frontend.log 2>&1 &
+            nohup npx http-server ./ -p 8080 --host 0.0.0.0 > frontend.log 2>&1 &
+            echo "Frontend deployed from dist/"
+          EOF
             
             # 后端
             cd /home/ubuntu/app/backend
