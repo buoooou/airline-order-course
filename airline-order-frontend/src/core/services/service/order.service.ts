@@ -27,7 +27,8 @@ export class OrderService {
     );
   }
 
-  getOrderById(orderNumber: string): Observable<Order> {
-    return this.http.get<Order>(`api/order/${orderNumber}`);
+  getOrderById(id: Number): Observable<Order> {
+  	const url = `${environment.apiUrl}/api/order/${id}`;
+    return this.http.get<Order>(url);
   }
 }
