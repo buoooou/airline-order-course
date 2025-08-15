@@ -14,6 +14,7 @@ import com.position.airline_order_course.service.OrderService;
 /*
  * 航空订单Controller
  */
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
