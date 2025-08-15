@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.position.airline_order_course.dto.TicketResponse;
 import com.position.airline_order_course.service.MockTicketService;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 /*
  * 出票服务Controller
