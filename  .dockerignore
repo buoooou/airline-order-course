@@ -1,7 +1,30 @@
 # .dockerignore
-**/node_modules
-**/target
-frontend/dist
+#**/node_modules
+#**/target
+#frontend/dist
+#.idea
+#.vscode
+*.iml
+
+# IDE / 编辑器相关
 .idea
 .vscode
 *.iml
+
+# 前端 build 缓存
+frontend/.angular
+frontend/node_modules
+frontend/dist
+
+# 后端 build 产物
+backend/target
+backend/application.log
+
+# 版本管理
+.git
+.gitignore
+
+# Docker 自身
+docker-compose.yml
+Dockerfile*
+.dockerignore
