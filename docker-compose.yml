@@ -18,7 +18,7 @@ services:
   # redis:
 
   app:
-    image: liugang3639/airline-order-manage:latest
+    image: wanglin0216/airline-order-manage:latest
     container_name: my-springboot-angular-app
     restart: always
     ports:
