@@ -1,52 +1,39 @@
-version: "3.8"
-
+# version: 字段已过时，可以删除
 services:
-  # MySQL 数据库服务
   database:
     image: mysql:8.0
     container_name: airline-mysql-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: airlineTest1234 # Root 用户的密码
-      MYSQL_DATABASE: myappdb # 创建的数据库名
-      MYSQL_USER: myappuser # 为应用创建的用户名
-      MYSQL_PASSWORD: airlineTest1234 # 应用用户的密码
-    # ports:
-    #   - "3306:3306"
+      # 最佳实践：使用 .env 文件管理这些敏感信息
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: airline_order_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql # 数据持久化
+      - db_data:/var/lib/mysql
     networks:
       - app-network
-    # healthcheck:
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
 
-  # Spring Boot + Angular 应用服务
   app:
-    # image: krowlzhang/airline-order-manage:latest
-    image: rongwen2005sh/airline-order-course:latest
+    # 核心：使用 CI/CD 构建的镜像
+    image: rongwen2005/airline-order-course:latest
     container_name: my-springboot-angular-app
     restart: always
     ports:
       - "8080:8080"
     depends_on:
-      database:
-        condition: service_healthy # 确保数据库健康后才启动
+      - database
     environment:
-      # 数据库连接配置
-      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/myappdb?useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: myappuser
-      SPRING_DATASOURCE_PASSWORD: airlineTest1234
-      # 其他Spring Boot配置
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/airline_order_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
     networks:
       - app-network
 
 volumes:
-  db_data: # 数据库持久化卷
-
+  db_data:
 networks:
-  app-network: # 自定义网络
-    driver: bridge
+  app-network:
