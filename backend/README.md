@@ -157,9 +157,6 @@ http://localhost:8080/swagger-ui/index.html
  # Ubuntu 打包
 ./mvn clean package -DskipTests
 
-# WIN11 打包
-mvnw.cmd clean package -DskipTests
-
 ### 注册DockerHub账号
 使用公司代理，登录 https://www.docker.com/, 使用github 账号登录dockerhub账号，获得access token
 

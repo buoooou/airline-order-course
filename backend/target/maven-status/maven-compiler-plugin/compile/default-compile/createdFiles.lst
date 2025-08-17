@@ -8,6 +8,7 @@ com\postion\airlineorderbackend\config\AsyncConfig.class
 com\postion\airlineorderbackend\dto\OrderDto.class
 com\postion\airlineorderbackend\repo\UserRepository.class
 com\postion\airlineorderbackend\task\OrderScheduledTask.class
+com\postion\airlineorderbackend\controller\TestController.class
 com\postion\airlineorderbackend\service\Impl\OrderServiceImpl.class
 com\postion\airlineorderbackend\dto\AuthRequest.class
 com\postion\airlineorderbackend\exception\GlobalExceptionHandler.class
