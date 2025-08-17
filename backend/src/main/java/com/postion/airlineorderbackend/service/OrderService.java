@@ -1,32 +1,54 @@
 package com.postion.airlineorderbackend.service;
-
 import com.postion.airlineorderbackend.dto.OrderDto;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Interface for order management services.
- * Defines the contract for business logic related to flight orders.
- */
+@Service
 public interface OrderService {
 
     /**
-     * Retrieves a list of all orders, converted to DTOs.
-     *
-     * @return A list of {@link OrderDto} objects.
+     * 获取所有订单的列表，转换为OrderDto对象。
+     * @return 所有订单的列表
      */
     List<OrderDto> getAllOrders();
 
     /**
-     * Retrieves a single order by its unique identifier and enriches it with additional information.
-     *
-     * @param id The unique ID of the order to retrieve.
-     * @return The corresponding {@link OrderDto}, enriched with flight information.
-     * @throws RuntimeException if an order with the given ID is not found.
+     * 根据用户ID获取单个订单，并附加航班信息。
+     * @param userId 用户ID
+     * @return 对应的OrderDto对象，包含航班信息
+     */
+    List<OrderDto> getAllOrdersByUserId(Long userId);
+
+    /**
+     * 根据订单ID获取单个订单，并附加航班信息。
+     * @param id 订单的唯一ID
+     * @return 对应的OrderDto对象，包含航班信息
      */
     OrderDto getOrderById(Long id);
 
+    /**
+     * 支付订单。
+     * @param id 订单的唯一ID
+     * @return 支付后的OrderDto对象
+     */
     OrderDto payOrder(Long id);
-    void requestTicketIssuance(Long id); // 这是一个异步触发方法
+
+    /**
+     * 异步触发方法，请求出票。
+     * @param id 订单的唯一ID
+     */
+    void requestTicketIssuance(Long id);
+
+    /**
+     * 取消订单。
+     * @param id 订单的唯一ID
+     * @return 取消后的OrderDto对象
+     */
     OrderDto cancelOrder(Long id);
+
+    /**
+     * 批量取消超时订单
+     */
+    void cancelUnpaidOrder();
 }
