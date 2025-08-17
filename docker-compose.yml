@@ -1,0 +1,40 @@
+services:
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: airline-mysql-db
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: airlineTest1234
+  #     MYSQL_DATABASE: airline_order_db
+  #     MYSQL_USER: myappuser
+  #     MYSQL_PASSWORD: airlineTest1234
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - db-data:/var/lib/mysql
+  #   networks:
+  #     - app-network
+
+  # redis:
+
+  app:
+    image: wanglin0216/airline-order-manage:latest
+    container_name: my-springboot-angular-app
+    restart: always
+    ports:
+      - "80:80"
+      - "8080:8080"
+    # depends_on:
+    #   - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database-ycr.cjkwkoiq2pgc.us-east-2.rds.amazonaws.com:3306/airline_order_db?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: myappuser
+      SPRING_DATASOURCE_PASSWORD: airlineTest1234
+    networks:
+      - app-network
+volumes:
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge
