@@ -10,7 +10,7 @@ COPY frontend/ ./
 RUN npm run build  # 生成产物默认在dist/[项目名]/browser
 
 # --- 阶段2：构建Spring Boot后端（OpenJDK 17） ---
-FROM 3.8.5-openjdk-17 AS backend-builder
+FROM maven:3.8.5-openjdk-17 AS backend-builder
 WORKDIR /app
 # 缓存Maven依赖
 COPY backend/pom.xml .
