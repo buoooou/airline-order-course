@@ -42,6 +42,9 @@ chmod 600 airline-fuser26.pem
 # 确认属性
 ls -ld airline-fuser26.pem         
 
+# 连接 EC2, 在authorized_keys下生成私钥
+ssh -i airline-fuser26.pem ubuntu@3.25.139.89
+
 # 创建 .ssh 目录并设置权限（仅当前用户可读写执行）
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
 # 创建 authorized_keys 文件并设置权限：
@@ -54,9 +57,6 @@ ssh-keygen -t rsa -b 4096 -f github_actions_deploy_key -N ""
 cat github_actions_deploy_key.pub >> ~/.ssh/authorized_keys
 # 验证
 ssh -i github_actions_deploy_key ubuntu@3.25.139.89
-
-# 连接 EC2, 在authorized_keys下生成私钥
-ssh -i airline-fuser26.pem ubuntu@3.25.139.89
 
 
 ### 1.5 注册DockerHub账号

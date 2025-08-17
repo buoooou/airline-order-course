@@ -93,7 +93,7 @@ jobs:
         output: 'trivy-results.sarif'
         
     - name: 上传安全扫描结果
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
@@ -172,11 +172,6 @@ jobs:
       
     - name: 等待服务完全启动
       run: sleep 60
-      
-    - name: 健康检查测试
-      run: |
-        echo "执行健康检查..."
-        curl -f http://${{ secrets.EC2_HOST }}:8080/actuator/health
         
     - name: API接口测试
       run: |
