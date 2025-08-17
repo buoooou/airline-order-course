@@ -1,0 +1,37 @@
+<div class="order-container">
+    <div class="header">
+        <h2>订单列表</h2>
+        <button (click)="logout()">退出登录</button>
+    </div>
+
+    <div *ngIf="loading" class="loading">加载订单中...</div>
+
+    <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+    </div>
+
+    <table *ngIf="!loading && !errorMessage">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>订单编号</th>
+                <th>状态</th>
+                <th>金额</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let order of orders">
+                <td>{{ order.id }}</td>
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.status }}</td>
+                <td>¥{{ order.amount.toFixed(2) }}</td>
+                <td>{{ order.creationDate | date:'yyyy-MM-dd HH:mm' }}</td>
+                <td>
+                    <button (click)="viewOrderDetail(order.id)">查看详情</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

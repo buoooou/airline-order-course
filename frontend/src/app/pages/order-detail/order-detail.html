@@ -1,0 +1,85 @@
+<div class="order-detail-container">
+    <button class="back-button" (click)="goBack()">← 返回订单列表</button>
+
+    <div *ngIf="loading" class="loading">加载订单详情中...</div>
+
+    <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+    </div>
+
+    <div *ngIf="actionMessage" class="action-message">
+        {{ actionMessage }}
+    </div>
+
+    <div *ngIf="order && !loading && !errorMessage">
+        <!-- 订单信息部分 -->
+        <div class="order-info">
+            <h2>订单信息</h2>
+            <div class="info-row">
+                <span class="label">ID:</span>
+                <span class="value">{{ order.id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">订单编号:</span>
+                <span class="value">{{ order.orderNumber }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">状态:</span>
+                <span class="value">{{ order.status }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">金额:</span>
+                <span class="value">¥{{ order.amount.toFixed(2) }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">创建时间:</span>
+                <span class="value">{{ order.creationDate | date:'yyyy-MM-dd HH:mm' }}</span>
+            </div>
+
+            <div class="action-buttons">
+                <button *ngIf="order.status === 'PENDING_PAYMENT'" (click)="payOrder(order.id)">支付</button>
+                <button *ngIf="order.status === 'PAID' || order.status === 'PENDING_PAYMENT'"
+                    (click)="cancelOrder(order.id)">取消</button>
+                <button *ngIf="order.status === 'TICKETING_FAILED'" (click)="retryTicketing(order.id)">重新出票</button>
+            </div>
+        </div>
+
+        <!-- 航班信息部分 -->
+        <div class="flight-info" *ngIf="order.flightInfo">
+            <h2>航班信息</h2>
+            <div class="info-row">
+                <span class="label">航班号:</span>
+                <span class="value">{{ order.flightInfo.flightNumber }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">出发城市:</span>
+                <span class="value">{{ order.flightInfo.departureCity }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">出发时间:</span>
+                <span class="value">{{ order.flightInfo.departureTime | date:'yyyy-MM-dd HH:mm' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">到达城市:</span>
+                <span class="value">{{ order.flightInfo.arrivalCity }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">到达时间:</span>
+                <span class="value">{{ order.flightInfo.arrivalTime | date:'yyyy-MM-dd HH:mm' }}</span>
+            </div>
+        </div>
+
+        <!-- 顾客信息部分 -->
+        <div class="customer-info" *ngIf="order.user">
+            <h2>顾客信息</h2>
+            <div class="info-row">
+                <span class="label">用户ID:</span>
+                <span class="value">{{ order.user.id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">用户名:</span>
+                <span class="value">{{ order.user.username }}</span>
+            </div>
+        </div>
+    </div>
+</div>
