@@ -1,5 +1,5 @@
-# --- 阶段1：构建Angular前端（Node.js 22） ---
-FROM node:22-alpine AS frontend-builder
+# --- 阶段1：构建Angular前端（Node.js 20） ---
+FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 # 复制前端依赖文件
 COPY frontend/package.json frontend/package-lock.json ./
@@ -9,8 +9,8 @@ RUN npm install
 COPY frontend/ ./
 RUN npm run build  # 生成产物默认在dist/[项目名]/browser
 
-# --- 阶段2：构建Spring Boot后端（Java 17） ---
-FROM maven:3.8.5-openjdk-17 AS backend-builder
+# --- 阶段2：构建Spring Boot后端（OpenJDK 11） ---
+FROM maven:3.8.5-openjdk-11 AS backend-builder
 WORKDIR /app
 # 缓存Maven依赖
 COPY backend/pom.xml .

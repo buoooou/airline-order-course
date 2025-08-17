@@ -2,7 +2,7 @@
 
 services:
   app:
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/airline-order-system-fuser26:${IMAGE_TAG}
+    image: ${secrets.DOCKERHUB_USERNAME}/airline-order-system-fuser26:latest
     restart: always
     ports:
       - "8080:8080"
