@@ -4,8 +4,9 @@ import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.model.Order;
 import com.postion.airlineorderbackend.model.OrderStatus;
 import com.postion.airlineorderbackend.model.User;
-import com.postion.airlineorderbackend.repository.OrderRepository;
-import com.postion.airlineorderbackend.service.impl.OrderServiceImpl;
+import com.postion.airlineorderbackend.repo.OrderRepository;
+import com.postion.airlineorderbackend.service.Impl.OrderServiceImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

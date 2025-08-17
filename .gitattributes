@@ -1,0 +1,10 @@
+# 所有文件默认用 LF，checkout 到 Windows 时自动转换为 CRLF
+* text=auto
+
+# .sh 脚本强制用 LF，不转换
+*.sh text eol=lf
+
+# 二进制文件（如 .pem 密钥、图片）不转换
+*.pem binary
+*.png binary
+*.jpg binary

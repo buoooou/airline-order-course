@@ -1,6 +1,5 @@
 package com.postion.airlineorderbackend.service;
 
-import com.postion.airlineorderbackend.service.impl.JwtServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import com.postion.airlineorderbackend.service.Impl.JwtServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -25,7 +26,8 @@ class JwtServiceImplTest {
         jwtService = new JwtServiceImpl();
         // 因为 @Value 在单元测试中无效，我们使用反射手动设置这些私有字段
         // 使用一个足够长的 Base64 编码密钥以满足 HMAC-SHA 算法的要求
-        String testSecret = Base64.getEncoder().encodeToString("my-test-secret-key-that-is-long-enough-for-hs256".getBytes());
+        String testSecret = Base64.getEncoder()
+                .encodeToString("my-test-secret-key-that-is-long-enough-for-hs256".getBytes());
         long expirationMs = 3600000; // 1小时
 
         ReflectionTestUtils.setField(jwtService, "secretKeyString", testSecret);
