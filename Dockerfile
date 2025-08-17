@@ -26,7 +26,7 @@ RUN mvn package -DskipTests
 FROM openjdk:11-jre-slim
 
 # 安装必要的运行时工具
-RUN apt-get update && apt-get install -y curl tzdata && \
+RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata && \
     ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata && \
     rm -rf /var/lib/apt/lists/*
@@ -36,6 +36,7 @@ RUN groupadd -g 1001 appgroup && \
     useradd -u 1001 -g appgroup -m appuser
 
 WORKDIR /app
+
 # 复制后端JAR包
 COPY --from=backend-builder /app/target/*.jar app.jar
 
