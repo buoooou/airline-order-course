@@ -23,10 +23,30 @@ COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 RUN mvn package -DskipTests
 
 # --- 阶段3：最终运行镜像（轻量JRE） ---
-FROM eclipse-temurin:17-jre-alpine
+FROM openjdk:11-jre-slim
+
+# 安装必要的运行时工具
+RUN apt-get update && apt-get install -y curl tzdata && \
+    ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
+# 创建应用用户（安全最佳实践）
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup -m appuser
+
 WORKDIR /app
 # 复制后端JAR包
 COPY --from=backend-builder /app/target/*.jar app.jar
+
+# 更改文件所有者
+RUN chown -R appuser:appgroup /app
+
+# 切换到非root用户
+USER appuser
+
+# 容器对外暴露8080端口
 EXPOSE 8080
+
 # 启动命令（可添加JVM参数）
 ENTRYPOINT ["java", "-jar", "app.jar"]

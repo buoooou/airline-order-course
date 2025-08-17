@@ -52,11 +52,6 @@ jobs:
       run: |
         mvn clean test
         
-    - name: 代码覆盖率报告
-      working-directory: ./backend
-      run: |
-        mvn jacoco:report
-        
   # 第二阶段：构建和推送Docker镜像
   build-and-push:
     name: 构建并推送Docker镜像
