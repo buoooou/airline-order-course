@@ -2,7 +2,7 @@
 
 services:
   app:
-    image: ${secrets.DOCKERHUB_USERNAME}/airline-order-system-fuser26:latest
+    image: ${secrets.DOCKERHUB_USERNAME}/${secrets.DOCKER_BACKEND_IMAGE_NAME}:latest
     restart: always
     ports:
       - "8080:8080"

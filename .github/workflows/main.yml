@@ -7,7 +7,7 @@ on:
     branches: [ main, master ]
 
 env:
-  DOCKER_BACKEND_IMAGE_NAME: airline-order-system-fuser26
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
@@ -81,14 +81,14 @@ jobs:
         push: true
         platforms: linux/amd64,linux/arm64  # 多架构支持
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_BACKEND_IMAGE_NAME }}:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
         cache-from: type=gha  # 缓存加速构建
         cache-to: type=gha,mode=max          
 
     - name: 镜像安全扫描
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_BACKEND_IMAGE_NAME }}:latest
+        image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
         format: 'sarif'
         output: 'trivy-results.sarif'
         
@@ -131,7 +131,7 @@ jobs:
           
           # 拉取最新镜像
           echo "拉取最新Docker镜像..."
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_BACKEND_IMAGE_NAME }}:latest
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
 
           # 启动服务
           echo "启动服务..."

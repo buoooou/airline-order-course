@@ -85,7 +85,10 @@ AWS_ACCOUNT_ID: AWS 账户 ID
 AWS_REGION: AWS 区域 (as-southeast-2)
 EC2_HOST: EC2 实例的公网 IP 或域名
 EC2_USERNAME: EC2 登录用户名（通常是 ubuntu）
-EC2_SSH_KEY: 用于登录 EC2 的 SSH 私钥
+SSH_PRIVATE_KEY: 用于登录 EC2 的 SSH 私钥
+DOCKER_IMAGE_NAME: Docker 镜像名称
+DOCKERHUB_TOKEN： DockerHub 账号的 Token
+DOCKERHUB_USERNAME：DockerHub 账号的用户名
 
 ### 三、Docker 配置文件
 生成多阶段构建的单镜像部署
