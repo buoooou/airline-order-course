@@ -29,12 +29,18 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
+                            // 显式放行OPTIONS请求 
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers("/api/**").permitAll()
                 .antMatchers("/api/orders/**","/api/auth/login", "/api/api/auth/login","/api/users/**").permitAll()
                 .antMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
             )
+            // 确保CORS配置生效 
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .httpBasic();
+
         return http.build();
     }
 
