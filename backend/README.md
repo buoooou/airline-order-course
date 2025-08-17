@@ -145,6 +145,8 @@ com.airline
 项目提供了完整的API文档，基于SpringDoc OpenAPI 2.8.9，可通过以下地址访问：
 http://localhost:8080/swagger-ui/index.html
 
+# 健康检查
+http://localhost:8080/actuator/health
 
  <!-- 
  # Ubuntu 安装maven
@@ -154,8 +156,8 @@ http://localhost:8080/swagger-ui/index.html
  mvn wrapper:wrapper
  chmod +x ./mvnw
 
- # Ubuntu 打包
-./mvn clean package -DskipTests
+ # 打包
+./mvnw clean package -DskipTests
 
 ### 注册DockerHub账号
 使用公司代理，登录 https://www.docker.com/, 使用github 账号登录dockerhub账号，获得access token

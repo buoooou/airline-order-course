@@ -157,3 +157,6 @@ com.airline
 ## API文档
 项目提供了完整的API文档，基于SpringDoc OpenAPI 2.8.9，可通过以下地址访问：
 http://localhost:8080/swagger-ui/index.html
+
+# 健康检查
+http://localhost:8080/actuator/health

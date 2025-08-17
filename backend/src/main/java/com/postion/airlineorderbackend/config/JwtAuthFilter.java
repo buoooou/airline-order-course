@@ -46,8 +46,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.info("========== JwtAuthenticationFilter called for path: {}", uri);
 
         // login/register/swagger-ui/v2/api-docs的场合，直接放行
-        if (uri.contains("/login") || uri.contains("/register") ||
-                uri.contains("/swagger")
+        if (uri.contains("/login") || uri.contains("/register")
+                || uri.contains("/swagger") || uri.contains("/actuator/health")
                 || uri.contains("/api-docs")) {
             log.info("========== JwtAuthenticationFilter skip for path: {}", uri);
             filterChain.doFilter(request, response);

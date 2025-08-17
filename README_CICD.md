@@ -94,7 +94,15 @@ DOCKERHUB_USERNAME：DockerHub 账号的用户名
 生成多阶段构建的单镜像部署
 
 ### 四、本地开发与 CI/CD 衔接脚本
+#
 
+# 打包后端
+cd backend
+./mvnw clean package -DskipTests
+
+# 编译前端
+cd frontend
+npm run build
 
 ### 五、使用说明
 准备工作:
