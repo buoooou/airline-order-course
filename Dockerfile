@@ -23,7 +23,7 @@ COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 RUN mvn package -DskipTests
 
 # --- 阶段3：最终运行镜像（轻量JRE） ---
-FROM openjdk:17-jre-slim
+FROM openjdk:17-jdk-slim
 
 # 安装必要的运行时工具
 RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata && \
