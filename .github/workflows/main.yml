@@ -122,11 +122,23 @@ jobs:
           export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
           export DOCKER_IMAGE_NAME=${{ secrets.DOCKER_IMAGE_NAME }}
 
-          echo "环境变量 DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} "
-          echo "环境变量 DOCKER_IMAGE_NAME=${{ secrets.DOCKER_IMAGE_NAME }} "
-
-          # 检查文件并复制
-          ls -la
+          # 验证变量是否被导出（仅检查是否存在，不打印值）
+          if [ -z "$DOCKERHUB_USERNAME" ]; then
+            echo "Error: DOCKERHUB_USERNAME 未导出"
+            exit 1
+          else
+            echo "DOCKERHUB_USERNAME 已成功导出"
+          fi
+          
+          if [ -z "$DOCKER_IMAGE_NAME" ]; then
+            echo "Error: DOCKER_IMAGE_NAME 未导出"
+            exit 1
+          else
+            echo "DOCKER_IMAGE_NAME 已成功导出"
+          fi
+          
+          echo "查找 docker-compose.yml 文件..."
+          find . -name "docker-compose.yml"  # 搜索当前目录及子目录
 
           # 创建部署目录
           mkdir -p ~/airline-deployment
