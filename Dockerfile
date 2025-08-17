@@ -9,8 +9,8 @@ RUN npm install
 COPY frontend/ ./
 RUN npm run build  # 生成产物默认在dist/[项目名]/browser
 
-# --- 阶段2：构建Spring Boot后端（OpenJDK 11） ---
-FROM maven:3.8.5-openjdk-11 AS backend-builder
+# --- 阶段2：构建Spring Boot后端（OpenJDK 17） ---
+FROM 3.8.5-openjdk-17 AS backend-builder
 WORKDIR /app
 # 缓存Maven依赖
 COPY backend/pom.xml .
@@ -23,7 +23,7 @@ COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 RUN mvn package -DskipTests
 
 # --- 阶段3：最终运行镜像（轻量JRE） ---
-FROM openjdk:11-jre-slim
+FROM openjdk:17-jre-slim
 
 # 安装必要的运行时工具
 RUN apt-get update && apt-get install -y --no-install-recommends curl tzdata && \
