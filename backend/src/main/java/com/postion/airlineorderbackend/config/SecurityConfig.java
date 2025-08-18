@@ -36,11 +36,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // 明确放行所有公共路径
                         .requestMatchers(
-                                "/", "/index.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/assets/**", // 前端静态资源
-                                "/api/auth/**", // 所有认证相关的API
-
-                                "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", // Swagger文档
-                                "/actuator/health/**" // Spring Boot Actuator监控API
+                                "/", "/index.html", "/login", "/*.js", "/*.css", "/*.ico", "/*.png", "/assets/**",
+                                "/static/**", // 前端静态资源
+                                "/api/auth/**", "/api/auth/login", // 所有认证相关的API
+                                "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**", // Swagger文档
+                                "/actuator/**" // Spring Boot Actuator监控API
                         ).permitAll()
                         // 其他任何请求都需要身份验证
                         .anyRequest().authenticated())

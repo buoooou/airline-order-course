@@ -137,6 +137,7 @@ jobs:
             echo "DOCKER_IMAGE_NAME 已成功导出"
           fi
           
+          echo "当前工作目录: $(pwd)"  # 新增：打印当前目录
           echo "查找 docker-compose.yml 文件..."
           find . -name "docker-compose.yml"  # 搜索当前目录及子目录
 
@@ -199,6 +200,11 @@ jobs:
       run: |
         echo "执行健康检查..."
         curl -f http://${{ secrets.EC2_HOST }}:8080/actuator/health      
+
+    - name: API文档测试
+      run: |
+        echo "API文档测试检查..."
+        curl -f http://${{ secrets.EC2_HOST }}:8080/swagger-ui/index.html
         
     - name: API接口测试
       run: |

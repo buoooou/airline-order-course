@@ -83,6 +83,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e);
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid JWT token");
+            return;
         }
 
         log.info("========== JwtAuthenticationFilter ended");
