@@ -6,7 +6,9 @@
   ubuntu:
         Java(OpenJDK 17)，awsCLI(2.28.9), Docker(27.5.1), MySql(8.3.0)
 
-  点击VSCode左下角的 ><, 链接 WSL, 把C盘挂载在 /mnt 下，在VSCode中打开 /mnt/cairline-order-course 就可以在ubuntu下进行开发。
+  <!-- 
+  点击VSCode左下角的 ><, 链接 WSL, 把C盘挂载在 /mnt 下，在VSCode中打开 /mnt/cairline-order-course 就可以在ubuntu下进行开发。 
+  -->
   
 # 后端
   Spring boot 3.5.4, 请参照 /backend/README.md 文档
@@ -66,14 +68,7 @@ git clone https://github.com/fm-t7/airline-order-course.git
 
 4. 修改`application.properties`文件，配置MySQL数据库连接信息
 
-5. 启动项目
-mvn spring-boot:run
-
-6. 访问API文档：http://localhost:8080/swagger-ui/index.html
-
-7. 注册新用户，登录获取JWT令牌
-
-8. 调用API接口，测试功能
+5. 修改前后端，测试，打包前后端
 
 
 ## 数据库设计
@@ -85,26 +80,6 @@ mvn spring-boot:run
 3. **订单表(orders)**：存储订单信息，关联用户和航班，包含订单状态、时间等
 4. **分布式锁表(shedlock)**：用于定时任务的分布式锁控制
 
-## 接口使用说明
-
-### 认证方式
-
-1. 通过`/api/auth/login`接口获取JWT令牌
-2. 需认证接口需在请求头携带令牌：
-   Authorization: Bearer <your_token>
-
-### 主要API端点
-
-- **认证接口**：`/api/auth/*`
-  - POST `/login` - 用户登录获取令牌
-
-
-- **订单接口**：`/api/orders/*`
-  - GET `/` - 获取当前用户订单
-  - GET `/{id}` - 获取订单详情
-  - POST `/` - 创建订单
-  - PUT `/{id}/status` - 更新订单状态
-
 ## 定时任务
 
 系统包含自动标记已完成订单的定时任务：
@@ -112,51 +87,37 @@ mvn spring-boot:run
 - 功能：查询已支付且航班已到达的订单，自动标记为"COMPLETED"状态
 - 采用ShedLock实现分布式锁，确保集群环境下任务唯一执行
 
-## 响应格式
-
-所有API接口返回统一响应格式：
-
-```json
-{
-  "status": 200,
-  "message": "Success",
-  "data": { ... }
-}
-```
-
-异常响应格式：
-
-```json
-{
-  "status": 400,
-  "message": "Cannot change status from CANCELLED",
-  "data": null
-}
-```
-
 
 ## 项目结构
 
 ```
-com.airline
-├── config          # 配置类（安全、Swagger、JWT、定时任务等）
-├── controller      # API接口控制器
-├── dto             # 数据传输对象
-├── entity          # 数据库实体类
-├── exception       # 自定义异常及全局异常处理器
-├── repository      # 数据访问层
-├── security        # 安全相关（JWT工具、过滤器等）
-├── service         # 业务逻辑层
-│   ├── impl        # 服务实现
-│   └── async       # 异步服务
-├── task            # 定时任务
-└── AirlineApplication.java  # 应用入口
-```
+airline-order-course
+├── .github/workflows       # workflows配置
+├── backend                 # 后端项目
+│   ├── README.md           # 后端项目说明
+├── frontend                # 前端项目
+│   ├── README.md           # 前端项目说明
+├── README.md               # 项目说明
+├── README_CICD.md          # 项目CI/CD说明
+└── README_DEV.md           # 项目开发说明
+└── Dockerfile              # docker配置（多阶段构建）
+└── docker-compose.yaml     # docker-compose配置（部署到同一个EC2实例，单一镜像）
 
+# 前端
+# 本地测试
+http://localhost:4200/
+
+# 服务器测试
+http://<IP>:8080/
+
+# 后端
+curl -X POST http://3.25.139.89:8080/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"user\",\"password\":\"pwd\"}"
 
 ## API文档
 项目提供了完整的API文档，基于SpringDoc OpenAPI 2.8.9，可通过以下地址访问：
-http://localhost:8080/swagger-ui/index.html
+http://<IP>:8080/swagger-ui/index.html
 
 # 健康检查
-http://localhost:8080/actuator/health
+http://<IP>:8080/actuator/health
+
+

@@ -110,14 +110,16 @@ DOCKERHUB_TOKEN： DockerHub 账号的 Token
 DOCKERHUB_USERNAME：DockerHub 账号的用户名
 
 ### 三、Dockerfile 和 Docker Compose 配置文件
-生成多阶段构建的单镜像部署, 前端和后端分别构建镜像, 然后使用 Docker Compose 部署到同一个 EC2 实例。
+生成多阶段构建的单镜像部署, 然后使用 Docker Compose 部署到同一个 EC2 实例。
 
 ### 3.1 Dockerfile
+多阶段构建
 
 ### 3.2 Docker Compose 配置文件
+单一镜像
 
 ### 四、本地开发与 CI/CD 衔接脚本
-#
+# 本地开发
 
 # 打包后端, 生成jar包
 cd backend
@@ -143,6 +145,7 @@ git push origin dev
 git checkout main
 git merge dev
 git push origin main
+git push origin main --force
 
 触发 CI/CD 流程:
 在 GitHub 仓库页面，Actions 标签页，点击 Run workflow，选择你要运行的工作流，点击 Run workflow 按钮，等待工作流完成。
