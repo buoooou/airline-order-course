@@ -1,0 +1,96 @@
+2025-08-18 13:36:31.480  INFO 4852 --- [main] c.p.a.AirlineOrderBackendApplication     : Starting AirlineOrderBackendApplication using Java 18.0.2.1 on IBM-PF3K9Z7A with PID 4852 (D:\dev\airline-order-course\backend\target\classes started by WenWRRong in D:\dev\airline-order-course)
+2025-08-18 13:36:31.484  INFO 4852 --- [main] c.p.a.AirlineOrderBackendApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-08-18 13:36:32.374  INFO 4852 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-18 13:36:32.449  INFO 4852 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 64 ms. Found 2 JPA repository interfaces.
+2025-08-18 13:36:33.257  INFO 4852 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-08-18 13:36:33.270  INFO 4852 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-18 13:36:33.270  INFO 4852 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.83]
+2025-08-18 13:36:33.391  INFO 4852 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-18 13:36:33.392  INFO 4852 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1840 ms
+2025-08-18 13:36:33.626  INFO 4852 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-18 13:36:33.670  INFO 4852 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.15.Final
+2025-08-18 13:36:33.805  INFO 4852 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-08-18 13:36:33.899  INFO 4852 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-08-18 13:36:34.098  INFO 4852 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-08-18 13:36:34.119  INFO 4852 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2025-08-18 13:36:34.743  INFO 4852 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-08-18 13:36:34.752  INFO 4852 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-18 13:36:35.338  INFO 4852 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2db6ba81, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@10728fe8, org.springframework.security.web.context.SecurityContextPersistenceFilter@278c67a7, org.springframework.security.web.header.HeaderWriterFilter@647aa45c, org.springframework.security.web.authentication.logout.LogoutFilter@16c9f7f0, com.postion.airlineorderbackend.config.JwtAuthFilter@c7269ad, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@c247363, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@67f0bf7e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@16fb9fdd, org.springframework.security.web.session.SessionManagementFilter@66d6e50b, org.springframework.security.web.access.ExceptionTranslationFilter@4cbb11e4, org.springframework.security.web.access.intercept.AuthorizationFilter@32b1e906]
+2025-08-18 13:36:35.502  WARN 4852 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-18 13:36:35.995  INFO 4852 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2025-08-18 13:36:36.011  INFO 4852 --- [main] c.p.a.AirlineOrderBackendApplication     : Started AirlineOrderBackendApplication in 4.944 seconds (JVM running for 5.487)
+2025-08-18 13:36:36.186  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:36:36.289  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:36:36.289435300
+2025-08-18 13:37:03.535  INFO 4852 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-18 13:37:03.536  INFO 4852 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-08-18 13:37:03.538  INFO 4852 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-08-18 13:37:36.098  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:37:36.104  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:37:36.104401800
+2025-08-18 13:38:36.107  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:38:36.119  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:38:36.119765
+2025-08-18 13:39:36.143  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:39:36.143  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:39:36.143455900
+2025-08-18 13:40:36.105  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:40:36.112  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:40:36.112745800
+2025-08-18 13:41:36.084  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:41:36.090  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:41:36.090716300
+2025-08-18 13:42:36.098  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:42:36.104  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:42:36.104740800
+2025-08-18 13:43:36.152  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:43:36.156  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:43:36.156144200
+2025-08-18 13:44:36.127  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:44:36.135  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:44:36.135157600
+2025-08-18 13:45:36.138  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:45:36.143  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:45:36.143930600
+2025-08-18 13:46:36.103  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:46:36.112  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:46:36.112170
+2025-08-18 13:47:36.101  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:47:36.101  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:47:36.101134500
+2025-08-18 13:48:36.082  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:48:36.082  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:48:36.082112800
+2025-08-18 13:49:36.091  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:49:36.096  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:49:36.096474900
+2025-08-18 13:50:36.095  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:50:36.100  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:50:36.100265800
+2025-08-18 13:51:36.258  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:51:36.260  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:51:36.260325700
+2025-08-18 13:52:36.106  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:52:36.106  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:52:36.106584400
+2025-08-18 13:53:36.188  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:53:36.194  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:53:36.194496700
+2025-08-18 13:54:36.129  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:54:36.145  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:54:36.145459700
+2025-08-18 13:55:36.231  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:55:36.239  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:55:36.239130800
+2025-08-18 13:56:36.100  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:56:36.107  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:56:36.107091400
+2025-08-18 13:57:36.113  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:57:36.117  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:57:36.117598
+2025-08-18 13:58:36.137  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:58:36.170  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:58:36.170325600
+2025-08-18 13:59:36.111  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 13:59:36.117  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T13:59:36.117696300
+2025-08-18 14:00:36.126  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:00:36.142  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:00:36.142687800
+2025-08-18 14:01:36.145  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:01:36.145  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:01:36.145804100
+2025-08-18 14:02:36.124  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:02:36.129  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:02:36.129698400
+2025-08-18 14:03:36.115  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:03:36.123  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:03:36.123388
+2025-08-18 14:04:36.117  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:04:36.123  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:04:36.123892500
+2025-08-18 14:05:36.090  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:05:36.098  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:05:36.098447500
+2025-08-18 14:06:36.150  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:06:36.165  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:06:36.165352900
+2025-08-18 14:07:36.113  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:07:36.115  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:07:36.115538700
+2025-08-18 14:08:36.112  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:08:36.112  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:08:36.112167200
+2025-08-18 14:09:36.126  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:09:36.135  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:09:36.135197
+2025-08-18 14:10:36.116  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:10:36.131  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:10:36.131978800
+2025-08-18 14:11:36.095  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】Start cancelUnpaidOrders().
+2025-08-18 14:11:36.111  INFO 4852 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : 【Scheduled Task】End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T14:11:36.111825200

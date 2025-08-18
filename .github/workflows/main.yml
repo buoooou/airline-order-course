@@ -13,6 +13,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      #####
       # # --- CT 阶段：验证代码质量（只测试，不打包）---
       # ## 2. 设置 JDK 1.8 环境
       # - name: Set up JDK 1.8
@@ -44,6 +45,7 @@ jobs:
       #     pnpm install
       #     # 如果有测试命令，在这里运行，例如：
       #     # pnpm test
+      #####
 
       # 6. 登录到 Docker Hub
       - name: Login to Docker Hub
