@@ -9,6 +9,8 @@ interface Order {
   name: string;
   status: string;
   createdAt: string;
+  totalAmount: number;
+  orderNumber: string;
 }
 
 @Component({

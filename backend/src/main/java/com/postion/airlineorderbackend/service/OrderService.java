@@ -10,6 +10,7 @@ import com.postion.airlineorderbackend.model.FlightInfo;
 import com.postion.airlineorderbackend.model.Order;
 import com.postion.airlineorderbackend.repository.OrderRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,8 +22,8 @@ public class OrderService {
     @Autowired
     private FlightApiService flightApiService;
 
-    public Page<Order> listOrders(Pageable pageable) {
-        return orderRepository.findAll(pageable);
+    public List<Order> listOrders(Long userid) {
+        return orderRepository.findByUserId(userid);
     }
 
     public Optional<Order> getOrderById(Long id) {

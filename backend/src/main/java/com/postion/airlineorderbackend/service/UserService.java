@@ -25,4 +25,10 @@ public class UserService implements UserDetailsService {
                 .roles(user.getRole())
                 .build();
     }
+    
+    public Long getUserIdByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return user.getId();
+    }
 }
