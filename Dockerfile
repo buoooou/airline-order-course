@@ -19,7 +19,6 @@ RUN mvn dependency:go-offline
 COPY backend/src ./src
 
 # 复制前端构建产物到后端静态资源目录（制整个目录结构）
-# COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
 COPY --from=frontend-builder /app/dist/*/browser/ ./src/main/resources/static/
 
 # 打包后端（跳过测试加速构建）

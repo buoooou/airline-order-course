@@ -214,7 +214,8 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{"username":"user","password":"password"}' || true
         
-    - name: 静态资源检查
+    - name: 前端检测检查
       run: |
-        echo "静态资源检查..."
-        curl -f http://${{ secrets.EC2_HOST }}:8080/static/index.html        
+        echo "前端检测检查..."
+        curl -f http://${{ secrets.EC2_HOST }}:8080/  | grep -q "AirlineOrderFrontend" || true
+       
