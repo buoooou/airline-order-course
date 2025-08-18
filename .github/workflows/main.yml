@@ -13,37 +13,37 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # # --- CT 阶段：验证代码质量（只测试，不打包）---
-      # ## 2. 设置 JDK 1.8 环境
-      # - name: Set up JDK 1.8
-      #   uses: actions/setup-java@v4
-      #   with:
-      #     java-version: "8"
-      #     distribution: "temurin"
+      # --- CT 阶段：验证代码质量（只测试，不打包）---
+      ## 2. 设置 JDK 1.8 环境
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v4
+        with:
+          java-version: "8"
+          distribution: "temurin"
 
-      # ## 3. 运行后端测试
-      # - name: Test Backend
-      #   working-directory: ./backend
-      #   run: mvn -B test --file pom.xml
+      ## 3. 运行后端测试
+      - name: Test Backend
+        working-directory: ./backend
+        run: mvn -B test --file pom.xml
 
-      # # 4. 设置 Node.js 环境
-      # - name: Set up Node.js 20
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: "20"
+      # 4. 设置 Node.js 环境
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-      # - name: Install pnpm
-      #   uses: pnpm/action-setup@v3
-      #   with:
-      #     version: 8
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
 
-      # # 5. 安装前端依赖并运行测试
-      # - name: Install Frontend Dependencies & Test
-      #   working-directory: ./frontend
-      #   run: |
-      #     pnpm install
-      #     # 如果有测试命令，在这里运行，例如：
-      #     # pnpm test
+      # 5. 安装前端依赖并运行测试
+      - name: Install Frontend Dependencies & Test
+        working-directory: ./frontend
+        run: |
+          pnpm install
+          # 如果有测试命令，在这里运行，例如：
+          # pnpm test
 
       # 6. 登录到 Docker Hub
       - name: Login to Docker Hub
