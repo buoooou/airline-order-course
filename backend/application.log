@@ -609,3 +609,23 @@ org.springframework.web.HttpRequestMethodNotSupportedException: Request method '
 2025-08-18 15:53:30.386  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T15:53:30.386051800
 2025-08-18 15:54:30.429  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
 2025-08-18 15:54:30.434  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T15:54:30.434441200
+2025-08-18 15:55:30.380  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 15:55:30.396  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T15:55:30.396288800
+2025-08-18 15:56:30.459  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 15:56:30.465  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T15:56:30.465091400
+2025-08-18 15:57:30.442  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 15:57:30.442  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T15:57:30.442974
+2025-08-18 15:58:30.548  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 15:58:30.555  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T15:58:30.555322200
+2025-08-18 15:59:30.455  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 15:59:30.458  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T15:59:30.458188200
+2025-08-18 16:00:30.397  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 16:00:30.397  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T16:00:30.397752800
+2025-08-18 16:01:30.385  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 16:01:30.385  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T16:01:30.385617600
+2025-08-18 16:02:30.565  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 16:02:30.584  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T16:02:30.584812400
+2025-08-18 16:03:30.397  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 16:03:30.401  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T16:03:30.401848900
+2025-08-18 16:04:30.396  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿Start cancelUnpaidOrders().
+2025-08-18 16:04:30.403  INFO 10084 --- [scheduling-1] c.p.a.service.impl.OrderServiceImpl      : ¡¾Scheduled Task¡¿End cancelUnpaidOrders(). No upaidOrders. Time:2025-08-18T16:04:30.403812900
