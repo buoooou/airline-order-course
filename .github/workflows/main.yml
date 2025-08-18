@@ -201,12 +201,12 @@ jobs:
         echo "执行健康检查..."
         curl -f http://${{ secrets.EC2_HOST }}:8080/actuator/health      
 
-    - name: API文档测试
+    - name: swagger-ui 文档测试
       run: |
-        echo "API文档测试检查..."
+        echo "swagger-ui 文档测试检查..."
         curl -f http://${{ secrets.EC2_HOST }}:8080/swagger-ui/index.html
         
-    - name: API接口测试
+    - name: 主要API接口测试
       run: |
         echo "测试主要API接口..."
         # 测试登录接口
@@ -214,8 +214,7 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{"username":"user","password":"password"}' || true
         
-    - name: 前端页面测试
+    - name: 静态资源检查
       run: |
-        echo "测试前端页面..."
-        curl -f http://${{ secrets.EC2_HOST }}:8080/ | grep -q "航空订单" || true
-        
+        echo "静态资源检查..."
+        curl -f http://${{ secrets.EC2_HOST }}:8080/static/index.html        

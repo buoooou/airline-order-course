@@ -17,8 +17,11 @@ COPY backend/pom.xml .
 RUN mvn dependency:go-offline
 # 复制后端源码
 COPY backend/src ./src
-# 复制前端构建产物到后端静态资源目录（供Spring Boot直接访问）
-COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
+
+# 复制前端构建产物到后端静态资源目录（制整个目录结构）
+# COPY --from=frontend-builder /app/dist/*/browser/* ./src/main/resources/static/
+COPY --from=frontend-builder /app/dist/*/browser/ ./src/main/resources/static/
+
 # 打包后端（跳过测试加速构建）
 RUN mvn package -DskipTests
 
