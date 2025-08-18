@@ -57,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 uri.contains("/login") ||
                 uri.contains("/register") ||
                 uri.contains("/swagger") ||
-                uri.contains("/actuator/health") ||
+                uri.startsWith("/actuator") ||
                 uri.contains("/api-docs")) {
             log.info("========== JwtAuthenticationFilter skip for path: {}", uri);
             filterChain.doFilter(request, response);
