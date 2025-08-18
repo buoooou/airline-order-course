@@ -14,7 +14,7 @@ public class AuthResponseDTO {
 
     @Schema(description = "JWT访问令牌", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     private String token;
-
+    
     @Schema(description = "用户ID")
     private Long userId;
 }
