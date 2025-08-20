@@ -6,10 +6,14 @@ import { catchError, map, Observable, of } from 'rxjs';
 export const authGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  
+
+  console.log('authGuard:' + state.url);
+
+  if (state.url.includes('/login')) return true;
+
   // return auth.isLoggedIn() ? true : router.parseUrl('/login');
   return auth.isAuthenticated$.pipe(
-    map(isValid => isValid ? true : router.parseUrl('/login')),
+    map((isValid) => (isValid ? true : router.parseUrl('/login'))),
     catchError(() => of(router.parseUrl('/login')))
   );
 };

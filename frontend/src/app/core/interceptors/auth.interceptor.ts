@@ -13,11 +13,14 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(
-    request: HttpRequest<unknown>,
+    request: HttpRequest<any>,
     next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
+  ): Observable<HttpEvent<any>> {
+    console.log('AuthInterceptor:' + request.url);
+
     // 获取当前认证令牌
     const token = this.authService.getToken();
+    console.log('Token:' + token ? '存在' : '不存在');
 
     // 如果令牌存在且请求不是登录请求，添加认证头
     if (token && !request.url.includes('/login')) {
@@ -26,6 +29,7 @@ export class AuthInterceptor implements HttpInterceptor {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log('已添加Authorization到HEADER');
       return next.handle(authReq);
     }
 
