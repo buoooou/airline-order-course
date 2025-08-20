@@ -28,7 +28,6 @@ com\postion\airlineorderbackend\client\AirlineApiClient.class
 com\postion\airlineorderbackend\config\SecurityConfig.class
 com\postion\airlineorderbackend\dto\ApiResponse.class
 com\postion\airlineorderbackend\model\OrderStatus.class
-com\postion\airlineorderbackend\config\CorsConfig.class
 com\postion\airlineorderbackend\dto\OrderDto$UserDto.class
 com\postion\airlineorderbackend\config\SwaggerConfig.class
 com\postion\airlineorderbackend\controller\OrderActionController.class
