@@ -16,7 +16,7 @@ services:
 
   app:
     # 核心：使用 CI/CD 构建的镜像
-    image: leihuang/airline-order-course:latest
+    image: zaqwsx123456a/airline-order-course:latest
     container_name: my-springboot-angular-app
     restart: always
     ports:
@@ -24,7 +24,7 @@ services:
     depends_on:
       - database
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/myappdb?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/airline_order_db?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=myappuser
       - SPRING_DATASOURCE_PASSWORD=airlineTest1234
     networks:
