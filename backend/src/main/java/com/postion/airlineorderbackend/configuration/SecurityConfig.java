@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -37,14 +38,21 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests(
                         auth -> auth
+                                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .antMatchers(
                                         "/api/test",
-                                        "/api/auth/**",
+                                        "/api/auth/login",
+                                        "/login",
                                         "/api/user/**",
                                         "/api/orders/**",
                                         "/swagger-ui/**",
                                         "/swagger-ui.html",
-                                        "/v3/api-docs/**").permitAll()
+                                        "/swagger-resources/**",
+                                        "/v3/api-docs/**",
+                                        "/api-docs/**",
+                                        "/favicon.ico",
+                                        "/index.html"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -68,7 +76,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Collections.singletonList("*"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setExposedHeaders(Arrays.asList("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
         config.setAllowCredentials(false);
