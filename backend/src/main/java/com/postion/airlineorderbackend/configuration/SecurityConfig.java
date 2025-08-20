@@ -51,7 +51,12 @@ public class SecurityConfig {
                                         "/v3/api-docs/**",
                                         "/api-docs/**",
                                         "/favicon.ico",
-                                        "/index.html"
+
+                                        "/index.html",
+                                        "/static/**",
+                                        "/assets/**",
+                                        "/*.css",
+                                        "/*.js"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 )
