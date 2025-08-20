@@ -12,9 +12,9 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(source="User", target="OrderDTO")
+    // @Mapping(source="User", target="UserDTO")
     UserDTO userToUserDTO(User user);
 
-    @Mapping(source="OrderDTO", target="User")
+    // @Mapping(source="UserDTO", target="User")
     User userDTOToUser(UserDTO userDto);
 }

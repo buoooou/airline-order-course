@@ -2,6 +2,7 @@ package com.position.airlineorderbackend.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +65,7 @@ public class OrderServiceImplTest {
         testOrder2.setCreateTime(currentTime);
         testOrder2.setUpdateTime(currentTime);
         testOrder2.setUser(testUser);
-        List<Order> mockOrders = List.of(testOrder, testOrder2);
+        List<Order> mockOrders = Arrays.asList(testOrder, testOrder2);
         // when(orderRepository.findByUserId(testUser.getId())).thenReturn(mockOrders);
         given(orderRepository.findByUserId(testUser.getId())).willReturn(mockOrders);
 

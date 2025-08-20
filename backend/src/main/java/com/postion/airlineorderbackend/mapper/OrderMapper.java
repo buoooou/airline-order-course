@@ -13,11 +13,11 @@ public interface OrderMapper {
 
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
-    @Mapping(source = "Order", target = "OrderDTO")
+    // @Mapping(source = "Order", target = "OrderDTO")
     OrderDTO orderToOrderDTO(Order order);
 
     OrderDTO.UserDto toUserDto(User user);
 
-    @Mapping(source = "OrderDTO", target = "Order")
+    // @Mapping(source = "OrderDTO", target = "Order")
     Order orderDTOToOrder(OrderDTO orderDto);
 }
