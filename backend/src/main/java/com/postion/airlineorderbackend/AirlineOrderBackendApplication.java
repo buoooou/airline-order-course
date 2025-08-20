@@ -13,7 +13,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class AirlineOrderBackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AirlineOrderBackendApplication.class, args);
+        try {
+            SpringApplication.run(AirlineOrderBackendApplication.class, args);
+        } catch (Throwable t) {
+            System.err.println("INIT ERROR: " + t.getMessage());
+            t.printStackTrace();
+            System.exit(1);
+        }
     }
 
 }
