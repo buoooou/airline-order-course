@@ -58,6 +58,7 @@ public class SecurityConfig {
                             "{\"success\":false,\"message\":\"未认证或令牌无效\",\"error\":\"UNAUTHORIZED\"}"
                         );
                     })
+                    // .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/api/auth/login"))
                 )
                 .userDetailsService(userDetailsService);
         return http.build();
@@ -70,7 +71,7 @@ public class SecurityConfig {
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setExposedHeaders(Arrays.asList("Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

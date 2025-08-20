@@ -20,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = this.authService.getToken();
 
     // 如果令牌存在且请求不是登录请求，添加认证头
-    if (token && !request.url.includes('/auth/login')) {
+    if (token && !request.url.includes('/login')) {
       const authReq = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
