@@ -45,7 +45,7 @@ CREATE TABLE `orders` (
 
 -- 插入用户 (密码原文均为 'password')
 -- 注意: 这里的哈希值是 BCrypt 加密后的示例，您的 Spring 应用可以识别
-INSERT INTO `app_users` (`id`, `username`, `password`, `role`) VALUES
+INSERT INTO `app_users` (`id`, `username`, `password`, `role`, `create_time`, `update_time`) VALUES
 (1, 'admin', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'ADMIN', NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 1 DAY),
 (2, 'user', '$2a$10$hJ/pfq0k2alfmFB.E5L5JOoEr.bDRpBEK20DFMLs73yGrwzHNDR/S', 'USER', NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 1 DAY);
 
