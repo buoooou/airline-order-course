@@ -19,8 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByStatus(OrderStatus status);
 
-    @Query("SELECT o FROM orders_hl o WHERE " +
-           "o.status = :status AND o.create_time >= :startTime AND o.create_time <= :endTime " + 
-           "ORDER BY o.create_time DESC")
+    @Query("SELECT o FROM orders o WHERE " +
+           "o.status = :status AND o.create_time < :createTime ORDER BY o.create_time DESC")
     List<Order> findByStatusAndCreateTimeBefore(OrderStatus status, LocalDateTime createTime);
 }
