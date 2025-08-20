@@ -52,6 +52,7 @@ public class SecurityConfig {
                                         "/api-docs/**",
                                         "/favicon.ico",
 
+                                        "/",
                                         "/index.html",
                                         "/static/**",
                                         "/assets/**",
