@@ -45,10 +45,12 @@ export class LoginComponent {
         finalize(() => this.isLoading = false)
       ).subscribe({
         next: (token) => {
+          console.log('登录成功！令牌:' + token);
           this.message.success('登录成功！令牌:' + token);
           this.router.navigate(['/orders']);
         },
         error: (err) => {
+          console.log('登录失败: 用户名或密码错误！  用户名:' + this.loginForm.value.username + ', 密码:' + this.loginForm.value.password);
           this.message.error('登录失败: 用户名或密码错误！');
         }
       });

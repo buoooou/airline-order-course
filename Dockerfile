@@ -34,3 +34,4 @@
     COPY --from=backend-builder /app/target/*.jar app.jar
     EXPOSE 8080
     ENTRYPOINT ["java", "-jar", "app.jar"]
+    RUN mkdir -p /app/logs && chmod 777 /app/logs
