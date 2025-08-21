@@ -1,5 +1,10 @@
 export interface ApiResponseDTO<T> {
-    code: number;
-    message: string;
-    data: T;
+  code: number;
+  message: string;
+  data: T;
+}
+
+export interface AuthResponse {
+  token: string;
+  userId: number;
 }

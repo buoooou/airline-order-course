@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -26,7 +26,8 @@ export class LoginComponent {
     private authService: AuthService,
     private fb: FormBuilder,
     private message: NzMessageService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.loginForm = this.fb.group({
       username: ['admin', [Validators.required, Validators.minLength(4)]],
@@ -42,7 +43,10 @@ export class LoginComponent {
         password: this.loginForm.value.password
       };
       this.authService.login(credentials).pipe(
-        finalize(() => this.isLoading = false)
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        })
       ).subscribe({
         next: (token) => {
           console.log('登录成功！令牌:' + token);

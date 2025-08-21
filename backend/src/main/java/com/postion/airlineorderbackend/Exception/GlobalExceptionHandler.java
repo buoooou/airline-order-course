@@ -43,6 +43,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseDTO<?>> handleGlobalException(Exception e) {
         log.error("{}: {}", AirlineBusinessException.class.getName(), e.getMessage());
         System.out.println("ExceptionHandler# message:" + e.getMessage());
+        e.printStackTrace();
         ApiResponseDTO<?> response = ApiResponseDTO.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), Constants.GLOBAL_ERROR_MSG);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

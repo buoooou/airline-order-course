@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { ApiResponseDTO, AuthResponse } from '../../shared/models/api-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -19,13 +20,15 @@ export class AuthService {
     this.isAuthenticatedSubject.next(this.isLoggedIn());
   }
 
-  login(credentials: {username: string, password: string}): Observable<AuthResponse>{
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+  login(credentials: {username: string, password: string}): Observable<ApiResponseDTO<AuthResponse>>{
+    return this.http.post<ApiResponseDTO<AuthResponse>>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
+        console.log('auth.service#login  response.token:' + response.data.token + ', response.userid:' + response.data.userId.toString());
         // 存储令牌到本地存储
-        localStorage.setItem(this.TOKEN_KEY, response.token);
-        localStorage.setItem(this.USER_KEY, response.userId.toString());
+        localStorage.setItem(this.TOKEN_KEY, response.data.token);
+        localStorage.setItem(this.USER_KEY, response.data.userId.toString());
         this.isAuthenticatedSubject.next(true);
+        console.log('登录成功，用户信息已保存.');
       })
     );
   }
@@ -60,7 +63,3 @@ export class AuthService {
   // }
 }
 
-interface AuthResponse {
-  token: string;
-  userId: number;
-}
