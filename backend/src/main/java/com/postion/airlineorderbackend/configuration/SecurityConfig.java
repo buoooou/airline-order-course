@@ -55,6 +55,7 @@ public class SecurityConfig {
                                         "/index.html",
                                         "/static/**",
                                         "/assets/**",
+                                        "/*.scss",
                                         "/*.css",
                                         "/*.js"
                                 ).permitAll()
