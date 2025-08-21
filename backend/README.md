@@ -148,39 +148,28 @@ http://localhost:8080/swagger-ui/index.html
 # 健康检查
 http://localhost:8080/actuator/health
 
+ <!-- 可以在 Win11 中做 -->
  <!-- 
  # Ubuntu 安装maven
  sudo apt install maven -y
  进入根目录
  cd /mnt/c/airline-order-course/backend
  mvn wrapper:wrapper
- chmod +x ./mvnw
+ chmod +x ./mvnw 
+ -->
 
  # 打包
 ./mvnw clean package -DskipTests
 
-### 注册DockerHub账号
-使用公司代理，登录 https://www.docker.com/, 使用github 账号登录dockerhub账号，获得access token
-
-# 方法1：设置公司代理
-sudo nano /etc/systemd/system/docker.service.d/proxy.conf
-[Service]
-Environment="HTTP_PROXY=username:password@http://proxy.emea.ibm.com:8080"
-Environment="HTTPS_PROXY=username:password@http://proxy.emea.ibm.com:8080"
-Environment="NO_PROXY=localhost,127.0.0.1,.example.com"
-
-# 重启Docker
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+# 网络设置
+打开公司网络，Win11的公司网络代理：http://proxy.emea.ibm.com:8080
 
 # 生成本地镜像, 做成本地镜像
 docker build -t airline-order-backend .
 docker build -t suifm/airline-order-backend:latest . 
 
-# 替换 <DockerHub用户名> 为实际账号，构建镜像
-docker build -t <DockerHub用户名>/my-app:latest . 
-# 推送到 Docker Hub
-docker push <DockerHub用户名>/my-app:latest 
+# 确认镜像
+docker image ls
 
 # docker-compose
 docker-compose up             # 启动（后台运行加 -d）
@@ -219,4 +208,3 @@ VPC:airline-order-db-VPC-sfm
 password: admin, admin123
 URL:airline-order-db-sfm.cj6gcogsidzt.ap-southeast-2.rds.amazonaws.com
 PORT: 3306 
--->
