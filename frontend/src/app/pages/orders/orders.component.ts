@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -60,7 +60,8 @@ export class OrdersComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private message: NzMessageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -70,17 +71,24 @@ export class OrdersComponent implements OnInit {
   loadOrders(): void {
     this.isLoading = true;
     this.orderService.getAllOrders()
-      .pipe(finalize(() => this.isLoading = false))
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        })
+      )
       .subscribe({
         next: (res) => {
+          console.log('loadOrders# response status:' + res.code);
           if (res.code === 200) {
             this.orders = res.data;
           } else {
-            this.message.error(`加载失败: ${res.message}`);
+            this.message.error(`加载订单失败: ${res.message}`);
           }
         },
         error: (err) => {
-          this.message.error('网络异常，请刷新重试');
+          console.log('加载订单失败:', err);
+          this.message.error('加载订单失败:', err);
         }
       });
   }

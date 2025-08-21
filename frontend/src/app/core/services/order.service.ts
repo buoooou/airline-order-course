@@ -11,7 +11,10 @@ import { Order } from '../../shared/models/order.model';
 export class OrderService {
   private readonly apiUrl = '/api/orders';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient, 
+    private authService: AuthService
+  ) {}
 
   // 获取所有订单
   getAllOrders(): Observable<ApiResponseDTO<Order[]>> {

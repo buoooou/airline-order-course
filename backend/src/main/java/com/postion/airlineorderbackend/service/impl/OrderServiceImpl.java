@@ -53,6 +53,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public List<OrderDTO> getAllOrders(Long userId) {
+        log.debug("OrderServiceImpl#getAllOrders# userId:{}", userId);
+        System.out.println();
+        System.out.println("OrderServiceImpl#getAllOrders# userId:" + userId);
+
         List<Order> orders = orderRepository.findByUserId(userId);
         return orders.stream().map(x -> orderMapper.orderToOrderDTO(x)).collect(Collectors.toList());
     }

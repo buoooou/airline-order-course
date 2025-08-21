@@ -17,9 +17,3 @@ export interface Order {
     user: User;
     flightInfo?: any; // 航班信息
 }
-
-// export interface ApiResponseDTO<T> {
-//     code: number;
-//     message: string;
-//     data: T;
-// }

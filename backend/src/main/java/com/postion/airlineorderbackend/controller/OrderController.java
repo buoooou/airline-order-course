@@ -25,10 +25,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/orders")
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
 
     private final OrderService orderService;
@@ -36,11 +38,23 @@ public class OrderController {
     @Operation(summary = "获取所有订单")
     @GetMapping("/all")
     public ApiResponseDTO<List<OrderDTO>> getAllOrders(@RequestParam Long userid) {
+        log.info("OrderController#getAllOrders# start.");
+        System.out.println("OrderController#getAllOrders# start.");
+
         try {
+            log.debug("OrderController#getAllOrders# UserId:{}", userid);
+            System.out.println("OrderController#getAllOrders# UserId:" + userid);
+
             List<OrderDTO> orderDtos = orderService.getAllOrders(userid);
+
+            log.debug("OrderController#getAllOrders# orderDtos:{}", orderDtos.size());
+            System.out.println("OrderController#getAllOrders# orderDtos:" + orderDtos.size());
 
             return ApiResponseDTO.success(HttpStatus.OK.value(), Constants.GET_ALL_ORDERS_SUCCESS, orderDtos);
         } catch (AirlineBusinessException e) {
+            log.warn("OrderController#getAllOrders# Catched AirlineBusinessException. UserId:{}", userid);
+            System.out.println("OrderController#getAllOrders# Catched AirlineBusinessException. UserId:" + userid);
+
             return ApiResponseDTO.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), Constants.GET_ALL_ORDERS_FAIL);
         }
     }
