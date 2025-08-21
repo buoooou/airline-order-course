@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,14 +46,20 @@ public class AuthServiceImpl implements AuthService {
 
         User tmpUser = userRepository.findByUsername(username)
             .orElseThrow(() -> new AirlineBusinessException(HttpStatus.SERVICE_UNAVAILABLE.value(), Constants.MSG_USER_NOT_FOUND));
-        tmpUser.setPassword(newPass);
-        userRepository.save(tmpUser);
-        log.debug("Authenticating# updated new password:{}", tmpUser);
-        System.out.println("Authenticating# updated new password.");
+        if ("admin".equals(tmpUser.getUsername())) {
+            tmpUser.setPassword(newPass);
+            userRepository.save(tmpUser);
+            log.debug("Authenticating# updated new password:{}", tmpUser);
+            System.out.println("Authenticating# updated new password.");
+        }
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        log.debug("Authenticating# UserDetails'username:{}, UserDetails'password:{}", userDetails.getUsername(), userDetails.getPassword());
+        System.out.println("Authenticating# UserDetails.password:" + userDetails.getPassword());
+
         UserDTO userDto = userRepository.findByUsername(username)
                 .map(x -> userMapper.userToUserDTO(x))
                 .orElseThrow(() -> new AirlineBusinessException(HttpStatus.SERVICE_UNAVAILABLE.value(), Constants.MSG_USER_NOT_FOUND));
