@@ -15,10 +15,12 @@ import com.postion.airlineorderbackend.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
@@ -31,6 +33,8 @@ public class AuthController {
             
             return ApiResponseDTO.success(HttpStatus.OK.value(), Constants.LOGIN_SUCCESS, authResponseDto);
         } catch (AuthenticationException e) {
+            log.warn("AuthController# Catched AuthenticationException. username:{}, password:{}", request.getUsername(), request.getPassword());
+            System.out.println("AuthController# Catched AuthenticationException. username:" + request.getUsername() + ", password:" + request.getPassword());
             return ApiResponseDTO.error(HttpStatus.UNAUTHORIZED.value(), Constants.LOGIN_FAIL);
         }
     }

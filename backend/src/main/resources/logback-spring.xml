@@ -2,7 +2,7 @@
 <configuration scan="true" scanPeriod="30 seconds">
     <!-- 从 Spring 环境读取属性 -->
     <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="airline-order"/>
-    <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="./logs"/>
+    <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="/app/logs"/>
     <springProperty scope="context" name="LOG_LEVEL" source="logging.level.root" defaultValue="debug"/>
 
     <!-- 日志格式定义 -->

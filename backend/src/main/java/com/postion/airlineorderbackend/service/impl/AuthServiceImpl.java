@@ -38,12 +38,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponseDTO authenticate(String username, String password) throws AuthenticationException {
-        log.debug("Authenticating# username:{}, password:{}", username, password);
-        System.out.println("Authenticating# username:" + username + ", password:" + password);
+        log.debug("AuthServiceImpl# username:{}, password:{}", username, password);
+        System.out.println();
+        System.out.println();
+        System.out.println("AuthServiceImpl# username:" + username + ", password:" + password);
 
         String newPass = passwordEncoder.encode(password);
-        log.debug("Authenticating# new Password:{}", newPass);
-        System.out.println("Authenticating# new Password:" + newPass);
+        log.debug("AuthServiceImpl# new Password:{}", newPass);
+        System.out.println("AuthServiceImpl# new Password:" + newPass);
 
         User tmpUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AirlineBusinessException(HttpStatus.SERVICE_UNAVAILABLE.value(), Constants.MSG_USER_NOT_FOUND));
@@ -51,22 +53,23 @@ public class AuthServiceImpl implements AuthService {
             User newUser = User.builder().username("testuser").password(newPass).role("USER")
                     .createTime(tmpUser.getCreateTime()).updateTime(tmpUser.getUpdateTime()).build();
             userRepository.save(newUser);
-            log.debug("Authenticating# updated new password:{}", newUser);
-            System.out.println("Authenticating# Created new user." + "New User#username:" + newUser.getUsername() + ", passowrd:" + newUser.getPassword());
+            log.debug("AuthServiceImpl# updated new password:{}", newUser);
+            System.out.println("AuthServiceImpl# Created new user." + "New User#username:" + newUser.getUsername() + ", passowrd:" + newUser.getPassword());
         }
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        log.debug("Authenticating# UserDetails'username:{}, UserDetails'password:{}", userDetails.getUsername(), userDetails.getPassword());
-        System.out.println("Authenticating# UserDetails.password:" + userDetails.getPassword());
+        log.debug("AuthServiceImpl# UserDetails.username:{}, UserDetails.password:{}", userDetails.getUsername(), userDetails.getPassword());
+        System.out.println("AuthServiceImpl# UserDetails.username:" + userDetails.getUsername() + ", UserDetails.password:" + userDetails.getPassword());
 
         UserDTO userDto = userRepository.findByUsername(username)
                 .map(x -> userMapper.userToUserDTO(x))
                 .orElseThrow(() -> new AirlineBusinessException(HttpStatus.SERVICE_UNAVAILABLE.value(), Constants.MSG_USER_NOT_FOUND));
 
-        log.info("用户认证通过。用户ID:{}，用户名:{}", userDto.getId(), username);
+        log.info("AuthServiceImpl# 用户认证通过。用户ID:{}，用户名:{}", userDto.getId(), username);
+        System.out.println("AuthServiceImpl# Authentication success.");
 
         return AuthResponseDTO.builder().token(jwtUtil.generateToken(authentication.getName())).userId(userDto.getId()).build();
     }
