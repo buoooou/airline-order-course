@@ -28,8 +28,14 @@ public class AuthController {
     @Operation(summary = "用户登录")
     @PostMapping("/login")
     public ApiResponseDTO<AuthResponseDTO> login(@RequestBody AuthRequestDTO request) {
+        log.info("AuthController# Login authentication start.");
+        System.out.println("AuthController# Login authentication start.");
+
         try {
             AuthResponseDTO authResponseDto = authService.authenticate(request.getUsername(), request.getPassword());
+
+            log.debug("AuthController# Token:{}, UserId:{}", authResponseDto.getToken(), authResponseDto.getUserId());
+            System.out.println("AuthController# Token:" + authResponseDto.getToken() + "，UserId:" + authResponseDto.getUserId());
             
             return ApiResponseDTO.success(HttpStatus.OK.value(), Constants.LOGIN_SUCCESS, authResponseDto);
         } catch (AuthenticationException e) {

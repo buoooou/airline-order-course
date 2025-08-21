@@ -37,8 +37,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            log.info("JwtAuthFilter# request header do not include Authorization or Bearer.");
-            System.out.println("JwtAuthFilter# request header do not include Authorization or Bearer.");
+            log.info("JwtAuthFilter# Request header do not include Authorization or Bearer. header:{}", header);
+            System.out.println("JwtAuthFilter# Request header do not include Authorization or Bearer. header:" + header);
 
             filterChain.doFilter(request, response);
             return;
