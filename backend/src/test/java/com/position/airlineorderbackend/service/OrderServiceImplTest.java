@@ -42,6 +42,8 @@ public class OrderServiceImplTest {
         testUser = new User();
         testUser.setId(100L);
         testUser.setUsername("test");
+        testUser.setPassword("123456");
+        testUser.setRole("USER");
 
         LocalDateTime currentTime = LocalDateTime.now();
         testOrder = new Order();
@@ -72,6 +74,8 @@ public class OrderServiceImplTest {
         List<OrderDTO> result = orderService.getAllOrders(testUser.getId());
         assertEquals(2, result.size());
         assertEquals("AA101001", result.get(0).getOrderNumber());
+        assertEquals(100, result.get(0).getUser().getId());
+        assertEquals("test", result.get(0).getUser().getUsername());
         assertEquals("AA101002", result.get(1).getOrderNumber());
 
         verify(orderRepository, times(1)).findByUserId(any());

@@ -23,6 +23,9 @@ public class OrderDTO {
     private UserDto user;
     private Map<String, Object> flightInfo;
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UserDto {
         private Long id;
         private String username;

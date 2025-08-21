@@ -48,9 +48,9 @@ export class LoginComponent {
           this.cdr.detectChanges();
         })
       ).subscribe({
-        next: (token) => {
-          console.log('登录成功！令牌:' + token);
-          this.message.success('登录成功！令牌:' + token);
+        next: (res) => {
+          console.log('登录成功！令牌:' + res.data.token);
+          this.message.success('登录成功！令牌:' + res.data.token);
           this.router.navigate(['/orders']);
         },
         error: (err) => {
