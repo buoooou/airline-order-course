@@ -40,17 +40,19 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponseDTO authenticate(String username, String password) throws AuthenticationException {
         log.debug("Authenticating# username:{}, password:{}", username, password);
         System.out.println("Authenticating# username:" + username + ", password:" + password);
+
         String newPass = passwordEncoder.encode(password);
         log.debug("Authenticating# new Password:{}", newPass);
         System.out.println("Authenticating# new Password:" + newPass);
 
         User tmpUser = userRepository.findByUsername(username)
-            .orElseThrow(() -> new AirlineBusinessException(HttpStatus.SERVICE_UNAVAILABLE.value(), Constants.MSG_USER_NOT_FOUND));
+                .orElseThrow(() -> new AirlineBusinessException(HttpStatus.SERVICE_UNAVAILABLE.value(), Constants.MSG_USER_NOT_FOUND));
         if ("admin".equals(tmpUser.getUsername())) {
-            tmpUser.setPassword(newPass);
-            userRepository.save(tmpUser);
-            log.debug("Authenticating# updated new password:{}", tmpUser);
-            System.out.println("Authenticating# updated new password.");
+            User newUser = User.builder().username("testuser").password(newPass).role("USER")
+                    .createTime(tmpUser.getCreateTime()).updateTime(tmpUser.getUpdateTime()).build();
+            userRepository.save(newUser);
+            log.debug("Authenticating# updated new password:{}", newUser);
+            System.out.println("Authenticating# Created new user." + "New User#username:" + newUser.getUsername() + ", passowrd:" + newUser.getPassword());
         }
 
         Authentication authentication = authenticationManager.authenticate(
