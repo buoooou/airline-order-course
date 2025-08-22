@@ -1,0 +1,84 @@
+1，AuthController 登录
+curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"admin\",\"password\":\"password\"}"
+{"code":200,"message":"Success","data":{"token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc1NDU0NTcwMSwiZXhwIjoxNzU0NjMyMTAxfQ.YMmxSRrzfKwnxtEN44vgzJn5Y0NujDlejj5-HH9rmgM"}}
+
+curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"user\",\"password\":\"password\"}"
+{"code":200,"message":"Success","data":{"username":"user","role":"USER","token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU1MDY2MzgyLCJleHAiOjE3NTUxNTI3ODJ9.WWUHkhgqsF3QtOvef3W8ENP0-6Tyy06MfyES42qtFPo"}}
+
+curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"user\",\"password\":\"passwordx\"}"
+{"code":401,"message":"Invalid username or password","data":null}
+
+2，OrderController 
+2.1, 取得订单列表
+curl -X GET http://localhost:8080/api/orders -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU1MDY2MzgyLCJleHAiOjE3NTUxNTI3ODJ9.WWUHkhgqsF3QtOvef3W8ENP0-6Tyy06MfyES42qtFPo"
+{"code":200,"message":"Success","data":[{"id":1,"orderNumber":"PAI-1A2B3C4D","status":"CANCELLED","amount":1250.75,"creationDate":"2025-08-06T13:43:15","user":{"id":1,"username":"admin"},"flightInfo":null},{"id":2,"orderNumber":"TIC-2B3C4D5E","status":"TICKETED","amount":3400.00,"creationDate":"2025-08-02T13:43:15","user":{"id":1,"username":"admin"},"flightInfo":null},{"id":3,"orderNumber":"TIC-3C4D5E6F","status":"TICKETING_FAILED","amount":980.50,"creationDate":"2025-08-07T11:43:15","user":{"id":1,"username":"admin"},"flightInfo":null},{"id":4,"orderNumber":"PEN-4D5E6F7G","status":"TICKETED","amount":550.00,"creationDate":"2025-08-07T13:13:15","user":{"id":1,"username":"admin"},"flightInfo":null},{"id":5,"orderNumber":"PEN-5E6F7G8H","status":"CANCELLED","amount":888.00,"creationDate":"2025-08-07T13:38:15","user":{"id":2,"username":"user"},"flightInfo":null},{"id":6,"orderNumber":"CAN-6F7G8H9I","status":"CANCELLED","amount":1100.20,"creationDate":"2025-08-05T13:43:15","user":{"id":2,"username":"user"},"flightInfo":null},{"id":7,"orderNumber":"TIC-7G8H9I0J","status":"TICKETING_IN_PROGRESS","amount":4321.00,"creationDate":"2025-08-07T13:33:15","user":{"id":2,"username":"user"},"flightInfo":null}]}
+
+2.2，取得订单列表：id
+curl -X GET http://localhost:8080/api/orders/1 -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU1MDY2MzgyLCJleHAiOjE3NTUxNTI3ODJ9.WWUHkhgqsF3QtOvef3W8ENP0-6Tyy06MfyES42qtFPo"
+{"code":200,"message":"Success","data":{"id":1,"orderNumber":"PAI-1A2B3C4D","status":"CANCELLED","amount":1250.75,"creationDate":"2025-08-06T13:43:15","user":{"id":1,"username":"admin"},"flightInfo":{"departureTime":"2025-08-14T14:28:12.810579600","departureCity":"Beijing","arrivalTime":"2025-08-14T16:28:12.810579600","arrivalCity":"Shanghai","flightNumber":"MU-1643"}}}
+
+3, OrderActionController
+3.1, pay（1） 
+curl -X POST http://localhost:8080/api/orders/1/pay -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU1MDY2MzgyLCJleHAiOjE3NTUxNTI3ODJ9.WWUHkhgqsF3QtOvef3W8ENP0-6Tyy06MfyES42qtFPo"
+{"code":400,"message":"不允许从 PAID 状态转换到 PAID 状态","data":null}
+
+3.2, pay（4） 
+curl -X POST http://localhost:8080/api/orders/4/pay -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU1MDY2MzgyLCJleHAiOjE3NTUxNTI3ODJ9.WWUHkhgqsF3QtOvef3W8ENP0-6Tyy06MfyES42qtFPo"
+{"code":200,"message":"Success","data":{"id":4,"orderNumber":"PEN-4D5E6F7G","status":"PAID","amount":550.00,"creationDate":"2025-08-07T13:13:15","user":{"id":1,"username":"admin"},"flightInfo":null}}
+
+3.3, cancel（1） 
+curl -X POST http://localhost:8080/api/orders/1/cancel -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU1MDY2MzgyLCJleHAiOjE3NTUxNTI3ODJ9.WWUHkhgqsF3QtOvef3W8ENP0-6Tyy06MfyES42qtFPo"
+{"code":200,"message":"Success","data":{"id":1,"orderNumber":"PAI-1A2B3C4D","status":"CANCELLED","amount":1250.75,"creationDate":"2025-08-06T13:43:15","user":{"id":1,"username":"admin"},"flightInfo":null}}
+
+3.4, cancel（2） 
+curl -X POST http://localhost:8080/api/orders/1/cancel -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU1MDY2MzgyLCJleHAiOjE3NTUxNTI3ODJ9.WWUHkhgqsF3QtOvef3W8ENP0-6Tyy06MfyES42qtFPo"
+{"code":400,"message":"不允许从 CANCELLED 状态转换到 CANCELLED 状态","data":null}
+
+3.5, retry-ticketing (4): TICKETING_FAILED → TICKETED          : 开始执行【关闭超时未支付订单】任务，当前时间：2025-08-07T15:50:00.081910200
+2025-08-07T15:50:00.082+08:00  INFO 25344 --- [airline-order-course] [   scheduling-1] c.p.a.task.OrderScheduledTask            : 查询时间参数：2025-08-07 15:20:00
+Hibernate: select o1_0.id,o1_0.amount,o1_0.creation_date,o1_0.order_number,o1_0.status,o1_0.user_id from orders o1_0 where o1_0.status=? and o1_0.creation_date<?
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from app_users u1_0 where u1_0.id=?
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from app_users u1_0 where u1_0.id=?
+Hibernate: select o1_0.id,o1_0.amount,o1_0.creation_date,o1_0.order_number,o1_0.status,u1_0.id,u1_0.password,u1_0.role,u1_0.username from orders o1_0 left join app_users u1_0 on u1_0.id=o1_0.user_id where o1_0.id=?
+Hibernate: update orders set amount=?,creation_date=?,order_number=?,status=?,user_id=? where id=?
+2025-08-07T15:50:00.325+08:00  INFO 25344 --- [airline-order-course] [  Async-Order-1] c.p.a.s.Impl.AsyncOrderServiceImpl       : 开始异步发送订单[PAI-1A2B3C4D]状态通知，当前线程：Async-Order-1
+2025-08-07T15:50:00.325+08:00  INFO 25344 --- [airline-order-course] [  Async-Order-2] c.p.a.s.Impl.AsyncOrderServiceImpl       : 异步记录订单[PAI-1A2B3C4D]操作日志：超时未支付，系统自动取消，时间：2025-08-07T15:50:00.325634600
+Hibernate: select o1_0.id,o1_0.amount,o1_0.creation_date,o1_0.order_number,o1_0.status,u1_0.id,u1_0.password,u1_0.role,u1_0.username from orders o1_0 left join app_users u1_0 on u1_0.id=o1_0.user_id where o1_0.id=?
+Hibernate: update orders set amount=?,creation_date=?,order_number=?,status=?,user_id=? where id=?
+2025-08-07T15:50:00.348+08:00  INFO 25344 --- [airline-order-course] [   scheduling-1] c.p.a.task.OrderScheduledTask            : 完成【关闭超时未支付订单】任务，处理数量：2
+2025-08-07T15:50:00.348+08:00  INFO 25344 --- [airline-order-course] [  Async-Order-3] c.p.a.s.Impl.AsyncOrderServiceImpl       : 开始异步发送订单[PEN-5E6F7G8H]状态通知，当前线程：Async-Order-3
+2025-08-07T15:50:00.348+08:00  INFO 25344 --- [airline-order-course] [  Async-Order-4] c.p.a.s.Impl.AsyncOrderServiceImpl       : 异步记录订单[PEN-5E6F7G8H]操作日志：超时未支付，系统自动取消，时间：2025-08-07T15:50:00.348063400
+2025-08-07T15:50:02.334+08:00  INFO 25344 --- [airline-order-course] [  Async-Order-1] c.p.a.s.Impl.AsyncOrderServiceImpl       : 订单[PAI-1A2B3C4D]状态通知发送成功，状态：CANCELLED
+2025-08-07T15:50:02.351+08:00  INFO 25344 --- [airline-order-course] [  Async-Order-3] c.p.a.s.Impl.AsyncOrderServiceImpl       : 订单[PEN-5E6F7G8H]状态通知发送成功，状态：CANCELLED
+curl -X POST http://localhost:8080/api/orders/4/retry-ticketing -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU0NTQ4MzQzLCJleHAiOjE3NTQ2MzQ3NDN9.nudFj_iehRqKSxYkFbeGFGZDnY47Pov77jDg6Byvf_4"
+Impl      : 开始为订单 4 调用航司接口出票...当前状态: TICKETING_FAILED
+开始为订单 4 调用航司接口出票...
+订单 4 出票成功！
+2025-08-07T14:33:08.438+08:00  INFO 12820 --- [airline-order-course] [cTaskExecutor-1] c.p.a.service.Impl.OrderServiceImpl      : 订单 4 出票成功
+
+3.5, retry-ticketing (4)
+curl -X POST http://localhost:8080/api/orders/4/retry-ticketing -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzU0NTUyMDU5LCJleHAiOjE3NTQ2Mzg0NTl9.L0yNfDoRwF4VKaULg2L-6Ksu_-VbC-ksg_JpSKZfIpA"
+Impl      : 开始为订单 4 调用航司接口出票...当前状态: TICKETED
+2025-08-07T15:34:46.356+08:00 ERROR 29204 --- [airline-order-course] [cTaskExecutor-1] .a.i.SimpleAsyncUncaughtExceptionHandler : Unexpected exception occurred invoking async method: public void com.postion.airlineorderbackend.service.Impl.OrderServiceImpl.requestTicketIssuance(java.lang.Long)
+
+com.postion.airlineorderbackend.exception.BusinessException: 不允许从 TICKETED 状态转换到 TICKETING_FAILED 状态 
+
+4, 定时作业：30分钟超时，PENDING_PAYMENT → CANCELLED 
+2025-08-13T14:40:00.034+08:00  INFO 24236 --- [airline-order-course] [   scheduling-1] c.p.a.task.OrderScheduledTask            : 开始执行【关闭超时未支付订单】任务，当前时间：2025-08-13T14:40:00.034772500
+2025-08-13T14:40:00.035+08:00  INFO 24236 --- [airline-order-course] [   scheduling-1] c.p.a.task.OrderScheduledTask            : 查询时间参数：2025-08-13 14:10:00
+Hibernate: select o1_0.id,o1_0.amount,o1_0.creation_date,o1_0.order_number,o1_0.status,o1_0.user_id from orders o1_0 
+where o1_0.status=? and o1_0.creation_date<?
+Hibernate: select u1_0.id,u1_0.password,u1_0.role,u1_0.username from app_users u1_0 where u1_0.id=?
+Hibernate: select o1_0.id,o1_0.amount,o1_0.creation_date,o1_0.order_number,o1_0.status,u1_0.id,u1_0.password,u1_0.role,u1_0.username from orders o1_0 left 
+join app_users u1_0 on u1_0.id=o1_0.user_id where o1_0.id=?
+Hibernate: update orders set amount=?,creation_date=?,order_number=?,status=?,user_id=? where id=?
+2025-08-13T14:40:00.072+08:00  INFO 24236 --- [airline-order-course] [  Async-Order-1] c.p.a.s.Impl.AsyncOrderServiceImpl       : 开始异步发送订单[PAI-1A2B3C4D]状态通知，当前线程：Async-Order-1
+2025-08-13T14:40:00.072+08:00  INFO 24236 --- [airline-order-course] [  Async-Order-2] c.p.a.s.Impl.AsyncOrderServiceImpl       : 异步记录订单[PAI-1A2B3C4D]操作日志：超时未支付，系统自动取消，时间：2025-08-13T14:40:00.072977100       
+Hibernate: select o1_0.id,o1_0.amount,o1_0.creation_date,o1_0.order_number,o1_0.status,u1_0.id,u1_0.password,u1_0.role,u1_0.username from orders o1_0 left join app_users u1_0 on u1_0.id=o1_0.user_id where o1_0.id=?
+Hibernate: update orders set amount=?,creation_date=?,order_number=?,status=?,user_id=? where id=?
+2025-08-13T14:40:00.089+08:00  INFO 24236 --- [airline-order-course] [   scheduling-1] c.p.a.task.OrderScheduledTask            : 完成【关闭超时未支付订单】任务，处理数量：2
+2025-08-13T14:40:00.090+08:00  INFO 24236 --- [airline-order-course] [  Async-Order-3] c.p.a.s.Impl.AsyncOrderServiceImpl       : 开始异步发送订单[TIC-2B3C4D5E]状态通知，当前线程：Async-Order-3
+2025-08-13T14:40:00.090+08:00  INFO 24236 --- [airline-order-course] [  Async-Order-4] c.p.a.s.Impl.AsyncOrderServiceImpl       : 异步记录订单[TIC-2B3C4D5E]操作日志：超时未支付，系统自动取消，时间：2025-08-13T14:40:00.090438100       
+
+2025-08-13T14:40:02.078+08:00  INFO 24236 --- [airline-order-course] [  Async-Order-1] c.p.a.s.Impl.AsyncOrderServiceImpl       : 订单[PAI-1A2B3C4D]状态通知发送成功，状态：CANCELLED
+2025-08-13T14:40:02.094+08:00  INFO 24236 --- [airline-order-course] [  Async-Order-3] c.p.a.s.Impl.AsyncOrderServiceImpl       : 订单[TIC-2B3C4D5E]状态通知发送成功，状态：CANCELLED

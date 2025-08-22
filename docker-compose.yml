@@ -1,0 +1,8 @@
+# version: '3.8'
+
+services:
+  app:
+    image: ${DOCKERHUB_USERNAME}/${DOCKER_BACKEND_IMAGE_NAME}:latest
+    restart: always
+    ports:
+      - "8080:8080"

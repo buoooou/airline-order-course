@@ -1,6 +1,6 @@
 package com.postion.airlineorderbackend.controller;
 
-
+import com.postion.airlineorderbackend.dto.ApiResponse;
 import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -18,18 +18,18 @@ public class OrderActionController {
     private final OrderService orderService;
 
     @PostMapping("/pay")
-    public ResponseEntity<OrderDto> pay(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<OrderDto>> pay(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(orderService.payOrder(id));
+            return ResponseEntity.ok(ApiResponse.success(orderService.payOrder(id)));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(null); // Or return a proper error DTO
         }
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<OrderDto> cancel(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<OrderDto>> cancel(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(orderService.cancelOrder(id));
+            return ResponseEntity.ok(ApiResponse.success(orderService.cancelOrder(id)));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(null);
         }
