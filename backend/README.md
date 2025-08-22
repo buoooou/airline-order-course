@@ -158,26 +158,36 @@ http://localhost:8080/actuator/health
  chmod +x ./mvnw 
  -->
 
- # 打包
+ # 在 Win11 中打包
 ./mvnw clean package -DskipTests
 
 # 网络设置
-打开公司网络，Win11的公司网络代理：http://proxy.emea.ibm.com:8080
+参照 Reademe.md 确认网络设置。
 
-# 生成本地镜像, 做成本地镜像
+# 挂载项目
+在vscode中通过WSL挂载项目到ubuntu
+
+# 在 ubuntu 生成本地镜像, 做成本地镜像
 docker build -t airline-order-backend .
-docker build -t suifm/airline-order-backend:latest . 
 
 # 确认镜像
 docker image ls
 
-# docker-compose
+# 运行 docker 本地镜像 方法1：docker-compose
 docker-compose up             # 启动（后台运行加 -d）
 docker-compose down           # 停止并删除容器
 docker-compose up --build     # 重新构建镜像并启动（若Dockerfile有修改）
+# 运行前后端镜像
+docker-compose -f docker-compose-2.yml up -d
 
-# 运行本地镜像
-Docker run -d -p 8080：8080 --name airline-order-backend-container airline-order-backend
+# 运行 docker 本地镜像 方法2：docker run
+docker run -d -p 8080:8080 --name aws-airline-backend airline-order-backend
+
+# 确认镜像内容
+docker exec -it aws-airline-backend /bin/sh
+
+# 查看日志
+docker logs -f aws-airline-backend
 
 # 生成aws镜像
 docker tag airline-order-backend:latest 381492153714.dkr.ecr.ap-southeast-2.amazonaws.com/airline-order-backend-sfm:V1
@@ -187,9 +197,9 @@ docker push 381492153714.dkr.ecr.ap-southeast-2.amazonaws.com/airline-order-back
 
 # 手动发布
 aws → 搜索 ECS (Elastic Container Service)  → Clusters, Namespace, Task definitions
-a, Clusters: airline-order-backend-sfm, Fargate, 点击Create 
+1. Clusters: airline-order-backend-sfm, Fargate, 点击Create 
 
-b, Task definitions, 定义如何运行容器
+2. Task definitions, 定义如何运行容器
 name:airline-order-backend-task-sfm
 Type: Fargate
 OS: Linux, .5 vCPU, 2GB
@@ -197,10 +207,10 @@ Role: ecsTaskExexutionRole
 Container: airline-order-backend-container-sfm, <Image URL>, 8080, 8080
 点击 Create
 
-c, 选中 Clusters，点击 Create Service, 选择自己的 Task definitions, airline-order-course-task-service-sfm-v1
+3. 选中 Clusters，点击 Create Service, 选择自己的 Task definitions, airline-order-course-task-service-sfm-v1
 , Lanch type, FARGATE, LATEST, Desied tasks: 1
 
-d, 搜索 RDS, Create Database, 标准, MySQL, 算力：Free，airline-order-db-sfm，password: admin, admin123，
+4. 搜索 RDS, Create Database, 标准, MySQL, 算力：Free，airline-order-db-sfm，password: admin, admin123，
 VPC:airline-order-db-VPC-sfm
 点击数据库，安全，入站规则，自定义，0000, 保存。
 

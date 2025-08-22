@@ -1,0 +1,18 @@
+# version: '3.8'
+
+services:
+  backend:
+    image: airline-order-backend
+    container_name: airline-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  frontend:
+    image: airline-order-frontend
+    container_name: airline-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend

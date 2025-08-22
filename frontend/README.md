@@ -38,40 +38,43 @@ npx ng e2e
 https://angular.dev/tools/cli
 
 # 网络设置
-1. 打开公司网络，Win11的公司网络代理：http://proxy.emea.ibm.com:8080
-
-2. 设置 ubuntu 的代理
-sudo nano /etc/systemd/system/docker.service.d/proxy.conf
-[Service]
-Environment="HTTP_PROXY=http://proxy.emea.ibm.com:8080"
-Environment="HTTPS_PROXY=http://proxy.emea.ibm.com:8080"
-Environment="NO_PROXY=localhost,127.0.0.1,.example.com"
+参照 Readme.md 中的网络设置
 
 # 运行 Dockerfile
 cd frontend
-docker build -t aws-airline-frontend .
+docker build -t airline-order-frontend .
 
 # 确认镜像
 docker image ls
-# 运行容器 （避免和后端端口冲突，这里使用8081端口）
-docker run -d -p 8081:80 --name aws-airline-frontend aws-airline-frontend
+
+# 运行容器方法1 （避免和后端端口冲突，这里使用8081端口）
+docker run -d -p 8081:80 --name airline-order-frontend airline-order-frontend
+
+# 运行容器方法2
+docker-compose up -d
+
+# 运行前后端镜像
+docker-compose -f docker-compose-2.yml up -d
 
 # 进入容器 （Alpine 系统默认没有 bash，用 sh 即可）
-# docker exec -it aws-airline-frontend /bin/bash
-docker exec -it aws-airline-frontend /bin/sh
-docker exec -it aws-airline-frontend ls /usr/share/nginx/html
+# docker exec -it airline-order-frontend /bin/bash
+docker exec -it airline-order-frontend /bin/sh
+docker exec -it airline-order-frontend ls /usr/share/nginx/html
 
 # 查看日志
-docker logs -f aws-airline-frontend
+docker logs -f airline-order-frontend
 
 # 停止运行的容器
-docker stop aws-airline-frontend
+docker stop airline-order-frontend
 
 # 删除容器
-docker rm aws-airline-frontend
+docker rm airline-order-frontend
+
+# 删除镜像
+docker image rm airline-order-frontend
 
 # 生成aws镜像
-docker tag aws-airline-frontend:latest 381492153714.dkr.ecr.ap-southeast-2.amazonaws.com/airline-order-frontend-sfm:V1
+docker tag airline-order-frontend:latest 381492153714.dkr.ecr.ap-southeast-2.amazonaws.com/airline-order-frontend-sfm:V1
 
 # 推送镜像到aws
 docker push 381492153714.dkr.ecr.ap-southeast-2.amazonaws.com/airline-order-frontend-sfm:V1 
@@ -83,9 +86,11 @@ http://localhost:8081/
 # 常见问题
 1. 前端页面显示空白
 注意前端打包后的结构dist，注意Dockerfile中COPY的路径
-确认Image内容：
-docker exec -it aws-airline-frontend ls /usr/share/nginx/html
-修改Dockerfile文件：
+
+# 确认Image内容：
+docker exec -it airline-order-frontend ls /usr/share/nginx/html
+
+# 修改Dockerfile文件：
 COPY --from=build /frontend-app/dist/airline-order-frontend/browser/ /usr/share/nginx/html/
 
 2. 前端页面显示 nginx welcome page
@@ -96,4 +101,4 @@ COPY --from=build /frontend-app/dist/airline-order-frontend/browser/ /usr/share/
 旧：
 proxy_pass http://host.docker.internal:8080;
 新：
-proxy_pass http://192.168.2.109:8080;
+proxy_pass http://<Local_IP>:8080;

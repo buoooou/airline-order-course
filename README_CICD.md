@@ -6,27 +6,27 @@ https://java.postions.app/java-github-cicd
    
 
 ### 一、前期准备工作
+### 1.1 确认网络设置 （参照 主目录下的 README.md 中的网络设置）
 
-### 1.1 配置 WSL 环境
-确保 WSL 中的 Ubuntu 已正确配置：
+### 1.2 配置 WSL 环境
+<!-- 确保 WSL 中的 Ubuntu 已正确配置：
 
 # 更新系统
 sudo apt update && sudo apt upgrade -y
 
 # 安装必要工具
-sudo apt install -y git curl wget unzip
+sudo apt install -y curl wget unzip
 
-# 确认 Docker 已正确安装并运行
+# 确认 Docker 已正确安装并运行（CICD过程中不需要）
 docker --version
-docker-compose --version
+docker-compose --version -->
 
 # 确保当前用户加入 docker 组（避免每次使用 sudo）
-sudo usermod -aG docker $USER
+sudo usermod -aG docker $USER -->
 
+### 1.3 配置 GitHub 仓库
 
-### 1.2 配置 GitHub 仓库
-
-# 克隆代码仓库（如果尚未克隆）
+# WIN11 中克隆代码仓库（如果尚未克隆）
 git clone https://github.com/fm-t7/airline-order-course.git
 cd airline-order-course
 
@@ -34,8 +34,7 @@ cd airline-order-course
 git checkout main
 git pull origin main
 
-
-### 1.3 登录AWS 建立EC2实例并下载 EC2 密钥
+### 1.4 登录AWS 建立EC2实例并下载 EC2 密钥
 # 登录AWS控制台
 URL: https://shida-awscloud3.signin.aws.amazon.com/console
 
@@ -46,8 +45,7 @@ URL: https://shida-awscloud3.signin.aws.amazon.com/console
 # 选择 EC2 实例 -> 连接 -> 选择实例 -> 选择实例
 # 下载密钥文件并保存到本地（如 airline-fuser26.pem）
 
-
-### 1.4 配置 AWS EC2 信任密钥
+### 1.5 在 Ubuntu 上配置 AWS EC2 信任密钥
 使用 vs code 链接 Ubuntu, 自然切换为 ubuntu 账户(/home/ubuntu) 
 (不需要使用 su - ubuntu，whoami, pwd)
 
@@ -75,10 +73,10 @@ cat github_actions_deploy_key.pub >> ~/.ssh/authorized_keys
 # 验证
 ssh -i github_actions_deploy_key ubuntu@3.25.139.89
 
-
-### 1.5 注册DockerHub账号
+### 1.6 注册DockerHub账号
 使用公司代理，登录 https://www.docker.com/, 使用github 账号登录dockerhub账号，获得Personal access tokens
 docker login -u suifm -p <password>
+
 
 ### 二、CI/CD 流程设计
 
@@ -109,29 +107,32 @@ DOCKER_IMAGE_NAME: Docker 镜像名称
 DOCKERHUB_TOKEN： DockerHub 账号的 Token
 DOCKERHUB_USERNAME：DockerHub 账号的用户名
 
-### 三、Dockerfile 和 Docker Compose 配置文件
-生成多阶段构建的单镜像部署, 然后使用 Docker Compose 部署到同一个 EC2 实例。
 
-### 3.1 Dockerfile
-多阶段构建
-
-### 3.2 Docker Compose 配置文件
-单一镜像
-
-### 四、本地开发与 CI/CD 衔接脚本
+### 三、本地开发与 CI/CD 衔接脚本
 # 本地开发
+完成前后端开发和测试
 
-# 打包后端, 生成jar包
+# 测试前后端的打包（Dockerfile中会重新制作）
+1. 测试打包后端, 生成jar包
 cd backend
 ./mvnw clean package -DskipTests
 
-# 编译前端，生成dist目录
+2. 编译前端，生成dist目录
 cd frontend
 npm run build
 
+
+### 四、Dockerfile 和 Docker Compose 配置文件
+生成多阶段构建的单镜像部署, 然后使用 Docker Compose 部署到同一个 EC2 实例。
+
+### 4.1 Dockerfile
+从源代码开始多阶段构建，注意
+
+### 4.2 Docker Compose
+制作单一镜像，注意 Dist 目录结构
+
+
 ### 五、CICD
-准备工作:
-在 AWS 控制台启动 EC2 实例
 
 建立新分支:
 git checkout -b dev
@@ -150,10 +151,13 @@ git push origin main --force
 触发 CI/CD 流程:
 在 GitHub 仓库页面，Actions 标签页，点击 Run workflow，选择你要运行的工作流，点击 Run workflow 按钮，等待工作流完成。
 
+
 ### 六、常见问题
 
 ### 6.1 Docker compose 部署失败
+1. 确认docker-compose.yml部署位置
 docker-compose.yml 要提前配置在EC2的/home/ubuntu目录下，并且要确保配置文件中，容器名称和镜像名称要保持一致。
+2. 确认镜像名
 docker-compose.yml 中的镜像名，和docerhub上的镜像名要保持一致。参数取不到，采取直接书写的方式。
 
 ### 6.2 部署成功后，前端无法访问
