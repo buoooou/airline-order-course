@@ -6,10 +6,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
+@EnableAsync
 public class AirlineOrderBackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(AirlineOrderBackendApplication.class, args);
     }
-
 }

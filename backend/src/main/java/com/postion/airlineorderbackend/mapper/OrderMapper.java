@@ -4,18 +4,19 @@ import com.postion.airlineorderbackend.dto.OrderDto;
 import com.postion.airlineorderbackend.model.Order;
 import com.postion.airlineorderbackend.model.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring") // Generates a Spring Bean for injection
 public interface OrderMapper {
 
-    // MapStruct can map nested objects automatically if they have a corresponding mapping method
+    // Mapping the Order entity to OrderDto with additional fields handling
     @Mappings({
-//            @Mapping(source = "author", target = "user"), // Map the user object
-//            @Mapping(target = "flightInfo", ignore = true) // flightInfo is added later, not from the entity
+            @Mapping(source = "user", target = "user"), // Map the user object
+            @Mapping(target = "flightInfo", ignore = true) // Add flightInfo separately, not mapped from entity
     })
     OrderDto toDto(Order order);
 
-    // This method will be used by the above toDto method to map the User entity to UserDto
+    // Mapping User entity to UserDto
     OrderDto.UserDto userToUserDto(User user);
 }
