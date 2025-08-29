@@ -1,6 +1,7 @@
 package com.postion.airlineorderbackend.service;
 
 import com.postion.airlineorderbackend.dto.OrderDto;
+import com.postion.airlineorderbackend.dto.CreateOrderRequest;
 
 import java.util.List;
 
@@ -29,4 +30,7 @@ public interface OrderService {
     OrderDto payOrder(Long id);
     void requestTicketIssuance(Long id); // 这是一个异步触发方法
     OrderDto cancelOrder(Long id);
+
+    // 新增：创建订单
+    OrderDto createOrder(CreateOrderRequest request, String username);
 }
