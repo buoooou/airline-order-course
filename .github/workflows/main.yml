@@ -41,7 +41,7 @@ jobs:
       #       docker-compose up -d --remove-orphans
       #       docker image prune -f
       - name: Deploy to Huawei ECS
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HUAWEI_ECS_HOST }} # 华为云ECS的弹性公网IP
           username: ${{ secrets.HUAWEI_ECS_USERNAME }} # 华为ECS登录用户名
