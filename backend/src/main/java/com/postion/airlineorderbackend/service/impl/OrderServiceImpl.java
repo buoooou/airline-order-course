@@ -145,26 +145,26 @@ public class OrderServiceImpl implements OrderService{
 		  return orderDto;
    }
   
-  @Scheduled(fixedRate = 60000)
-  @Transactional
-  @SchedulerLock(
-	        name = "cancleUpaidOrdersTask",  // 锁名称（唯一标识任务）
-	        lockAtMostFor = "55s",  // 最大锁持有时间（防止死锁）
-	        lockAtLeastFor = "10s"   // 最小锁持有时间（避免高频释放/获取）
-	    )
-  public void cancleUpaidOrdersTask() {
-	  log.info("【定时任务】开始处理超时未支付订单"); 
-    LocalDateTime fifteenMinutesAgo = LocalDateTime.now().minusMinutes(15);
-    List<Order> unpaidOrders = orderRepository.findByStatusAndCreationDateBefore(OrderStatus.PENDING_PAYMENT, fifteenMinutesAgo);
-    if(unpaidOrders.isEmpty()){
-	    log.info("【定时任务】发现{}个超时订单，将它们跟更新为CANCELLED",unpaidOrders.size()); 
-      for(Order order: unpaidOrders) {
-        order.setStatus(OrderStatus.CANCELLED);
-        log.info("【定时任务】超时订单{}（创建于{}）状态已更新为CANCELLED",order.getId(),order.getCreationDate());
-      }
-      orderRepository.saveAll(unpaidOrders);
-    }else{
-	    log.info("【定时任务】未发现支付超时的订单"); 
-    }
-  }
+//  @Scheduled(fixedRate = 60000)
+//  @Transactional
+//  @SchedulerLock(
+//	        name = "cancleUpaidOrdersTask",  // 锁名称（唯一标识任务）
+//	        lockAtMostFor = "55s",  // 最大锁持有时间（防止死锁）
+//	        lockAtLeastFor = "10s"   // 最小锁持有时间（避免高频释放/获取）
+//	    )
+//  public void cancleUpaidOrdersTask() {
+//	  log.info("【定时任务】开始处理超时未支付订单"); 
+//    LocalDateTime fifteenMinutesAgo = LocalDateTime.now().minusMinutes(15);
+//    List<Order> unpaidOrders = orderRepository.findByStatusAndCreationDateBefore(OrderStatus.PENDING_PAYMENT, fifteenMinutesAgo);
+//    if(unpaidOrders.isEmpty()){
+//	    log.info("【定时任务】发现{}个超时订单，将它们跟更新为CANCELLED",unpaidOrders.size()); 
+//      for(Order order: unpaidOrders) {
+//        order.setStatus(OrderStatus.CANCELLED);
+//        log.info("【定时任务】超时订单{}（创建于{}）状态已更新为CANCELLED",order.getId(),order.getCreationDate());
+//      }
+//      orderRepository.saveAll(unpaidOrders);
+//    }else{
+//	    log.info("【定时任务】未发现支付超时的订单"); 
+//    }
+//  }
 }

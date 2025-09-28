@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 @Service
 public class UserServiceImpl implements UserService {
     
-    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Resource
     private UserRepository userRepository;
