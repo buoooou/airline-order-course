@@ -43,11 +43,13 @@ jobs:
       - name: Deploy to Huawei ECS
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.HUAWEI_ECS_HOST }} # ???ECS?????IP
-          username: ${{ secrets.HUAWEI_ECS_USERNAME }} # ??ECS?????
-          key: ${{ secrets.HUAWEI_SSH_PRIVATE_KEY }} # ??ECS???SSH??
+          host: ${{ secrets.HUAWEI_ECS_HOST }} # 华为云ECS的弹性公网IP
+          username: ${{ secrets.HUAWEI_ECS_USERNAME }} # 华为ECS登录用户名
+          key: ${{ secrets.HUAWEI_SSH_PRIVATE_KEY }} # 华为ECS对应的SSH私钥
+          debug: true # 开启调试模式
           script: |
-            cd ~/airline-cicd  # ????????ECS???
+            echo "登录成功"
+            cd ~/airline-cicd 
             docker-compose pull
             docker-compose up -d --remove-orphans
             docker image prune -f
