@@ -105,7 +105,7 @@ jobs:
       # 9. 在 EC2 上重启服务
       - name: Restart Services on EC2
         run: |
-          ssh -i "aws-key.pem" ubuntu@13.62.76.189 << 'EOF'
+          ssh -i "aws-key.pem" ubuntu@13.61.58.81 << 'EOF'
             cd /home/ubuntu/app/frontend
             pkill -f "http-server" || true
             nohup npx http-server ./ -p 8080 --host 0.0.0.0 > frontend.log 2>&1 &
