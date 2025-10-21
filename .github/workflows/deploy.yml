@@ -115,7 +115,7 @@ jobs:
             pkill -f "java -jar .*\.jar" || true
             JAR_FILE=$(ls -t *.jar | head -n1)
             if [ -f "$JAR_FILE" ]; then
-              nohup java -jar "$JAR_FILE" --server.port=8081 > backend.log 2>&1 &
+              nohup java -jar "$JAR_FILE" --server.port=8081 --server.address=0.0.0.0 > backend.log 2>&1 &
               echo "Backend started: $JAR_FILE"
             else
               echo "No JAR file found!"
